@@ -4,6 +4,7 @@ import './anime-enhancements.css';
 import './contact-dock.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
+import TeamPhotoLoader from './team-photo-loader';
 
 export const metadata: Metadata = {
   title: 'MakeWebb | 3D Digital Product Studio',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <AnimeEnhancements />
+        <TeamPhotoLoader />
         {children}
         <ContactDock />
       </body>
