@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { animate, stagger } from 'animejs';
-import { ArrowUpRight, BrainCircuit, Cpu, Globe2, Laptop, Layers3, MousePointer2, Play, Smartphone, Sparkles, Terminal, Wand2, X } from 'lucide-react';
+import { ArrowUpRight, BrainCircuit, Code2, Cpu, Globe2, Laptop, Layers3, MousePointer2, Play, Smartphone, Sparkles, Terminal, Wand2, X } from 'lucide-react';
 
 const services = [
   { icon: Globe2, index: '01', title: 'Websites', timeline: '2–6 weeks', tech: 'Next.js · React · TypeScript', text: 'High-impact websites and web apps with sharp UX, responsive systems and production-ready performance.', examples: 'Marketing sites, SaaS, e-commerce, dashboards' },
@@ -13,10 +13,11 @@ const services = [
 ];
 
 const projects = [
-  { code: 'MW / 001', title: 'AI Job Tracker', type: 'AI PRODUCT', meta: 'Next.js · AI · Analytics', shape: 'project-cube', detail: 'A focused job-search workspace that turns applications, status changes and follow-ups into one clear workflow.' },
-  { code: 'MW / 002', title: 'E-commerce Platform', type: 'COMMERCE', meta: 'React · Payments · CMS', shape: 'project-ring', detail: 'A conversion-focused commerce system with a flexible catalog, smooth checkout and an interface built for mobile-first shopping.' },
-  { code: 'MW / 003', title: '3D Experience', type: 'INTERACTIVE', meta: 'WebGL · Motion · 3D', shape: 'project-orb', detail: 'An immersive product surface using depth, motion and spatial interaction to make exploration feel physical.' },
-  { code: 'MW / 004', title: 'Computer Vision', type: 'AI / ML', meta: 'Python · Vision · ML', shape: 'project-grid', detail: 'A computer-vision pipeline that turns visual input into useful signals, measurements and operational decisions.' },
+  { code: 'MW / 001', title: 'AI Job Tracker', type: 'AI PRODUCT', meta: 'Next.js · AI · Analytics', shape: 'project-cube', url: 'https://ai-job-application-tracker-rose.vercel.app' },
+  { code: 'MW / 002', title: 'E-Examiner', type: 'EXAM PLATFORM', meta: 'Web App · Assessments · Exams', shape: 'project-ring', url: 'https://e-examiner.vercel.app/' },
+  { code: 'MW / 003', title: 'World Object Detector', type: 'COMPUTER VISION', meta: 'Python · Vision · Detection', shape: 'project-orb', url: 'https://world-object-detector.netlify.app/' },
+  { code: 'MW / 004', title: 'Silsila Burqa House', type: 'E-COMMERCE', meta: 'Web · Commerce · Product Experience', shape: 'project-grid', url: 'https://silsilaburqahouse.web.app' },
+  { code: 'MW / 005', title: 'Hand Gesture Controller', type: 'COMPUTER VISION', meta: 'Python · Hand Tracking · Interaction', shape: 'project-cube', url: 'https://handgesturecontroller.netlify.app/' },
 ];
 
 const technologies = ['Next.js', 'React', 'Python', 'AI / ML', 'Three.js', 'Supabase', 'TypeScript', 'Node.js'];
@@ -61,7 +62,7 @@ export function InteractiveHeroVisual() {
   };
 
   return <div ref={stage} className={`interactive-hero ${entered ? 'is-entered' : ''}`} onPointerDown={e => { dragging.current = true; pointer.current.x = e.clientX; pointer.current.y = e.clientY; }}>
-    <div className="hero-particle-field" aria-hidden="true">{Array.from({ length: 22 }, (_, i) => <i className="hero-particle" key={i} style={{ left: `${(i * 37) % 100}%`, top: `${(i * 61) % 100}%` }} />)}</div>
+    <div className="hero-particle-field" aria-hidden="true">{Array.from({ length: 22 }, (_, i) => <i className="hero-particle" key={i} style={{ '--i': i } as React.CSSProperties} />)}</div>
     <div className="hero-3d-orbit orbit-a" />
     <div className="hero-3d-orbit orbit-b" />
     <div ref={object} className="hero-3d-object">
@@ -70,7 +71,7 @@ export function InteractiveHeroVisual() {
     </div>
     <div className="hero-3d-label label-one"><Sparkles size={13}/> DEPTH / 03</div>
     <div className="hero-3d-label label-two"><MousePointer2 size={13}/> DRAG TO ROTATE</div>
-    <button className="enter-experience" onClick={e => { e.stopPropagation(); enter(); }}>{entered ? <X size={15}/> : <Play size={15}/>} {entered ? 'EXIT EXPERIENCE' : 'ENTER EXPERIENCE'} <ArrowUpRight size={14}/></button>
+    <button className="enter-experience" onClick={enter}>{entered ? <X size={15}/> : <Play size={15}/>} {entered ? 'EXIT EXPERIENCE' : 'ENTER EXPERIENCE'} <ArrowUpRight size={14}/></button>
   </div>;
 }
 
@@ -91,11 +92,10 @@ export function ServicesExplorer() {
 
 export function ProjectGallery() {
   const [active, setActive] = useState(0);
-  const [caseOpen, setCaseOpen] = useState(false);
   const project = projects[active];
   return <div className="project-showcase">
-    <div className="project-list">{projects.map((p, i) => <button key={p.code} className={i === active ? 'active' : ''} onMouseEnter={() => { setActive(i); setCaseOpen(false); }} onFocus={() => { setActive(i); setCaseOpen(false); }} onClick={() => { setActive(i); setCaseOpen(false); }}><span>{p.code}</span><strong>{p.title}</strong><small>{p.type}</small><ArrowUpRight size={16}/></button>)}</div>
-    <div className="project-stage"><div className={`project-object ${project.shape}`}><span>{String(active + 1).padStart(2, '0')}</span></div><div className="project-stage-copy"><span>{project.code} / SELECTED</span><h3>{project.title}</h3><p>{project.meta}</p><button onClick={() => setCaseOpen(v => !v)}>{caseOpen ? 'CLOSE CASE STUDY' : 'VIEW CASE STUDY'} <ArrowUpRight size={14}/></button></div>{caseOpen && <div className="case-study-panel"><button className="case-close" onClick={() => setCaseOpen(false)} aria-label="Close case study"><X size={15}/></button><span>{project.type} / CASE STUDY</span><h4>{project.title}</h4><p>{project.detail}</p><div><b>STACK</b><strong>{project.meta}</strong></div></div>}</div>
+    <div className="project-list">{projects.map((p, i) => <button key={p.code} className={i === active ? 'active' : ''} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} onClick={() => setActive(i)}><span>{p.code}</span><strong>{p.title}</strong><small>{p.type}</small><ArrowUpRight size={16}/></button>)}</div>
+    <div className="project-stage"><div className={`project-object ${project.shape}`}><span>{String(active + 1).padStart(2, '0')}</span></div><div className="project-stage-copy"><span>{project.code} / SELECTED</span><h3>{project.title}</h3><p>{project.meta}</p><a className="project-case-study" href={project.url} target="_blank" rel="noreferrer">VIEW PROJECT <ArrowUpRight size={14}/></a></div></div>
   </div>;
 }
 
