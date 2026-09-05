@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { animate, stagger } from 'animejs';
 import { ArrowDownRight, ArrowUpRight, BrainCircuit, Code2, Globe2, Laptop, Linkedin, Mail, Menu, Move3d, Phone, Smartphone, Sparkles, X } from 'lucide-react';
 
 const people = [
@@ -25,8 +26,131 @@ function TiltCard({ children, className='' }: { children:React.ReactNode; classN
   return <div className={`tilt-card ${className}`} onPointerMove={e=>{const r=e.currentTarget.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;setRotation({x:-y*10,y:x*12});}} onPointerLeave={()=>setRotation({x:0,y:0})} style={{transform:`perspective(1200px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`}}>{children}</div>;
 }
 
+function useAnimeMotion() {
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const heroTargets = document.querySelectorAll('.hero-copy .eyebrow, .hero-copy h1, .hero-copy .hero-text, .hero-copy .hero-actions');
+    const heroStage = document.querySelector('.hero-stage');
+
+    animate(heroTargets, {
+      opacity: [0, 1],
+      y: [28, 0],
+      duration: 850,
+      delay: stagger(110),
+      ease: 'out(4)',
+    });
+
+    if (heroStage) {
+      animate(heroStage, {
+        opacity: [0, 1],
+        scale: [0.94, 1],
+        duration: 1100,
+        delay: 180,
+        ease: 'out(4)',
+      });
+    }
+
+    animate('.stage-glow', {
+      scale: [0.82, 1.16],
+      opacity: [0.45, 1],
+      duration: 2200,
+      alternate: true,
+      loop: true,
+      ease: 'inOutSine',
+    });
+
+    animate('.orbit-one', {
+      rotateZ: [-22, 338],
+      duration: 14000,
+      loop: true,
+      ease: 'linear',
+    });
+
+    animate('.orbit-two', {
+      rotateZ: [33, -327],
+      duration: 10500,
+      loop: true,
+      ease: 'linear',
+    });
+
+    animate('.cube-a', {
+      rotateZ: [14, 374],
+      translateY: [-8, 8],
+      duration: 5200,
+      alternate: true,
+      loop: true,
+      ease: 'inOutSine',
+    });
+
+    animate('.cube-b', {
+      rotateZ: [-22, 338],
+      translateY: [8, -8],
+      duration: 4200,
+      alternate: true,
+      loop: true,
+      ease: 'inOutSine',
+    });
+
+    animate('.mini-phone', {
+      translateY: [-10, 10],
+      rotateX: [7, 11],
+      duration: 3000,
+      alternate: true,
+      loop: true,
+      ease: 'inOutSine',
+    });
+
+    animate('.floating-chip', {
+      translateY: [-7, 7],
+      duration: 1800,
+      delay: stagger(260),
+      alternate: true,
+      loop: true,
+      ease: 'inOutSine',
+    });
+
+    const marquee = document.querySelector('.marquee div');
+    if (marquee) {
+      animate(marquee, {
+        translateX: ['0%', '-50%'],
+        duration: 30000,
+        loop: true,
+        ease: 'linear',
+      });
+    }
+
+    const revealTargets = document.querySelectorAll('.section-head, .service-card, .person-card, .process-item, .contact-card');
+    const observers: IntersectionObserver[] = [];
+
+    revealTargets.forEach((element) => {
+      const node = element as HTMLElement;
+      node.style.opacity = '0';
+      node.style.transform = 'translateY(34px)';
+
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        animate(node, {
+          opacity: [0, 1],
+          y: [34, 0],
+          duration: 850,
+          ease: 'out(4)',
+        });
+      }, { threshold: 0.14 });
+
+      observer.observe(node);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach(observer => observer.disconnect());
+  }, []);
+}
+
 export default function Home(){
   const [menuOpen,setMenuOpen]=useState(false);
+  useAnimeMotion();
+
   return <main>
     <nav className="nav shell">
       <a className="brand" href="#top" onClick={()=>setMenuOpen(false)}><span className="brand-mark"><Move3d size={17}/></span><span>MAKEWEBB</span></a>
