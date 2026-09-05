@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { animate, stagger } from 'animejs';
-import { ArrowDownRight, ArrowUpRight, BrainCircuit, Code2, Compass, Globe2, Laptop, Linkedin, Mail, Menu, Move3d, PenTool, Rocket, Smartphone, Sparkles, Wrench, X } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Code2, Compass, Linkedin, Mail, Menu, Move3d, PenTool, Rocket, Wrench, X } from 'lucide-react';
 import { BuildStatusTerminal, InteractiveHeroVisual, ProjectGallery, ServicesExplorer, TechStackOrbit } from './interactive-experience';
 
 const people = [
-  { name:'Mohammed Owaies', role:'AI / ML Engineer', image:'https://raw.githubusercontent.com/owaies/MakeWebb/main/public/team/ow​aies.jpg', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398', portfolio:'https://owaies-portfolio.base44.app', phone:'7619329863', email:'owaies786@gmail.com', tag:'AI · ML · Engineering' },
+  { name:'Mohammed Owaies', role:'AI / ML Engineer', image:'https://raw.githubusercontent.com/owaies/MakeWebb/main/public/team/owaies.jpg', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398', portfolio:'https://owaies-portfolio.base44.app', phone:'7619329863', email:'owaies786@gmail.com', tag:'AI · ML · Engineering' },
   { name:'Mohammed Afaf Hassan', role:'Web Developer', image:'https://raw.githubusercontent.com/owaies/MakeWebb/main/public/team/afaf.jpg', github:'https://github.com/afaf-app', linkedin:'https://www.linkedin.com/in/mansafaf', portfolio:'https://afaf.base44.app', phone:'8073818817', email:'kingahassan786@gmail.com', tag:'Web · Frontend · Full-stack' },
 ];
 const process = [
