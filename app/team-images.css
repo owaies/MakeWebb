@@ -1,3 +1,3 @@
 .person-card:nth-child(1) .person-image{content:url('/team/owaies.jpg');}
-.person-card:nth-child(2) .person-image{content:url('/team/afaf.jpg');}
+.person-card:nth-child(2) .person-image{content:url('/team/file_000000001c20821185b00fb24f8c0312.png');}
 .person-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
