@@ -15,6 +15,7 @@ import TeamPhotoLoader from './team-photo-loader';
 export const metadata: Metadata = {
   title: 'MakeWebb | 3D Digital Product Studio',
   description: 'MakeWebb designs and develops immersive websites, Android applications, Windows software, and AI-powered digital products.',
+  icons: { icon: '/makewebb-mark.svg', shortcut: '/makewebb-mark.svg', apple: '/makewebb-mark.svg' },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
