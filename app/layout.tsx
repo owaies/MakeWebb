@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './anime-enhancements.css';
+import './contact-dock.css';
 import AnimeEnhancements from './anime-enhancements';
+import ContactDock from './contact-dock';
 
 export const metadata: Metadata = {
-  title: 'MakeWebb | Digital Products, Built in 3D',
-  description: 'MakeWebb creates high-performance websites, Android apps, Windows applications, and AI-powered digital products.',
+  title: 'MakeWebb | 3D Digital Product Studio',
+  description: 'MakeWebb designs and develops immersive websites, Android applications, Windows software, and AI-powered digital products.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -14,6 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <AnimeEnhancements />
         {children}
+        <ContactDock />
       </body>
     </html>
   );
