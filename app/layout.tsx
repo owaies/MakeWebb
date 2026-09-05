@@ -3,6 +3,7 @@ import './globals.css';
 import './anime-enhancements.css';
 import './contact-dock.css';
 import './contact-section.css';
+import './process-mobile.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
 import TeamPhotoLoader from './team-photo-loader';
