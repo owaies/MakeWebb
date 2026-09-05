@@ -5,8 +5,8 @@ import { animate, stagger } from 'animejs';
 import { ArrowDownRight, ArrowUpRight, BrainCircuit, Code2, Globe2, Laptop, Linkedin, Mail, Menu, Move3d, Phone, Smartphone, Sparkles, X } from 'lucide-react';
 
 const people = [
-  { name:'Mohammed Owaies', role:'AI / ML Engineer', image:'/team/owaies.jpg', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398', portfolio:'https://owaies-portfolio.base44.app', phone:'7619329863', email:'owaies786@gmail.com', tag:'AI · ML · Engineering' },
-  { name:'Mohammed Afaf Hassan', role:'Web Developer', image:'/team/file_000000001c20821185b00fb24f8c0312.png', github:'https://github.com/afaf-app', linkedin:'https://www.linkedin.com/in/mansafaf', portfolio:'https://afaf.base44.app', phone:'8073818817', email:'kingahassan786@gmail.com', tag:'Web · Frontend · Full-stack' },
+  { name:'Mohammed Owaies', role:'AI / ML Engineer', image:'https://raw.githubusercontent.com/owaies/MakeWebb/main/public/team/owaies.jpg', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398', portfolio:'https://owaies-portfolio.base44.app', phone:'7619329863', email:'owaies786@gmail.com', tag:'AI · ML · Engineering' },
+  { name:'Mohammed Afaf Hassan', role:'Web Developer', image:'https://raw.githubusercontent.com/owaies/MakeWebb/main/public/team/file_000000001c20821185b00fb24f8c0312.png', github:'https://github.com/afaf-app', linkedin:'https://www.linkedin.com/in/mansafaf', portfolio:'https://afaf.base44.app', phone:'8073818817', email:'kingahassan786@gmail.com', tag:'Web · Frontend · Full-stack' },
 ];
 const services = [
   { icon:Globe2,index:'01',title:'Web Design & Development',text:'High-impact websites and web apps with thoughtful UX, strong performance and a visual system built around your brand.' },
