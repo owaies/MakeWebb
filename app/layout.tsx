@@ -6,6 +6,7 @@ import './contact-section.css';
 import './process-mobile.css';
 import './interactive-experience.css';
 import './case-study.css';
+import './project-motion.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
 import TeamPhotoLoader from './team-photo-loader';
