@@ -35,10 +35,21 @@ function ServiceVisual({ kind }: { kind: string }) {
   return <div className="service-visual chip-visual"><strong>AI</strong><i/><i/><i/><i/></div>;
 }
 
+function HeroGlassCube(){
+  return <div className="hero-glass-cube" aria-hidden="true">
+    <div className="hero-glass-cube-shadow"/>
+    <div className="hero-glass-cube-orbit orbit-x"/><div className="hero-glass-cube-orbit orbit-y"/>
+    <div className="hero-glass-cube-body">
+      <span className="cube-face cube-front">M/W</span><span className="cube-face cube-back">3D</span><span className="cube-face cube-right">AI</span><span className="cube-face cube-left">WEB</span><span className="cube-face cube-top">BUILD</span><span className="cube-face cube-bottom">∞</span>
+    </div>
+  </div>;
+}
+
 export default function HeroReference(){
   return <>
     <section className="hero-reference-shell shell" id="top">
       <div className="hero-reference-stage"><HeroThreeScene/></div>
+      <div className="hero-glass-cube-wrap"><HeroGlassCube/></div>
       <div className="hero-founder-layer"><FounderCard person={people[0]}/><FounderCard person={people[1]}/></div>
       <div className="hero-reference-copy">
         <div className="eyebrow"><span className="pulse"/> BUILDING A BETTER DIGITAL WORLD</div>
