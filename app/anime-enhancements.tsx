@@ -152,7 +152,7 @@ export default function AnimeEnhancements() {
           const y = (event.clientY - (rect.top + rect.height / 2)) * 0.08;
           animate(node, { translateX: x, translateY: y, duration: 180, ease: 'out(3)' });
         });
-        const leave = () => animate(node, { translateX: 0, translateY: 0, duration: 320, ease: 'out(4)');
+        const leave = () => animate(node, { translateX: 0, translateY: 0, duration: 320, ease: 'out(4)' });
         node.addEventListener('pointermove', move, { passive: true });
         node.addEventListener('pointerleave', leave, { passive: true });
         cleanups.push(() => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerleave', leave); });
