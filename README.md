@@ -26,3 +26,5 @@ npm run test:e2e
 The production deployment is managed by the connected Vercel project for the `main` branch.
 
 The current reference-directed visual layer is loaded from `app/reference.css` and the hero composition has been rebuilt around the supplied cinematic glass reference rather than the previous layout.
+
+Deployment trigger: 2026-09-06.
