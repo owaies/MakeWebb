@@ -1,0 +1,2 @@
+import { defineConfig, devices } from '@playwright/test'
+export default defineConfig({testDir:'./tests',use:{baseURL:'http://127.0.0.1:3000',trace:'retain-on-failure'},webServer:{command:'npm run dev',url:'http://127.0.0.1:3000',reuseExistingServer:true},projects:[{name:'mobile',use:{...devices['Pixel 7']}},{name:'desktop',use:{...devices['Desktop Chrome']}},{name:'android-desktop-site',use:{viewport:{width:1280,height:800},hasTouch:true,isMobile:true,deviceScaleFactor:1}}]})
