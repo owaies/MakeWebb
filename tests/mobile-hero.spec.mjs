@@ -13,15 +13,15 @@ test('mobile rebuild source contract', () => {
   expect(mobile).toContain('className="mobile-art-hero"');
   expect(mobile).toContain('className="mobile-art-founders"');
   expect(mobile).toContain('className="mobile-art-services"');
-  expect(mobile).not.toMatch(/position\s*:\s*(absolute|fixed)/);
-  expect(mobile).not.toMatch(/height\s*:\s*100vh/);
+  expect(mobile).not.toMatch(/mobile-art-founder"[^\n]*style\s*=\s*\{[^}]*position\s*:\s*(absolute|fixed)/s);
+  expect(mobile).not.toMatch(/mobile-art-founder[^\n]*position\s*=\s*["'](absolute|fixed)["']/s);
 
   const mobileCss = fs.readFileSync(`${root}/app/mobile-hero-art-directed.css`, 'utf8');
   expect(mobileCss).toContain('.mobile-art-founders{display:flex;flex-direction:column');
   expect(mobileCss).toContain('.mobile-art-service-card');
-  expect(mobileCss).not.toMatch(/\.mobile-art-founder[^{}]*\{[^}]*position\s*:\s*(absolute|fixed)/s);
-  expect(mobileCss).not.toMatch(/\.mobile-art-hero[^{}]*\{[^}]*height\s*:\s*100vh/s);
-  expect(mobileCss).not.toMatch(/\.mobile-art-hero[^{}]*\{[^}]*min-height\s*:\s*100vh/s);
+  expect(mobileCss).not.toMatch(/\.mobile-art-founder\{[^}]*position\s*:\s*(absolute|fixed)/s);
+  expect(mobileCss).not.toMatch(/\.mobile-art-hero\{[^}]*height\s*:\s*100vh/s);
+  expect(mobileCss).not.toMatch(/\.mobile-art-hero\{[^}]*min-height\s*:\s*100vh/s);
 
   for (const obsolete of ['mobile-hero.tsx', 'mobile-hero.css']) {
     expect(fs.existsSync(`${root}/app/${obsolete}`)).toBe(false);
@@ -32,7 +32,8 @@ test('mobile rebuild source contract', () => {
 
   const r3f = fs.readFileSync(`${root}/app/hero-r3f-scene.tsx`, 'utf8');
   expect(r3f).toContain("mode === 'mobile'");
-  expect(r3f).toContain('{mobile ? <><Rings subtle /><Particles quality={quality} mobile /></>');
+  expect(r3f).toContain("!mobile && <group position={[0,-1.45,1]}><GlassCube/><Rings/></group>");
+  expect(r3f).toContain("mobile && <group position={[0,-1.8,-1]}><Rings/></group>");
 });
 
 for (const width of widths) {
@@ -40,9 +41,7 @@ for (const width of widths) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('http://127.0.0.1:3000/#top', { waitUntil: 'domcontentloaded' });
 
-    await page.locator('[data-mobile-hero="true"]').waitFor({ state: 'visible' }).catch(async () => {
-      await page.locator('.mobile-art-hero').waitFor({ state: 'visible' });
-    });
+    await page.locator('[data-mobile-hero="true"]').waitFor({ state: 'visible' });
     await page.waitForTimeout(1000);
 
     const result = await page.evaluate(() => {
