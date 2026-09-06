@@ -21,9 +21,7 @@ import './glassmorphism-final.css';
 import './premium-liquid-glass.css';
 import './motion-system.css';
 import './mobile-hero.css';
-import AnimeEnhancements from './anime-enhancements';
-import ContactDock from './contact-dock';
-import TeamPhotoLoader from './team-photo-loader';
+import './hero-loading.css';
 
 const SITE_URL = 'https://makewebb.vercel.app';
 export const metadata: Metadata = { metadataBase:new URL(SITE_URL), title:{default:'MAKEWEBB | Digital Product Studio',template:'%s | MAKEWEBB'}, description:'MAKEWEBB is a digital product studio building websites, Android apps, Windows software, AI/ML systems and interactive 3D experiences.', applicationName:'MAKEWEBB', keywords:['MAKEWEBB','MakeWebb','MakeWebb India','digital product studio','web development','AI ML development','Android app development','Windows software development','3D web development'], authors:[{name:'MAKEWEBB',url:SITE_URL}], creator:'MAKEWEBB',publisher:'MAKEWEBB', alternates:{canonical:'/'}, robots:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1,'max-video-preview':-1}}, verification:{google:'4fFGBwEGAk14Q7Gapq_gcGn_9d02NDnBlHYpAwviPqs'}, openGraph:{type:'website',url:SITE_URL,siteName:'MAKEWEBB',title:'MAKEWEBB | Digital Product Studio',description:'Websites, apps, software, AI/ML and interactive 3D products engineered by MAKEWEBB.',locale:'en_IN'}, twitter:{card:'summary_large_image',title:'MAKEWEBB | Digital Product Studio',description:'MAKEWEBB builds websites, apps, software, AI/ML systems and interactive digital products.'}, icons:{icon:'/makewebb-mark.svg',shortcut:'/makewebb-mark.svg',apple:'/makewebb-mark.svg'} };
