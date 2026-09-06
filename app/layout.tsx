@@ -19,6 +19,7 @@ import './hero-reference-final.css';
 import './hero-composition-refinement.css';
 import './hero-mobile-flow-fix.css';
 import './hero-mobile-final.css';
+import './hero-mobile-structural.css';
 import './glass-ui.css';
 import './glassmorphism-final.css';
 import './premium-liquid-glass.css';
