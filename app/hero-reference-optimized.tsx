@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
+import { animate, stagger } from 'animejs';
 import { ArrowDownRight, ArrowUpRight, Github, Linkedin, Mail, Phone, Globe } from 'lucide-react';
 import HeroThreeScene from './hero-r3f-scene';
 
@@ -90,6 +91,19 @@ function MobileMWObject(){
 }
 
 function MobileHero(){
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+    const copy = document.querySelectorAll<HTMLElement>('.hero-mobile-copy > *');
+    const object = document.querySelector<HTMLElement>('.hero-mobile-object');
+    const founders = document.querySelectorAll<HTMLElement>('.hero-mobile-founder-card');
+    const serviceCards = document.querySelectorAll<HTMLElement>('.hero-mobile-service-card');
+    animate(copy, { opacity:[0,1], y:[22,0], duration:650, delay:stagger(55), ease:'out(4)' });
+    if (object) animate(object, { opacity:[0,1], y:[18,0], scale:[.94,1], duration:760, delay:240, ease:'out(4)' });
+    animate(founders, { opacity:[0,1], y:[30,0], duration:620, delay:stagger(90, {start:420}), ease:'out(4)' });
+    animate(serviceCards, { opacity:[0,1], y:[24,0], duration:520, delay:stagger(65, {start:720}), ease:'out(4)' });
+  }, []);
+
   return <section className="hero-mobile" id="top">
     <div className="hero-mobile-background"><HeroThreeScene/></div>
     <div className="hero-mobile-content">
