@@ -4,7 +4,7 @@ import { ArrowDownRight, ArrowUpRight, Github, Linkedin } from 'lucide-react';
 import HeroThreeScene from './hero-three-scene';
 
 const builders = [
-  { name:'Mohammed Owaies', role:'AI / ML Engineer', tag:'AI · ML · ENGINEERING', image:'/team/file_000000002d30821185b00fb24f8c0312.png', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398' },
+  { name:'Mohammed Owaies', role:'AI / ML Engineer', tag:'AI · ML · ENGINEERING', image:'/team/file_000000002d308211b0a2203107625baf.png', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398' },
   { name:'Mohammed Afaf Hassan', role:'Web Developer', tag:'WEB · FRONTEND · FULL-STACK', image:'/team/file_000000001c20821185b00fb24f8c0312.png', github:'https://github.com/afaf-app', linkedin:'https://www.linkedin.com/in/mansafaf' },
 ];
 
