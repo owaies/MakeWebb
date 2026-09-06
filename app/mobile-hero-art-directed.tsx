@@ -9,13 +9,12 @@ import { founders, heroServices } from './hero-data';
 
 type Founder = typeof founders[number];
 type ServiceKind = 'browser' | 'phone' | 'windows' | 'chip';
-
 type PausableAnimation = { pause: () => unknown };
 
 function MobileFounderCard({ person, index }: { person: Founder; index: number }) {
   return <article className="mobile-art-founder" data-art-founder={index + 1}>
     <div className="mobile-art-founder-photo">
-      <Image src={person.image} alt={person.name} fill sizes="(max-width: 800px) calc(100vw - 32px), 390px" priority={index === 0} quality={82}/>
+      <Image src={person.image} alt={person.name} fill sizes="(max-width: 800px) calc(100vw - 32px), 390px" priority={index === 0} quality={86}/>
       <span className="mobile-art-founder-tag">{person.tag}</span><span className="mobile-art-founder-corner" aria-hidden="true">↗</span><span className="mobile-art-founder-sheen" aria-hidden="true"/>
     </div>
     <div className="mobile-art-founder-body">
@@ -35,7 +34,7 @@ function MobileServiceVisual({ kind }: { kind: ServiceKind }) {
 }
 
 function MobileMWObject(){
-  return <div className="mobile-art-mw-stage" data-art-reveal="object" aria-hidden="true"><div className="mobile-art-mw-aura"/><div className="mobile-art-mw-orbit orbit-a"/><div className="mobile-art-mw-orbit orbit-b"/><div className="mobile-art-mw-cube"><span className="face front">M/W</span><span className="face side">3D</span><span className="face top">AI</span></div><span className="mobile-art-mw-spark one"/><span className="mobile-art-mw-spark two"/><span className="mobile-art-mw-spark three"/></div>;
+  return <div className="mobile-art-mw-stage" data-art-reveal="object" aria-label="Interactive MAKEWEBB M/W glass object"><div className="mobile-art-mw-caption"><span>03D / CORE OBJECT</span><i>INTERACTIVE</i></div><div className="mobile-art-mw-aura"/><HeroThreeScene mode="mobile"/><div className="mobile-art-mw-scan" aria-hidden="true"/></div>;
 }
 
 export default function MobileHeroArtDirected(){
@@ -45,19 +44,16 @@ export default function MobileHeroArtDirected(){
     if(!root||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     const animations: PausableAnimation[]=[];
     const push=(animation: PausableAnimation)=>animations.push(animation);
-    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="copy"]'),{opacity:[0,1],y:[22,0],duration:650,delay:stagger(65),ease:'out(4)'}));
-    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="object"]'),{opacity:[0,1],y:[18,0],scale:[.92,1],duration:850,delay:320,ease:'out(4)'}));
-    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="founder"]'),{opacity:[0,1],y:[26,0],duration:650,delay:stagger(140,{start:520}),ease:'out(4)'}));
-    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="service"]'),{opacity:[0,1],y:[20,0],duration:520,delay:stagger(70,{start:850}),ease:'out(4)'}));
-    return () => {
-      for (const animation of animations) {
-        animation.pause();
-      }
-    };
+    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="copy"]'),{opacity:[0,1],y:[22,0],duration:650,delay:stagger(58),ease:'out(4)'}));
+    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="object"]'),{opacity:[0,1],y:[12,0],scale:[.94,1],duration:900,delay:420,ease:'out(4)'}));
+    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="founder"]'),{opacity:[0,1],y:[30,0],duration:700,delay:stagger(125,{start:700}),ease:'out(4)'}));
+    push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="service"]'),{opacity:[0,1],y:[22,0],scale:[.97,1],duration:560,delay:stagger(65,{start:1050}),ease:'out(4)'}));
+    push(animate(root.querySelectorAll<HTMLElement>('.mobile-art-founder-sheen'),{translateX:['-18%','18%'],duration:2600,delay:1200,ease:'inOutSine',loop:true,direction:'alternate'}));
+    push(animate(root.querySelectorAll<HTMLElement>('.mobile-art-service-card'),{translateY:['0px','-4px'],duration:1900,delay:stagger(110,{start:1400}),ease:'inOutSine',loop:true,direction:'alternate'}));
+    return ()=>{for(const animation of animations)animation.pause();};
   },[]);
 
   return <section ref={rootRef} className="mobile-art-hero" id="top" data-mobile-hero="true">
-    <div className="mobile-art-background" aria-hidden="true"><HeroThreeScene mode="mobile"/></div>
     <div className="mobile-art-content">
       <div className="mobile-art-intro">
         <div className="mobile-art-eyebrow" data-art-reveal="copy"><span/>BUILDING A BETTER DIGITAL WORLD</div>
