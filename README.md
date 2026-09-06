@@ -21,3 +21,6 @@ npm run dev
 npm run build
 npm run test:e2e
 ```
+
+## Deployment
+The production deployment is managed by the connected Vercel project for the `main` branch.
