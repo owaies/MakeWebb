@@ -1,6 +1,6 @@
 'use client'
 
-import { Float, Sparkles, TorusKnot } from '@react-three/drei'
+import { Float, Sparkles } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
