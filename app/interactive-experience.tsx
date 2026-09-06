@@ -26,7 +26,11 @@ export function InteractiveHeroVisual() {
   const stage = useRef<HTMLDivElement>(null); const object = useRef<HTMLDivElement>(null); const [entered, setEntered] = useState(false); const dragging = useRef(false); const pointer = useRef({ x: 0, y: 0, rx: -12, ry: 24 });
   useEffect(() => {
     const node = stage.current; const target = object.current; if (!node || !target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    animate('.hero-3d-core', { rotateZ: [0, 360], duration: 18000, loop: true, ease: 'linear' }); animate('.hero-3d-orbit', { rotateZ: [0, -360], duration: 12000, loop: true, ease: 'linear' }); animate('.hero-particle', { opacity: [0.2, 0.85], scale: [0.7, 1.35], duration: 1800, delay: stagger(90), alternate: true, loop: true, ease: 'inOutSine' });
+    animate('.hero-3d-core', { rotateZ: [0, 360], translateY: [0, -12, 0], scale: [1, 1.035, 1], duration: 18000, loop: true, ease: 'inOutSine' });
+    animate('.hero-3d-orbit.orbit-a', { rotateZ: [0, -360], scale: [1, 1.025, 1], duration: 12000, loop: true, ease: 'linear' });
+    animate('.hero-3d-orbit.orbit-b', { rotateZ: [0, 360], duration: 15000, loop: true, ease: 'linear' });
+    animate('.hero-particle', { opacity: [0.18, 0.9], scale: [0.6, 1.4], duration: 1800, delay: stagger(90), alternate: true, loop: true, ease: 'inOutSine' });
+    animate('.hero-3d-label', { translateY: [0, -5, 0], opacity: [0.72, 1, 0.72], duration: 2400, delay: stagger(220), loop: true, ease: 'inOutSine' });
     const onMove = (e: PointerEvent) => { if (dragging.current) { pointer.current.ry += (e.clientX - pointer.current.x) * 0.55; pointer.current.rx -= (e.clientY - pointer.current.y) * 0.55; } else { const r = node.getBoundingClientRect(); pointer.current.ry = 24 + ((e.clientX - r.left) / r.width - 0.5) * 22; pointer.current.rx = -12 + ((e.clientY - r.top) / r.height - 0.5) * -18; } pointer.current.x = e.clientX; pointer.current.y = e.clientY; target.style.transform = `rotateX(${pointer.current.rx}deg) rotateY(${pointer.current.ry}deg)`; };
     const onUp = () => { dragging.current = false; }; node.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp); return () => { node.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); };
   }, []);
