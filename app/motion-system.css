@@ -1,0 +1,122 @@
+:root {
+  --scroll-progress: 0;
+  --hero-scroll: 0;
+  --pointer-x: 0;
+  --pointer-y: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+  overscroll-behavior-x: none;
+}
+
+body {
+  overscroll-behavior-x: none;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+.anime-scroll-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #5b9cff, #9b7cff);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hero-reference-copy,
+.hero-reference-shell .hero-float-copy,
+.hero-reference-shell .hero-glass-cube-wrap,
+.hero-reference-shell .hero-reference-stage {
+  will-change: transform;
+}
+
+.hero-reference-copy { translate: 0 calc(var(--hero-scroll) * -10px); }
+.hero-reference-shell .hero-float-left { translate: calc(var(--pointer-x) * 5px) calc(var(--hero-scroll) * -14px + var(--pointer-y) * 4px); }
+.hero-reference-shell .hero-float-right { translate: calc(var(--pointer-x) * -5px) calc(var(--hero-scroll) * -10px + var(--pointer-y) * -4px); }
+.hero-reference-shell .hero-glass-cube-wrap { translate: calc(var(--pointer-x) * 7px) calc(var(--hero-scroll) * -18px + var(--pointer-y) * 5px); }
+.hero-reference-shell .hero-reference-stage { translate: calc(var(--pointer-x) * -4px) calc(var(--hero-scroll) * -5px); }
+
+.hero-three-scene,
+.hero-three-scene canvas { touch-action: pan-y; }
+.hero-three-scene { pointer-events: none !important; contain: layout paint; }
+
+.hero-founder-card,
+.hero-service-card {
+  --gx: calc(50% + var(--pointer-x) * 30%);
+  --gy: calc(18% + var(--pointer-y) * 30%);
+}
+
+.service-card,
+.hero-service-card,
+.person-card,
+.contact-card,
+.interactive-block,
+.process-item { backface-visibility: hidden; }
+
+.service-card,
+.hero-service-card,
+.person-card,
+.contact-card,
+.button,
+.nav-cta,
+.person-links a,
+.contact-person-button { touch-action: manipulation; }
+
+.person-image-wrap { contain: paint; }
+.person-image { content-visibility: auto; contain-intrinsic-size: 380px 320px; }
+
+@media (max-width: 900px) {
+  .section,
+  .studio-section { content-visibility: auto; contain-intrinsic-size: 900px; }
+  .hero-reference-copy { translate: 0 calc(var(--hero-scroll) * -5px); }
+}
+
+@media (max-width: 800px) {
+  .hero-founder-card,
+  .hero-service-card {
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .anime-scroll-progress { height: 1px; }
+  .hero-reference-shell .hero-float-left,
+  .hero-reference-shell .hero-float-right,
+  .hero-reference-shell .hero-reference-stage { translate: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .anime-scroll-progress { display: none; }
+  .hero-reference-copy,
+  .hero-reference-shell .hero-float-left,
+  .hero-reference-shell .hero-float-right,
+  .hero-reference-shell .hero-glass-cube-wrap,
+  .hero-reference-shell .hero-reference-stage { translate: none; }
+}
+
+@media (max-width: 420px) {
+  .hero-founder-card,
+  .hero-service-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (max-width: 650px) and (prefers-reduced-motion: no-preference) {
+  .marquee div { animation-duration: 38s; }
+}
