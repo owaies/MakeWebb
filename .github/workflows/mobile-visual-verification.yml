@@ -14,5 +14,6 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
-      - run: npx --yes playwright@1.55.0 install chromium --with-deps
-      - run: npx --yes playwright@1.55.0 test
+      - run: npm install --no-save @playwright/test@1.55.0
+      - run: npx playwright install chromium --with-deps
+      - run: npx playwright test
