@@ -1,0 +1,515 @@
+/* Dedicated mobile hero presentation. It intentionally does not reuse desktop hero geometry. */
+.hero-mobile {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  overflow: clip;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(77, 137, 231, .15), transparent 31%),
+    radial-gradient(circle at 50% 48%, rgba(137, 91, 238, .09), transparent 34%),
+    #03060b;
+}
+
+.hero-mobile-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-mobile-background .hero-three-scene,
+.hero-mobile-background canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  pointer-events: none !important;
+}
+
+.hero-mobile-background .hero-three-scene {
+  opacity: .42;
+}
+
+.hero-mobile-background canvas {
+  transform: none !important;
+  opacity: .78;
+  filter: saturate(1.08) contrast(1.03);
+}
+
+.hero-mobile-content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+}
+
+.hero-mobile-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-mobile-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid rgba(119, 176, 255, .2);
+  border-radius: 999px;
+  background: rgba(4, 12, 23, .52);
+  color: #8fa7c1;
+  font: 8px 'DM Mono', monospace;
+  letter-spacing: .12em;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+}
+
+.hero-mobile-copy h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 18px 0 15px;
+  font-size: clamp(42px, 13vw, 61px);
+  line-height: .91;
+  letter-spacing: -.075em;
+}
+
+.hero-mobile-copy h1 strong,
+.hero-mobile-copy h1 em,
+.hero-mobile-copy h1 span {
+  display: block;
+  max-width: 100%;
+}
+
+.hero-mobile-copy h1 strong {
+  color: #f5f7fa;
+  font-size: 1.06em;
+  white-space: nowrap;
+  text-shadow: 0 0 28px rgba(111, 172, 255, .14);
+}
+
+.hero-mobile-copy h1 em {
+  margin-top: 5px;
+  color: #69a5ff;
+  font-size: .73em;
+  line-height: .98;
+  font-style: normal;
+}
+
+.hero-mobile-copy h1 span {
+  margin-top: 4px;
+  color: #f2f4f7;
+  font-size: .73em;
+  line-height: 1.02;
+}
+
+.hero-mobile-copy > p {
+  width: min(100%, 330px);
+  margin: 0;
+  color: #9aaabd;
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+.hero-mobile-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 9px;
+  margin-top: 19px;
+}
+
+.hero-mobile-actions .button.primary {
+  min-width: 0;
+  padding: 11px 13px;
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.hero-mobile-work-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid rgba(126, 167, 214, .22);
+  border-radius: 999px;
+  color: #b0bfd0;
+  background: rgba(7, 15, 25, .4);
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.hero-mobile-trust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 25px;
+  color: #6f8298;
+  font: 7px 'DM Mono', monospace;
+  letter-spacing: .14em;
+}
+
+.hero-mobile-trust small {
+  font: inherit;
+}
+
+.hero-mobile-trust > div {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px 15px;
+  width: 100%;
+  color: #91a4ba;
+  font-size: 8.5px;
+  letter-spacing: 0;
+}
+
+.hero-mobile-object {
+  position: relative;
+  width: clamp(158px, 46vw, 190px);
+  height: clamp(158px, 46vw, 190px);
+  margin: 42px auto 30px;
+  flex: 0 0 auto;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.hero-mobile-object-cube {
+  position: absolute;
+  left: 18%;
+  top: 18%;
+  width: 64%;
+  height: 64%;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(124, 190, 255, .68);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(73, 142, 229, .2), rgba(3, 12, 24, .74) 58%, rgba(155, 124, 255, .12));
+  box-shadow: inset 0 0 34px rgba(93, 170, 255, .11), 0 28px 48px rgba(0,0,0,.45), 0 0 28px rgba(91,156,255,.09);
+  color: #dcecff;
+  font: 800 clamp(22px, 7vw, 31px) 'Manrope', sans-serif;
+  letter-spacing: -.08em;
+  text-shadow: 0 0 24px rgba(105,180,255,.65);
+  transform: rotateX(-16deg) rotateY(28deg) rotateZ(-4deg);
+}
+
+.hero-mobile-object-cube::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border: 1px solid rgba(98,183,255,.24);
+  border-radius: 16px;
+  box-shadow: 0 0 28px rgba(91,156,255,.1);
+}
+
+.hero-mobile-object-orbit {
+  position: absolute;
+  border: 1px solid rgba(98, 215, 255, .42);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-mobile-object-orbit-x {
+  left: 2%;
+  top: 38%;
+  width: 96%;
+  height: 34%;
+  transform: rotateX(68deg) rotateZ(-18deg);
+}
+
+.hero-mobile-object-orbit-y {
+  left: 16%;
+  top: 16%;
+  width: 68%;
+  height: 68%;
+  border-color: rgba(155,124,255,.3);
+  transform: rotateY(65deg) rotateZ(18deg);
+}
+
+.hero-mobile-object-shadow {
+  position: absolute;
+  left: 15%;
+  bottom: 4%;
+  width: 70%;
+  height: 22%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,0,0,.7), transparent 70%);
+  filter: blur(11px);
+  transform: rotateX(72deg);
+}
+
+.hero-mobile-founders {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.hero-mobile-founder-card {
+  position: relative;
+  display: block;
+  width: min(100%, 390px);
+  height: auto;
+  margin-inline: auto;
+  padding: 8px;
+  border: 1px solid rgba(126, 188, 247, .34);
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(10, 28, 49, .8), rgba(2, 8, 16, .94));
+  box-shadow: 0 28px 70px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.13), inset 0 0 38px rgba(73, 139, 224, .06);
+  backdrop-filter: blur(18px) saturate(1.12);
+}
+
+.hero-mobile-founder-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(156, 207, 255, .08);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.hero-mobile-founder-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #071321;
+}
+
+.hero-mobile-founder-photo img {
+  object-fit: cover;
+  object-position: center 24%;
+  filter: saturate(1.02) contrast(1.04) brightness(.98);
+}
+
+.hero-mobile-founder-corner {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: 9px;
+  background: rgba(3,10,18,.42);
+  color: #d8e8fb;
+  font-size: 17px;
+  backdrop-filter: blur(9px);
+}
+
+.hero-mobile-founder-label {
+  position: absolute;
+  top: 11px;
+  left: 11px;
+  padding: 5px 7px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(3,10,18,.45);
+  color: #b5c9df;
+  font: 7px 'DM Mono', monospace;
+  letter-spacing: .08em;
+  backdrop-filter: blur(9px);
+}
+
+.hero-mobile-founder-body {
+  position: relative;
+  padding: 11px 9px 9px;
+}
+
+.hero-mobile-founder-badge {
+  display: inline-flex;
+  padding: 5px 8px;
+  border: 1px solid rgba(126,188,247,.22);
+  border-radius: 999px;
+  background: rgba(91,156,255,.07);
+  color: #9db8d4;
+  font: 7px 'DM Mono', monospace;
+  letter-spacing: .08em;
+}
+
+.hero-mobile-founder-card h2 {
+  margin: 7px 0 2px;
+  color: #f1f5fa;
+  font-size: clamp(16px, 4.8vw, 20px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+.hero-mobile-founder-role {
+  margin: 0;
+  color: #72a9ff;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.hero-mobile-founder-description {
+  margin: 7px 0 9px;
+  color: #8798aa;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.hero-mobile-founder-contact {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.45fr);
+  gap: 5px 8px;
+}
+
+.hero-mobile-founder-contact a {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 5px;
+  overflow: hidden;
+  color: #9cafc2;
+  font: 7px 'DM Mono', monospace;
+}
+
+.hero-mobile-founder-contact a svg {
+  flex: none;
+}
+
+.hero-mobile-founder-contact a:first-child,
+.hero-mobile-founder-contact a:nth-child(2) {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.hero-mobile-founder-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 9px;
+}
+
+.hero-mobile-founder-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 4px;
+  padding: 6px 4px;
+  border: 1px solid rgba(126, 167, 214, .18);
+  border-radius: 999px;
+  background: rgba(4, 12, 22, .42);
+  color: #a9bacb;
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+.hero-mobile-services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.hero-mobile-service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+  height: 154px;
+  padding: 13px;
+  border: 1px solid rgba(126, 188, 247, .28);
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(10, 26, 45, .78), rgba(2, 8, 16, .92));
+  box-shadow: 0 22px 55px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.hero-mobile-service-card::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -55px;
+  bottom: -55px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(75,145,255,.14), transparent 68%);
+}
+
+.hero-mobile-service-card > span {
+  position: absolute;
+  top: 11px;
+  left: 12px;
+  color: #58718c;
+  font: 7px 'DM Mono', monospace;
+}
+
+.hero-mobile-service-card > strong {
+  position: relative;
+  max-width: 125px;
+  color: #e6edf5;
+  font-size: 9.5px;
+  line-height: 1.25;
+}
+
+.hero-mobile-service-card > small {
+  position: relative;
+  max-width: 125px;
+  margin-top: 5px;
+  color: #788da2;
+  font-size: 6.8px;
+  line-height: 1.45;
+}
+
+.hero-mobile-service-card > svg {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  color: #7799ba;
+}
+
+.hero-mobile-service-visual {
+  position: absolute;
+  top: 18px;
+  right: 12px;
+  transform: rotateX(12deg) rotateY(-16deg);
+  transform-style: preserve-3d;
+  opacity: .9;
+}
+
+.hero-mobile-browser { width: 60px; height: 42px; border: 1px solid rgba(101,169,255,.6); border-radius: 6px; background: rgba(20,53,86,.32); box-shadow: inset 0 0 16px rgba(91,156,255,.08); }
+.hero-mobile-browser i { position:absolute; left:6px; top:6px; width:5px; height:5px; border-radius:50%; background:#62d7ff; }
+.hero-mobile-browser b { position:absolute; left:7px; width:32px; height:3px; border-radius:4px; background:#4779aa; }
+.hero-mobile-browser b:nth-of-type(1){top:16px}.hero-mobile-browser b:nth-of-type(2){top:23px;width:40px}.hero-mobile-browser b:nth-of-type(3){top:30px;width:25px}
+.hero-mobile-phone { width:30px; height:52px; border:2px solid rgba(101,169,255,.68); border-radius:7px; background:rgba(20,53,86,.32); box-shadow:inset 0 0 14px rgba(91,156,255,.1); }
+.hero-mobile-phone span { display:block; width:11px; height:2px; margin:4px auto 0; border-radius:4px; background:#577a9d; }
+.hero-mobile-phone i { position:absolute; left:6px; right:6px; bottom:6px; height:22px; border:1px solid rgba(98,215,255,.28); border-radius:3px; }
+.hero-mobile-windows { width:48px; height:48px; display:grid; grid-template-columns:1fr 1fr; gap:3px; padding:3px; border:1px solid rgba(101,169,255,.58); border-radius:7px; background:rgba(20,53,86,.28); }
+.hero-mobile-windows b { background:rgba(91,156,255,.62); }
+.hero-mobile-chip { width:48px; height:48px; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:2px; padding:8px; border:1px solid rgba(155,124,255,.62); border-radius:7px; background:rgba(48,30,84,.26); }
+.hero-mobile-chip strong { position:absolute; inset:0; display:grid; place-items:center; color:#bcaaff; font:800 13px 'Manrope',sans-serif; }
+.hero-mobile-chip i { background:rgba(155,124,255,.5); }
+
+@media (max-width: 370px) {
+  .hero-mobile-content { padding-inline:14px; }
+  .hero-mobile-copy h1 { font-size:42px; }
+  .hero-mobile-actions { gap:7px; }
+  .hero-mobile-actions .button.primary,
+  .hero-mobile-work-link { padding-inline:10px; font-size:8px; }
+  .hero-mobile-founder-links { gap:3px; }
+  .hero-mobile-founder-links a { font-size:6.3px; padding-inline:3px; }
+  .hero-mobile-service-card { height:148px; padding:11px; }
+}
+
+@media (min-width: 801px) {
+  .hero-mobile { display: none; }
+}
