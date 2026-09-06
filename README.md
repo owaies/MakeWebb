@@ -24,3 +24,5 @@ npm run test:e2e
 
 ## Deployment
 The production deployment is managed by the connected Vercel project for the `main` branch.
+
+Vercel deployment uses the repository `.npmrc` peer-dependency configuration so the React Three Fiber dependency graph installs consistently in CI.
