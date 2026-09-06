@@ -1,257 +1,56 @@
 /* Targeted mobile geometry fix for the existing hero. Desktop is intentionally untouched. */
 @media (max-width: 800px) {
-  /* The hero owns its height through normal content flow. The WebGL scene is only a visual layer. */
-  .hero-reference-shell {
-    position: relative !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-height: 0 !important;
-    height: auto !important;
-    padding: 0 0 28px !important;
-    overflow: visible !important;
-  }
+  .hero-reference-shell { position:relative!important; display:flex!important; flex-direction:column!important; align-items:center!important; width:100%!important; min-height:0!important; height:auto!important; padding:0 0 28px!important; overflow:visible!important; }
+  .hero-reference-stage { position:absolute!important; inset:0!important; width:100%!important; height:auto!important; min-height:0!important; margin:0!important; z-index:1!important; pointer-events:none!important; }
+  .hero-reference-stage .hero-three-scene { width:100%!important; height:100%!important; min-height:0!important; position:absolute!important; inset:0!important; }
+  .hero-reference-stage .hero-three-scene canvas { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; transform:none!important; }
 
-  .hero-reference-stage {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    z-index: 1 !important;
-    pointer-events: none !important;
-  }
+  .hero-reference-copy { order:1!important; position:relative!important; width:100%!important; min-height:0!important; padding:28px 10px 0!important; z-index:12!important; }
 
-  .hero-reference-stage .hero-three-scene {
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    position: absolute !important;
-    inset: 0 !important;
-  }
+  .hero-glass-cube-wrap { order:2!important; position:relative!important; left:auto!important; top:auto!important; width:196px!important; height:196px!important; margin:14px auto 2px!important; transform:none!important; z-index:14!important; flex:0 0 196px!important; }
+  .hero-glass-cube { width:100%!important; height:100%!important; }
 
-  .hero-reference-stage .hero-three-scene canvas {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    transform: none !important;
-  }
+  .hero-founder-layer { order:3!important; position:relative!important; inset:auto!important; width:100%!important; height:auto!important; min-height:0!important; display:flex!important; flex-direction:column!important; align-items:center!important; gap:18px!important; padding:0 16px!important; margin:8px 0 0!important; z-index:16!important; pointer-events:none!important; }
+  .hero-founder-card,.hero-founder-card.blue,.hero-founder-card.violet { position:relative!important; inset:auto!important; left:auto!important; right:auto!important; top:auto!important; width:100%!important; max-width:380px!important; height:auto!important; min-height:0!important; padding:7px!important; margin:0!important; transform:perspective(1400px) rotateX(1deg)!important; overflow:hidden!important; pointer-events:auto!important; }
+  .hero-founder-photo { width:100%!important; height:auto!important; aspect-ratio:3 / 2!important; min-height:0!important; max-height:none!important; overflow:hidden!important; }
+  .hero-founder-photo img { width:100%!important; height:100%!important; object-fit:cover!important; object-position:center 23%!important; }
+  .hero-founder-body { padding:9px 9px 7px!important; }
+  .hero-founder-badge { padding:4px 7px!important; font-size:7px!important; }
+  .hero-founder-body h2 { margin:5px 0 1px!important; font-size:15px!important; line-height:1.1!important; }
+  .hero-founder-role { font-size:10px!important; line-height:1.25!important; }
+  .hero-founder-description { display:block!important; margin:6px 0 7px!important; max-width:100%!important; font-size:8px!important; line-height:1.35!important; }
+  .hero-founder-contact { display:grid!important; grid-template-columns:minmax(0,.78fr) minmax(0,1.5fr)!important; column-gap:8px!important; row-gap:3px!important; margin-top:3px!important; font-size:7px!important; line-height:1.2!important; }
+  .hero-founder-contact span { min-width:0!important; overflow:hidden!important; white-space:nowrap!important; text-overflow:ellipsis!important; }
+  .hero-founder-contact svg { width:9px!important; height:9px!important; flex:none!important; }
+  .hero-founder-links { display:flex!important; flex-wrap:nowrap!important; gap:4px!important; margin-top:7px!important; }
+  .hero-founder-links a { flex:0 1 auto!important; padding:4px 6px!important; font-size:7px!important; line-height:1!important; white-space:nowrap!important; }
+  .hero-founder-links svg { width:9px!important; height:9px!important; }
 
-  .hero-reference-copy {
-    order: 1 !important;
-    position: relative !important;
-    width: 100% !important;
-    min-height: 0 !important;
-    padding: 28px 10px 0 !important;
-    z-index: 12 !important;
-  }
+  .hero-service-strip { position:relative!important; width:min(100% - 28px,900px)!important; margin:20px auto 0!important; padding:0!important; display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:9px!important; z-index:20!important; }
+  .hero-service-strip::before { content:''; position:absolute; z-index:-1; inset:-55px -18px -35px; border-radius:40px; background:radial-gradient(ellipse at 50% 35%,rgba(65,132,235,.13),rgba(135,83,235,.055) 38%,transparent 72%); filter:blur(22px); pointer-events:none; }
+  .hero-service-card { min-width:0!important; overflow:hidden!important; }
 
-  /* Reserve visual space for the prominent M/W cube without making it part of the WebGL layout. */
-  .hero-glass-cube-wrap {
-    order: 2 !important;
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    width: 196px !important;
-    height: 196px !important;
-    margin: 14px auto 2px !important;
-    transform: none !important;
-    z-index: 14 !important;
-    flex: 0 0 196px !important;
-  }
-
-  .hero-glass-cube {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Founder cards return to real document flow. Their height is content-driven. */
-  .hero-founder-layer {
-    order: 3 !important;
-    position: relative !important;
-    inset: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 18px !important;
-    padding: 0 16px !important;
-    margin: 8px 0 0 !important;
-    z-index: 16 !important;
-    pointer-events: none !important;
-  }
-
-  .hero-founder-card,
-  .hero-founder-card.blue,
-  .hero-founder-card.violet {
-    position: relative !important;
-    inset: auto !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    width: 100% !important;
-    max-width: 380px !important;
-    height: auto !important;
-    min-height: 0 !important;
-    padding: 7px !important;
-    margin: 0 !important;
-    transform: perspective(1400px) rotateX(1deg) !important;
-    overflow: hidden !important;
-    pointer-events: auto !important;
-  }
-
-  .hero-founder-photo {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 3 / 2 !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: hidden !important;
-  }
-
-  .hero-founder-photo img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center 23% !important;
-  }
-
-  .hero-founder-body {
-    padding: 9px 9px 7px !important;
-  }
-
-  .hero-founder-badge {
-    padding: 4px 7px !important;
-    font-size: 7px !important;
-  }
-
-  .hero-founder-body h2 {
-    margin: 5px 0 1px !important;
-    font-size: 15px !important;
-    line-height: 1.1 !important;
-  }
-
-  .hero-founder-role {
-    font-size: 10px !important;
-    line-height: 1.25 !important;
-  }
-
-  .hero-founder-description {
-    display: block !important;
-    margin: 6px 0 7px !important;
-    max-width: 100% !important;
-    font-size: 8px !important;
-    line-height: 1.35 !important;
-  }
-
-  .hero-founder-contact {
-    display: grid !important;
-    grid-template-columns: minmax(0, .78fr) minmax(0, 1.5fr) !important;
-    column-gap: 8px !important;
-    row-gap: 3px !important;
-    margin-top: 3px !important;
-    font-size: 7px !important;
-    line-height: 1.2 !important;
-  }
-
-  .hero-founder-contact span {
-    min-width: 0 !important;
-    overflow: hidden !important;
-    white-space: nowrap !important;
-    text-overflow: ellipsis !important;
-  }
-
-  .hero-founder-contact svg {
-    width: 9px !important;
-    height: 9px !important;
-    flex: none !important;
-  }
-
-  .hero-founder-links {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 4px !important;
-    margin-top: 7px !important;
-  }
-
-  .hero-founder-links a {
-    flex: 0 1 auto !important;
-    padding: 4px 6px !important;
-    font-size: 7px !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-  }
-
-  .hero-founder-links svg {
-    width: 9px !important;
-    height: 9px !important;
-  }
-
-  /* The service strip follows the final founder card in normal flow. */
-  .hero-service-strip {
-    position: relative !important;
-    width: min(100% - 28px, 900px) !important;
-    margin: 20px auto 0 !important;
-    padding: 0 !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 9px !important;
-    z-index: 20 !important;
-  }
-
-  /* Continue the cinematic atmosphere through the service cards without altering their design. */
-  .hero-service-strip::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    inset: -55px -18px -35px;
-    border-radius: 40px;
-    background: radial-gradient(ellipse at 50% 35%, rgba(65,132,235,.13), rgba(135,83,235,.055) 38%, transparent 72%);
-    filter: blur(22px);
-    pointer-events: none;
-  }
-
-  /* Keep the existing service visual proportions, only prevent overflow in narrow cards. */
-  .hero-service-card {
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
+  .contact-dock-trigger { bottom:calc(14px + env(safe-area-inset-bottom))!important; }
+  .contact-dock-panel { bottom:calc(65px + env(safe-area-inset-bottom))!important; }
 }
 
-@media (max-width: 520px) {
-  .hero-reference-copy { padding-top: 24px !important; }
-  .hero-glass-cube-wrap {
-    width: 184px !important;
-    height: 184px !important;
-    flex-basis: 184px !important;
-    margin-top: 12px !important;
-  }
-  .hero-founder-layer {
-    padding: 0 14px !important;
-    gap: 16px !important;
-  }
-  .hero-founder-card,
-  .hero-founder-card.blue,
-  .hero-founder-card.violet {
-    width: 100% !important;
-  }
-  .hero-founder-body { padding: 8px 8px 6px !important; }
-  .hero-founder-body h2 { font-size: 14px !important; }
-  .hero-founder-role { font-size: 9px !important; }
-  .hero-founder-description { font-size: 7px !important; margin: 5px 0 6px !important; }
-  .hero-founder-contact { font-size: 6.5px !important; column-gap: 6px !important; }
-  .hero-founder-links { margin-top: 6px !important; }
-  .hero-founder-links a { padding: 4px 5px !important; font-size: 6.5px !important; }
-  .hero-service-strip { width: calc(100% - 28px) !important; margin-top: 18px !important; }
+@media (max-width:520px) {
+  .hero-reference-copy { padding-top:24px!important; }
+  .hero-glass-cube-wrap { width:184px!important; height:184px!important; flex-basis:184px!important; margin-top:12px!important; }
+  .hero-founder-layer { padding:0 14px!important; gap:16px!important; }
+  .hero-founder-card,.hero-founder-card.blue,.hero-founder-card.violet { width:100%!important; }
+  .hero-founder-body { padding:8px 8px 6px!important; }
+  .hero-founder-body h2 { font-size:14px!important; }
+  .hero-founder-role { font-size:9px!important; }
+  .hero-founder-description { font-size:7px!important; margin:5px 0 6px!important; }
+  .hero-founder-contact { font-size:6.5px!important; column-gap:6px!important; }
+  .hero-founder-links { margin-top:6px!important; }
+  .hero-founder-links a { padding:4px 5px!important; font-size:6.5px!important; }
+  .hero-service-strip { width:calc(100% - 28px)!important; margin-top:18px!important; }
 }
 
-@media (max-width: 370px) {
-  .hero-founder-links { gap: 3px !important; }
-  .hero-founder-links a { padding-left: 4px !important; padding-right: 4px !important; }
-  .hero-founder-contact { grid-template-columns: minmax(0, .72fr) minmax(0, 1.55fr) !important; }
+@media (max-width:370px) {
+  .hero-founder-links { gap:3px!important; }
+  .hero-founder-links a { padding-left:4px!important; padding-right:4px!important; }
+  .hero-founder-contact { grid-template-columns:minmax(0,.72fr) minmax(0,1.55fr)!important; }
 }
