@@ -106,7 +106,7 @@ function Particles({ quality }: { quality: Quality }) {
   return <points ref={ref}><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry><pointsMaterial color={CYAN} size={quality==='low'?.018:.024} transparent opacity={.65} sizeAttenuation /></points>;
 }
 
-function SceneContent({ quality }: { quality: Quality }) {
+function SceneContent({ quality, mobile }: { quality: Quality; mobile: boolean }) {
   const root = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (!root.current) return;
@@ -121,8 +121,8 @@ function SceneContent({ quality }: { quality: Quality }) {
     <pointLight intensity={quality==='high'?15:9} distance={15} position={[-5,2,4]} color={BLUE}/>
     <pointLight intensity={quality==='high'?11:7} distance={13} position={[5,-1,4]} color={VIOLET}/>
     <group ref={root}>
-      <group position={[0,-1.45,1]}><GlassCube/><Rings/></group>
-      {quality !== 'low' && serviceKinds.map((kind,index)=><ServiceObject kind={kind} index={index} key={kind}/>)}
+      {!mobile && <group position={[0,-1.45,1]}><GlassCube/><Rings/></group>}
+      {!mobile && quality !== 'low' && serviceKinds.map((kind,index)=><ServiceObject kind={kind} index={index} key={kind}/>)}
       <Particles quality={quality}/>
     </group>
   </>;
@@ -130,6 +130,7 @@ function SceneContent({ quality }: { quality: Quality }) {
 
 export default function HeroThreeScene() {
   const quality = useQuality();
+  const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 800px)').matches;
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [visible, setVisible] = useState(true);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -141,5 +142,5 @@ export default function HeroThreeScene() {
     return () => observer.disconnect();
   }, []);
   const frameMode = reduced ? 'demand' : visible ? 'always' : 'never';
-  return <div ref={hostRef} className="hero-three-scene" aria-hidden="true"><Canvas camera={{ position: [0,0,12.2], fov: 34, near: .1, far: 100 }} dpr={quality==='high'?[1,1.6]:quality==='medium'?[1,1.3]:[.8,1]} gl={{ antialias: quality !== 'low', alpha: true, powerPreference: 'high-performance' }} frameloop={frameMode}><SceneContent quality={quality}/></Canvas></div>;
+  return <div ref={hostRef} className="hero-three-scene" aria-hidden="true"><Canvas camera={{ position: [0,0,12.2], fov: 34, near: .1, far: 100 }} dpr={quality==='high'?[1,1.6]:quality==='medium'?[1,1.3]:[.8,1]} gl={{ antialias: quality !== 'low', alpha: true, powerPreference: 'high-performance' }} frameloop={frameMode}><SceneContent quality={quality} mobile={mobile}/></Canvas></div>;
 }
