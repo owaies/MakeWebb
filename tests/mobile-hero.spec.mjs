@@ -13,12 +13,14 @@ test('mobile rebuild source contract', () => {
   expect(mobile).toContain('className="mobile-art-hero"');
   expect(mobile).toContain('className="mobile-art-founders"');
   expect(mobile).toContain('className="mobile-art-services"');
-  expect(mobile).not.toMatch(/mobile-art-founder"[^\n]*style\s*=\s*\{[^}]*position\s*:\s*(absolute|fixed)/s);
-  expect(mobile).not.toMatch(/mobile-art-founder[^\n]*position\s*=\s*["'](absolute|fixed)["']/s);
+  expect(mobile).toMatch(/<MobileFounderCard[^>]+person=\{person\}/);
+  expect(mobile.match(/function MobileFounderCard\(/g)?.length ?? 0).toBe(1);
+  expect(mobile.match(/function MobileServiceVisual\(/g)?.length ?? 0).toBe(1);
 
   const mobileCss = fs.readFileSync(`${root}/app/mobile-hero-art-directed.css`, 'utf8');
   expect(mobileCss).toContain('.mobile-art-founders{display:flex;flex-direction:column');
-  expect(mobileCss).toContain('.mobile-art-service-card');
+  expect(mobileCss).toContain('.mobile-art-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))');
+  expect(mobileCss).toMatch(/\.mobile-art-founder\{[^}]*position\s*:\s*relative/s);
   expect(mobileCss).not.toMatch(/\.mobile-art-founder\{[^}]*position\s*:\s*(absolute|fixed)/s);
   expect(mobileCss).not.toMatch(/\.mobile-art-hero\{[^}]*height\s*:\s*100vh/s);
   expect(mobileCss).not.toMatch(/\.mobile-art-hero\{[^}]*min-height\s*:\s*100vh/s);
@@ -31,9 +33,10 @@ test('mobile rebuild source contract', () => {
   expect(layout).not.toContain("'./mobile-hero.css'");
 
   const r3f = fs.readFileSync(`${root}/app/hero-r3f-scene.tsx`, 'utf8');
-  expect(r3f).toContain("mode === 'mobile'");
-  expect(r3f).toContain("!mobile && <group position={[0,-1.45,1]}><GlassCube/><Rings/></group>");
-  expect(r3f).toContain("mobile && <group position={[0,-1.8,-1]}><Rings/></group>");
+  expect(r3f).toContain("const mobile = mode === 'mobile';");
+  expect(r3f).toContain('{mobile ? <><Rings subtle /><Particles quality={quality} mobile /></>');
+  expect(r3f).toContain("{kind === 'web'");
+  expect(r3f).toContain("{mobile ? (quality==='high'");
 });
 
 for (const width of widths) {
