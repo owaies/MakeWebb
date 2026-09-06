@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { animate, stagger } from 'animejs';
-import { ArrowDownRight, ArrowUpRight, Code2, Linkedin, Mail, Menu, X } from 'lucide-react';
-import { BuildStatusTerminal, InteractiveHeroVisual, ProjectGallery, ServicesExplorer, TechStackOrbit } from './interactive-experience';
-import { ArchitecturePipeline, CursorContextBridge, LogoSystem, MakeWebbLogo, ProcessJourney, ProjectConfigurator, SkillConstellation } from './studio-features';
+import { ArrowUpRight, Code2, Linkedin, Mail, Menu, X } from 'lucide-react';
+import { BuildStatusTerminal, ProjectGallery, ServicesExplorer, TechStackOrbit } from './interactive-experience';
+import { ArchitecturePipeline, CursorContextBridge, LogoSystem, ProcessJourney, ProjectConfigurator, SkillConstellation } from './studio-features';
+import HeroReference from './hero-reference';
 
 const people = [
   { name:'Mohammed Owaies', role:'AI / ML Engineer', image:'/team/file_000000002d308211b0a2203107625baf.png', github:'https://github.com/owaies', linkedin:'https://www.linkedin.com/in/mohammed-owaies-507b4a398', portfolio:'https://owaies-portfolio.base44.app', phone:'7619329863', email:'owaies786@gmail.com', tag:'AI · ML · Engineering' },
@@ -19,8 +20,8 @@ function TiltCard({ children, className='' }: { children:React.ReactNode; classN
 function useAnimeMotion() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const heroTargets = document.querySelectorAll('.hero-copy .eyebrow, .hero-copy h1, .hero-copy .hero-text, .hero-copy .hero-actions');
-    animate(heroTargets,{opacity:[0,1],y:[28,0],duration:850,delay:stagger(110),ease:'out(4)'});
+    const heroTargets = document.querySelectorAll('.hero-reference-copy .eyebrow, .hero-reference-copy h1, .hero-reference-copy .hero-text, .hero-reference-copy .hero-actions, .hero-reference-side, .hero-service-card');
+    animate(heroTargets,{opacity:[0,1],y:[28,0],duration:850,delay:stagger(80),ease:'out(4)'});
     const marquee=document.querySelector('.marquee div');
     if(marquee) animate(marquee,{translateX:['0%','-50%'],duration:30000,loop:true,ease:'linear'});
     const revealTargets=document.querySelectorAll('.section-head, .service-card, .person-card, .process-item, .contact-card, .interactive-block, .architecture, .configurator, .logo-system');
@@ -35,8 +36,8 @@ export default function Home(){
   useAnimeMotion();
   return <main>
     <CursorContextBridge />
-    <nav className="nav shell"><a className="brand" href="#top" onClick={()=>setMenuOpen(false)} data-cursor="VIEW"><MakeWebbLogo compact/></a><div className={`nav-links ${menuOpen?'open':''}`}><a href="#services" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Services</a><a href="#studio" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Studio</a><a href="#process" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Process</a><a href="#contact" onClick={()=>setMenuOpen(false)} data-cursor="OPEN">Contact</a></div><a className="nav-cta" href="#configurator" data-cursor="OPEN">Start a project <ArrowUpRight size={16}/></a><button className="menu-button" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" data-cursor="VIEW">{menuOpen?<X/>:<Menu/>}</button></nav>
-    <section className="hero shell" id="top"><div className="hero-copy"><div className="eyebrow"><span className="pulse"/> DIGITAL PRODUCT STUDIO</div><h1>We build digital<br/><em>worlds</em> that work.</h1><p className="hero-text">Websites, Android apps, Windows software and AI-powered products. Designed with intent. Engineered for the real world.</p><div className="hero-actions"><a className="button primary" href="#configurator" data-cursor="OPEN">Build something <ArrowUpRight size={17}/></a><a className="text-link" href="#work" data-cursor="EXPLORE">Explore the studio <ArrowDownRight size={17}/></a></div></div><div className="hero-stage" aria-label="Interactive 3D MakeWebb experience"><InteractiveHeroVisual/></div></section>
+    <nav className="nav shell"><a className="brand" href="#top" onClick={()=>setMenuOpen(false)} data-cursor="VIEW"><span className="brand-mark">MW</span><span>MAKEWEBB</span></a><div className={`nav-links ${menuOpen?'open':''}`}><a href="#services" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Services</a><a href="#studio" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Studio</a><a href="#process" onClick={()=>setMenuOpen(false)} data-cursor="EXPLORE">Process</a><a href="#contact" onClick={()=>setMenuOpen(false)} data-cursor="OPEN">Contact</a></div><a className="nav-cta" href="#configurator" data-cursor="OPEN">Start a project <ArrowUpRight size={16}/></a><button className="menu-button" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" data-cursor="VIEW">{menuOpen?<X/>:<Menu/>}</button></nav>
+    <HeroReference />
     <div className="marquee"><div>WEB DESIGN <span>✦</span> ANDROID <span>✦</span> WINDOWS <span>✦</span> AI / ML <span>✦</span> PRODUCT ENGINEERING <span>✦</span> 3D INTERACTION <span>✦</span> WEB DESIGN <span>✦</span> ANDROID <span>✦</span></div></div>
     <section className="section shell" id="services"><div className="section-head"><div><span className="section-number">01 / SERVICES</span><h2>One studio.<br/><span>Many surfaces.</span></h2></div><p>Explore the capabilities behind the build. Select a service to see what we ship, how we build it and how long it typically takes.</p></div><div className="interactive-block"><ServicesExplorer/></div></section>
     <section className="section shell interactive-section" id="work"><div className="interactive-block"><div className="interactive-kicker">02 / SELECT PROJECT</div><h2 className="interactive-section-title">Work with <span>depth.</span></h2><ProjectGallery/></div><div className="interactive-block"><div className="interactive-kicker">03 / TECHNOLOGY SYSTEM</div><h2 className="interactive-section-title">The stack <span>orbits.</span></h2><TechStackOrbit/></div><div className="interactive-block"><div className="interactive-kicker">04 / BUILD STATUS</div><h2 className="interactive-section-title">From idea to <span>online.</span></h2><BuildStatusTerminal/></div></section>
