@@ -8,16 +8,14 @@ import { FounderCard } from './FounderCard'
 import { Glass } from './Glass'
 
 const founders=[
-{name:'Mohammed Owaies',role:'AI/ML Engineer',description:'Building intelligent solutions for a smarter tomorrow.',phone:'7619329863',email:'owaies786@gmail.com',image:'/founders/owaies.jpg',focus:'AI · ML · DATA',portfolio:'https://github.com/owaies',github:'https://github.com/owaies',linkedin:'https://www.linkedin.com/'},
-{name:'Mohammed Afaf Hassan',role:'Web Developer',description:'Crafting modern web experiences with clean code and creative design.',phone:'8073818817',email:'kingahassan786@gmail.com',image:'/founders/afaf.jpg',focus:'WEB · APPS · UI/UX',portfolio:'#projects',github:'https://github.com/',linkedin:'https://www.linkedin.com/'}]
-
+{name:'Mohammed Owaies',role:'AI/ML Engineer',description:'Building intelligent solutions for a smarter tomorrow.',phone:'7619329863',email:'owaies786@gmail.com',focus:'AI · ML · DATA',portfolio:'https://github.com/owaies',github:'https://github.com/owaies',linkedin:'https://www.linkedin.com/'},
+{name:'Mohammed Afaf Hassan',role:'Web Developer',description:'Crafting modern web experiences with clean code and creative design.',phone:'8073818817',email:'kingahassan786@gmail.com',focus:'WEB · APPS · UI/UX',portfolio:'#projects',github:'https://github.com/',linkedin:'https://www.linkedin.com/'}]
 const services=[['01','Web Design & Development','Modern, fast and scalable web experiences.','▣'],['02','Android App Development','Powerful mobile apps for real users.','▱'],['03','Windows App Development','Desktop apps with modern technology.','⊞'],['04','AI Integration','Smarter products with AI/ML.','AI']]
 
 export default function Hero(){
- const ref=useRef<HTMLDivElement>(null); const [menu,setMenu]=useState(false)
+ const ref=useRef<HTMLDivElement>(null);const[menu,setMenu]=useState(false)
  useEffect(()=>{const root=ref.current;if(!root||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const a=animate(root.querySelectorAll('[data-hero]'),{opacity:[0,1],translateY:[22,0],delay:stagger(80),duration:800,ease:'out(4)'});return()=>a.pause()},[])
- return <section ref={ref} className="hero" id="home">
-  <StudioScene/>
+ return <section ref={ref} className="hero" id="home"><StudioScene/>
   <header className="nav glass-shell"><Link href="#home" className="brand" aria-label="MakeWebb home"><span className="brand-mark">M</span><span>MakeWebb</span></Link><nav className={`desktop-nav ${menu?'open':''}`}>{['Home','About','Services','Projects','Team','Contact'].map(x=><Link key={x} href={`#${x.toLowerCase()}`} onClick={()=>setMenu(false)}>{x}</Link>)}</nav><div className="nav-actions"><Link className="nav-cta" href="#contact">Start a Project <span>↗</span></Link><button className="menu-btn" onClick={()=>setMenu(v=>!v)} aria-label="Toggle menu" aria-expanded={menu}>☰</button></div></header>
   <div className="hero-side hero-side-left"><span>PEOPLE</span><span>IDEAS</span><span>TECHNOLOGY</span><span>IMPACT</span></div><div className="hero-side hero-side-right"><span>MODERN</span><span>SCALABLE</span><span>BEAUTIFUL</span><span>TOGETHER</span></div>
   <div className="hero-copy"><div data-hero className="eyebrow">BUILDING A BETTER DIGITAL WORLD</div><h1 data-hero><span>MakeWebb</span><strong>Web. Android. Windows.</strong><em>Ideas into real products.</em></h1><p data-hero>We design and develop modern digital experiences<br className="desktop-only"/> with 3D, AI and next-gen technologies.</p><div data-hero className="hero-actions"><Link href="#contact" className="button button-primary">Let&apos;s Build Together <span>↗</span></Link><Link href="#projects" className="button">View Our Work <span>↗</span></Link></div></div>
