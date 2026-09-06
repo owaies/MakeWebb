@@ -69,9 +69,7 @@ export default function AnimeEnhancements() {
       root.style.setProperty('--pointer-x', x.toFixed(4));
       root.style.setProperty('--pointer-y', y.toFixed(4));
       const cursor = document.querySelector<HTMLElement>('.anime-cursor');
-      if (cursor) {
-        cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
-      }
+      if (cursor) cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
     });
 
     if (!coarse && !reduced) {
@@ -87,7 +85,6 @@ export default function AnimeEnhancements() {
         const label = cursor.querySelector('span');
         if (label) label.textContent = target.dataset.cursor || 'OPEN';
         cursor.classList.add('has-label');
-        animate(cursor, { scale: 1.35, duration: 180, ease: 'out(3)' });
       };
       const onOut = (event: PointerEvent) => {
         const next = (event.relatedTarget as HTMLElement | null)?.closest?.('[data-cursor]');
@@ -95,7 +92,6 @@ export default function AnimeEnhancements() {
         const label = cursor.querySelector('span');
         if (label) label.textContent = '';
         cursor.classList.remove('has-label');
-        animate(cursor, { scale: 1, duration: 220, ease: 'out(3)' });
       };
       document.addEventListener('pointerover', onOver, { passive: true });
       document.addEventListener('pointerout', onOut, { passive: true });
@@ -110,23 +106,15 @@ export default function AnimeEnhancements() {
     scope.execute(() => {
       const nav = document.querySelector('.nav');
       if (nav && !reduced) animate(nav, { opacity: [0, 1], y: [-12, 0], duration: 620, ease: 'out(4)' });
-
-      const heroIntro = document.querySelectorAll(
-        '.hero-reference-copy .eyebrow, .hero-reference-copy h1 strong, .hero-reference-copy h1 em, .hero-reference-copy h1 span, .hero-reference-copy .hero-text, .hero-reference-copy .hero-actions, .hero-trust, .hero-reference-shell .hero-float-copy'
-      );
+      const heroIntro = document.querySelectorAll('.hero-reference-copy .eyebrow, .hero-reference-copy h1 strong, .hero-reference-copy h1 em, .hero-reference-copy h1 span, .hero-reference-copy .hero-text, .hero-reference-copy .hero-actions, .hero-trust, .hero-reference-shell .hero-float-copy');
       if (!reduced) animate(heroIntro, { opacity: [0, 1], y: [22, 0], duration: 720, delay: stagger(55), ease: 'out(4)' });
-
       const brand = document.querySelector('.brand-mark');
       if (brand && !reduced) animate(brand, { rotateZ: [-10, 0], scale: [0.88, 1], duration: 760, delay: 120, ease: 'out(4)' });
-
       if (!reduced) {
         const marquee = document.querySelector<HTMLElement>('.marquee div');
         if (marquee) animate(marquee, { translateX: ['0%', '-50%'], duration: 30000, loop: true, ease: 'linear' });
       }
-
-      const revealTargets = document.querySelectorAll<HTMLElement>(
-        '.section-head, .service-card, .person-card, .process-item, .contact-card, .interactive-block, .architecture, .configurator, .logo-system, .hero-service-card'
-      );
+      const revealTargets = document.querySelectorAll<HTMLElement>('.section-head, .service-card, .person-card, .process-item, .contact-card, .interactive-block, .architecture, .configurator, .logo-system, .hero-service-card');
       revealTargets.forEach((node, index) => {
         if (reduced) return;
         node.style.opacity = '0';
@@ -139,7 +127,6 @@ export default function AnimeEnhancements() {
         observer.observe(node);
         observers.push(observer);
       });
-
       const hoverTargets = document.querySelectorAll<HTMLElement>('.service-card, .hero-service-card, .person-links a, .contact-person-button');
       hoverTargets.forEach((node) => {
         const enter = () => { if (!coarse && !reduced) animate(node, { translateY: -3, duration: 180, ease: 'out(3)' }); };
@@ -148,7 +135,6 @@ export default function AnimeEnhancements() {
         node.addEventListener('pointerleave', leave, { passive: true });
         cleanups.push(() => { node.removeEventListener('pointerenter', enter); node.removeEventListener('pointerleave', leave); });
       });
-
       const magneticTargets = document.querySelectorAll<HTMLElement>('.button.primary, .nav-cta');
       magneticTargets.forEach((node) => {
         const move = rafThrottle((event: PointerEvent) => {
@@ -163,7 +149,6 @@ export default function AnimeEnhancements() {
         node.addEventListener('pointerleave', leave, { passive: true });
         cleanups.push(() => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerleave', leave); });
       });
-
       if (!reduced) animate(document.querySelectorAll('.section-number'), { opacity: [0.55, 1], letterSpacing: ['0.1em', '0.16em'], duration: 700, delay: stagger(60), ease: 'out(3)' });
     });
 
