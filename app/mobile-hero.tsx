@@ -71,11 +71,11 @@ export default function MobileHero() {
   }, []);
 
   return (
-    <section ref={rootRef} className="mobile-hero-clean" id="top">
+    <section ref={rootRef} className="mobile-hero-clean" id="top" data-mobile-hero="true">
       <div className="mobile-hero-bg" aria-hidden="true"><HeroThreeScene mode="mobile" /></div>
 
       <div className="mobile-hero-content">
-        <div className="mobile-hero-intro">
+        <div className="mobile-hero-intro" data-mobile-region="hero-copy">
           <div className="mobile-hero-eyebrow" data-mobile-reveal="copy"><span />BUILDING A BETTER DIGITAL WORLD</div>
           <h1>
             <strong data-mobile-reveal="copy">MakeWebb</strong>
@@ -93,13 +93,13 @@ export default function MobileHero() {
           </div>
         </div>
 
-        <div data-mobile-reveal="object"><MobileMWObject /></div>
+        <div data-mobile-region="mw-object" data-mobile-reveal="object"><MobileMWObject /></div>
 
-        <div className="mobile-founder-stack" aria-label="MakeWebb founders">
+        <div className="mobile-founder-stack" aria-label="MakeWebb founders" data-mobile-region="founders">
           {founders.map((person) => <div key={person.name} data-mobile-reveal="founder"><MobileFounderCard person={person} /></div>)}
         </div>
 
-        <div className="mobile-service-grid" aria-label="MakeWebb services">
+        <div className="mobile-service-grid" aria-label="MakeWebb services" data-mobile-region="service-grid">
           {heroServices.map(([index, title, text, kind]) => (
             <a href="#services" className="mobile-service-card" key={index} data-mobile-reveal="service">
               <span className="mobile-service-index">{index}</span>
