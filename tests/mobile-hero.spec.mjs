@@ -1,11 +1,48 @@
+import fs from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 const widths = [320, 360, 375, 390, 412, 430, 480, 600, 768];
+const root = process.cwd();
+
+const sourceChecks = [
+  ['app/hero-reference-optimized.tsx', 'hero-reference-shell'],
+  ['app/mobile-hero.tsx', 'mobile-founder-card'],
+  ['app/mobile-hero.css', '.mobile-founder-card'],
+];
+
+test('mobile rebuild source contract', () => {
+  for (const [file, token] of sourceChecks) {
+    const source = fs.readFileSync(`${root}/${file}`, 'utf8');
+    expect(source).toContain(token);
+  }
+  const mobileCss = fs.readFileSync(`${root}/app/mobile-hero.css`, 'utf8');
+  expect(mobileCss).not.toMatch(/\.mobile-founder-card[^{}]*\{[^}]*position\s*:\s*(absolute|fixed)/s);
+  expect(mobileCss).not.toMatch(/\.mobile-hero-clean[^{}]*\{[^}]*height\s*:\s*[^;]+/s);
+  expect(mobileCss).not.toMatch(/\.mobile-hero-clean[^{}]*\{[^}]*min-height\s*:\s*100vh/s);
+  for (const obsolete of ['hero-mobile-final.css', 'hero-mobile-flow-fix.css', 'hero-mobile-structural.css', 'hero-mobile-art-directed.css']) {
+    expect(fs.existsSync(`${root}/app/${obsolete}`)).toBe(false);
+  }
+  const layout = fs.readFileSync(`${root}/app/layout.tsx`, 'utf8');
+  for (const obsoleteImport of ['hero-mobile-final.css', 'hero-mobile-flow-fix.css', 'hero-mobile-structural.css', 'hero-mobile-art-directed.css']) {
+    expect(layout).not.toContain(obsoleteImport);
+  }
+  const r3f = fs.readFileSync(`${root}/app/hero-r3f-scene.tsx`, 'utf8');
+  expect(r3f).toContain('mode === \'mobile\'');
+  expect(r3f).toContain('{mobile ? <><Rings subtle /><Particles quality={quality} mobile /></>');
+});
 
 for (const width of widths) {
   test(`mobile hero flow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto('http://127.0.0.1:3000/#top', { waitUntil: 'networkidle' });
+    await page.goto('http://127.0.0.1:3000/#top', { waitUntil: 'domcontentloaded' });
+
+    const initial = await page.evaluate(() => ({
+      desktopHeroCount: document.querySelectorAll('.hero-reference-shell').length,
+      mobileHeroCount: document.querySelectorAll('[data-mobile-hero="true"]').length,
+    }));
+    expect(initial.desktopHeroCount).toBe(0);
+    expect(initial.mobileHeroCount).toBe(0);
+
     await page.locator('[data-mobile-hero="true"]').waitFor({ state: 'visible' });
     await page.waitForTimeout(1000);
 
@@ -49,6 +86,12 @@ for (const width of widths) {
     expect(result.serviceGrid.bottom).toBeLessThan(result.marquee.top);
     expect(result.marquee.bottom).toBeLessThanOrEqual(result.servicesSection.top);
     expect(result.offenders).toEqual([]);
+
+    await page.waitForTimeout(2000);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+    await page.waitForTimeout(300);
+    const afterScroll = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, viewport: window.innerWidth }));
+    expect(afterScroll.scrollWidth).toBeLessThanOrEqual(afterScroll.viewport);
   });
 }
 
