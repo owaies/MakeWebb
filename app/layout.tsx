@@ -23,6 +23,7 @@ import './premium-liquid-glass.css';
 import './motion-system.css';
 import './mobile-hero-art-directed.css';
 import './presentation-responsive.css';
+import './mobile-art-direction-v2.css';
 import './hero-loading.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
