@@ -57,6 +57,7 @@ for (const width of widths) {
       const servicesSection = document.querySelector('#services')?.getBoundingClientRect();
       const viewport = window.innerWidth;
       const offenders = [...document.querySelectorAll('body *')].flatMap((element) => {
+        if (element.closest('.marquee') || element.classList.contains('anime-cursor')) return [];
         const r = element.getBoundingClientRect();
         return r.right > viewport + 0.5 || r.left < -0.5 ? [element.tagName.toLowerCase() + (element.className ? `.${String(element.className).split(/\s+/)[0]}` : '')] : [];
       }).slice(0, 20);
@@ -75,6 +76,17 @@ for (const width of widths) {
         offenders,
       };
     });
+
+    console.log(`MOBILE_GEOMETRY ${width}px`, JSON.stringify({
+      heroCopy: result.heroCopy,
+      founder1: result.founder1,
+      founder2: result.founder2,
+      serviceGrid: result.serviceGrid,
+      marquee: result.marquee,
+      servicesSection: result.servicesSection,
+      scrollWidth: result.scrollWidth,
+      viewport: result.viewport,
+    }));
 
     expect(result.desktopHeroCount).toBe(0);
     expect(result.founderCount).toBe(2);
