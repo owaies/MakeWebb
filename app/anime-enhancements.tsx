@@ -23,7 +23,7 @@ export default function AnimeEnhancements() {
     const root = document.documentElement;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
-    const scope = createScope({ root: document });
+    const scope = createScope({ root });
     const cleanups: Array<() => void> = [];
     const observers: IntersectionObserver[] = [];
 
