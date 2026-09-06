@@ -11,6 +11,7 @@ import './studio-features.css';
 import './brand-system.css';
 import './reference-ui.css';
 import './hero-reference.css';
+import './hero-three-scene.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
 import TeamPhotoLoader from './team-photo-loader';
