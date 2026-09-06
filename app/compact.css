@@ -1,0 +1,15 @@
+@media (min-width:1101px){
+[data-presentation="tablet"] .hero{min-height:auto;padding-bottom:28px}
+[data-presentation="tablet"] .hero-side{display:none}
+[data-presentation="tablet"] .desktop-nav{display:none}
+[data-presentation="tablet"] .nav{grid-template-columns:1fr auto}
+[data-presentation="tablet"] .nav-cta{display:none}
+[data-presentation="tablet"] .menu-btn{display:block}
+[data-presentation="tablet"] .founder-stage{display:flex;flex-direction:column;gap:18px;max-width:760px;margin-top:44px}
+[data-presentation="tablet"] .founder-card{width:100%;min-height:0;transform:none!important}
+[data-presentation="tablet"] .center-stack{order:2}
+[data-presentation="tablet"] .founder-card:nth-child(3){order:3}
+[data-presentation="tablet"] .hero-services{max-width:760px}
+[data-presentation="tablet"] .service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+[data-presentation="tablet"] .hero-copy{max-width:760px}
+}
