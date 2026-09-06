@@ -10,6 +10,8 @@ import { founders, heroServices } from './hero-data';
 type Founder = typeof founders[number];
 type ServiceKind = 'browser' | 'phone' | 'windows' | 'chip';
 
+type PausableAnimation = { pause: () => void };
+
 function MobileFounderCard({ person, index }: { person: Founder; index: number }) {
   return <article className="mobile-art-founder" data-art-founder={index + 1}>
     <div className="mobile-art-founder-photo">
@@ -41,13 +43,13 @@ export default function MobileHeroArtDirected(){
   useEffect(()=>{
     const root=rootRef.current;
     if(!root||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    const animations=[];
-    const push=(animation: ReturnType<typeof animate>)=>animations.push(animation);
+    const animations: PausableAnimation[]=[];
+    const push=(animation: PausableAnimation)=>animations.push(animation);
     push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="copy"]'),{opacity:[0,1],y:[22,0],duration:650,delay:stagger(65),ease:'out(4)'}));
     push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="object"]'),{opacity:[0,1],y:[18,0],scale:[.92,1],duration:850,delay:320,ease:'out(4)'}));
     push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="founder"]'),{opacity:[0,1],y:[26,0],duration:650,delay:stagger(140,{start:520}),ease:'out(4)'}));
     push(animate(root.querySelectorAll<HTMLElement>('[data-art-reveal="service"]'),{opacity:[0,1],y:[20,0],duration:520,delay:stagger(70,{start:850}),ease:'out(4)'}));
-    return()=>{animations.forEach((animation)=>animation.pause());};
+    return()=>{animations.forEach((animation)=>{animation.pause();});};
   },[]);
 
   return <section ref={rootRef} className="mobile-art-hero" id="top" data-mobile-hero="true">
