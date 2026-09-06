@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
-import HeroThreeScene from './hero-three-scene';
+import HeroThreeScene from './hero-three-scene-v2';
 
 const services = [
   ['01','Web Design & Development','Modern, fast and scalable web experiences'],
