@@ -7,6 +7,26 @@ import HeroThreeScene from './hero-r3f-scene';
 import MobileHeroArtDirected from './mobile-hero-art-directed';
 import { founders, heroServices } from './hero-data';
 
+type Presentation = 'mobile' | 'compact' | 'desktop';
+
+function getPresentation(): Presentation {
+  if (typeof window === 'undefined') return 'desktop';
+
+  const width = window.innerWidth;
+  const touchPoints = navigator.maxTouchPoints > 0;
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const noHover = window.matchMedia('(hover: none)').matches;
+
+  // Treat the primary interaction environment as authoritative. This catches
+  // Android Chrome Desktop Site, where the CSS viewport and UA can look desktop-sized.
+  const touchFirst = (touchPoints && coarse) || (coarse && noHover) || (touchPoints && noHover);
+
+  if (width <= 768) return 'mobile';
+  if (touchFirst) return 'compact';
+  if (width <= 1024) return 'compact';
+  return 'desktop';
+}
+
 function FounderCardDesktop({ person }: { person: typeof founders[number] }) {
   return <article className={`hero-founder-card ${person.accent}`}>
     <div className="hero-founder-photo"><Image src={person.image} alt={person.name} fill sizes="30vw" priority quality={82}/><span className="hero-founder-corner">↗</span><span className="hero-founder-label">{person.tag}</span></div>
@@ -45,8 +65,33 @@ function DesktopHero(){
 function HeroLoadingShell(){ return <div className="hero-reference-loading" aria-hidden="true"><div className="hero-reference-loading-glow"/></div>; }
 
 export default function HeroReferenceOptimized(){
-  const [mounted,setMounted]=useState(false); const [mobile,setMobile]=useState(false);
-  useEffect(()=>{const media=window.matchMedia('(max-width:800px)');const sync=()=>{setMobile(media.matches);setMounted(true)};sync();media.addEventListener('change',sync);return()=>media.removeEventListener('change',sync)},[]);
-  if(!mounted) return <HeroLoadingShell/>;
-  return mobile ? <MobileHeroArtDirected/> : <DesktopHero/>;
+  const [presentation,setPresentation]=useState<Presentation | null>(null);
+
+  useEffect(()=>{
+    const sync=()=>{
+      const next=getPresentation();
+      setPresentation(next);
+      document.documentElement.dataset.presentation=next;
+    };
+    sync();
+
+    const queries=[
+      window.matchMedia('(pointer: coarse)'),
+      window.matchMedia('(hover: none)'),
+      window.matchMedia('(orientation: portrait)'),
+    ];
+    queries.forEach(query=>query.addEventListener('change',sync));
+    window.addEventListener('resize',sync,{passive:true});
+    window.addEventListener('orientationchange',sync,{passive:true});
+
+    return()=>{
+      queries.forEach(query=>query.removeEventListener('change',sync));
+      window.removeEventListener('resize',sync);
+      window.removeEventListener('orientationchange',sync);
+      delete document.documentElement.dataset.presentation;
+    };
+  },[]);
+
+  if(!presentation) return <HeroLoadingShell/>;
+  return presentation === 'desktop' ? <DesktopHero/> : <MobileHeroArtDirected/>;
 }
