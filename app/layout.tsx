@@ -24,6 +24,7 @@ import './glass-ui.css';
 import './glassmorphism-final.css';
 import './premium-liquid-glass.css';
 import './motion-system.css';
+import './hero-mobile-art-directed.css';
 import AnimeEnhancements from './anime-enhancements';
 import ContactDock from './contact-dock';
 import TeamPhotoLoader from './team-photo-loader';
