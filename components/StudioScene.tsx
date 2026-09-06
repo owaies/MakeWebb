@@ -1,13 +1,88 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-import { Float, Sparkles } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { Float, Sparkles, TorusKnot } from '@react-three/drei'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-const ShaderGradientCanvas = dynamic(() => import('@shadergradient/react').then(m => m.ShaderGradientCanvas), { ssr:false })
-const ShaderGradient = dynamic(() => import('@shadergradient/react').then(m => m.ShaderGradient), { ssr:false })
+const vertexShader = `
+varying vec2 vUv;
+void main(){
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`
+
+const fragmentShader = `
+precision highp float;
+varying vec2 vUv;
+uniform float uTime;
+
+float hash(vec2 p){
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+float noise(vec2 p){
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f*f*(3.0-2.0*f);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0,0.0));
+  float c = hash(i + vec2(0.0,1.0));
+  float d = hash(i + vec2(1.0,1.0));
+  return mix(mix(a,b,f.x),mix(c,d,f.x),f.y);
+}
+
+float fbm(vec2 p){
+  float v = 0.0;
+  float a = 0.5;
+  for(int i=0;i<5;i++){
+    v += a * noise(p);
+    p = p * 2.0 + 17.13;
+    a *= 0.5;
+  }
+  return v;
+}
+
+void main(){
+  vec2 p = vUv - 0.5;
+  p.x *= 1.45;
+  float t = uTime * 0.045;
+  float n = fbm(p * 2.1 + vec2(t, -t * 0.7));
+  float glowA = exp(-length((p + vec2(0.24,0.10))*1.55) * 2.7);
+  float glowB = exp(-length((p - vec2(0.30,0.22))*1.65) * 2.8);
+  float center = exp(-length(p * vec2(1.0,1.3)) * 2.4);
+
+  vec3 navy = vec3(0.008,0.018,0.070);
+  vec3 blue = vec3(0.035,0.105,0.34);
+  vec3 violet = vec3(0.18,0.055,0.46);
+  vec3 electric = vec3(0.12,0.31,0.92);
+
+  vec3 col = mix(navy, blue, smoothstep(0.12,0.90,n));
+  col += violet * glowA * 0.72;
+  col += electric * glowB * 0.52;
+  col += vec3(0.02,0.05,0.15) * center;
+  col += (n - 0.5) * 0.035;
+
+  float vignette = smoothstep(0.95,0.20,length(p));
+  col *= 0.78 + vignette * 0.32;
+  gl_FragColor = vec4(col, 1.0);
+}`
+
+function ShaderBackdrop(){
+  const material = useRef<THREE.ShaderMaterial>(null)
+  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), [])
+  useFrame((state) => {
+    if (material.current) material.current.uniforms.uTime.value = state.clock.elapsedTime
+  })
+  return (
+    <mesh position={[0,0,-5]} scale={[11,8,1]}>
+      <planeGeometry args={[2,2]} />
+      <shaderMaterial ref={material} vertexShader={vertexShader} fragmentShader={fragmentShader} uniforms={uniforms} depthWrite={false} depthTest={false} />
+    </mesh>
+  )
+}
 
 function GlassCube({position,scale=1,speed=.25}:{position:[number,number,number];scale?:number;speed?:number}) {
   const ref=useRef<THREE.Mesh>(null)
@@ -32,7 +107,7 @@ function OrbitingCore(){
 function SceneContent(){
   const stars=useMemo(()=>({count:180,scale:9,size:1.1,speed:.12}),[])
   return <>
-    <ShaderGradient type="plane" animate="on" uSpeed={.18} uStrength={3.2} uDensity={1.25} uFrequency={4} color1="#06143d" color2="#12135a" color3="#311a78" cDistance={7} cPolarAngle={95} lightType="3d" brightness={1.1} grain="on"/>
+    <ShaderBackdrop/>
     <ambientLight intensity={.45}/><pointLight position={[0,2,1]} color="#4e7dff" intensity={12} distance={8}/><pointLight position={[-4,1,-2]} color="#8b5cf6" intensity={8} distance={7}/>
     <Sparkles {...stars} color="#83a8ff"/>
     <GlassCube position={[-3.8,1.8,-1.8]} scale={.72} speed={.18}/><GlassCube position={[3.6,1.4,-1.6]} scale={.68} speed={-.15}/>
@@ -41,5 +116,5 @@ function SceneContent(){
 }
 
 export default function StudioScene(){
-  return <div className="scene" aria-hidden="true"><ShaderGradientCanvas pixelDensity={1} fov={48} pointerEvents="none" lazyLoad threshold={.01} powerPreference="high-performance"><SceneContent/></ShaderGradientCanvas></div>
+  return <div className="scene" aria-hidden="true"><Canvas camera={{position:[0,0,5],fov:48}} dpr={[1,1.5]} gl={{antialias:true,powerPreference:'high-performance'}} style={{pointerEvents:'none'}}><SceneContent/></Canvas></div>
 }
