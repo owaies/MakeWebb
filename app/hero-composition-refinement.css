@@ -6,7 +6,7 @@
 .hero-reference-copy h1 strong{font-size:1.02em!important;text-shadow:0 0 28px rgba(116,174,255,.13),0 12px 60px rgba(0,0,0,.5)}
 .hero-reference-copy h1 em{text-shadow:0 0 28px rgba(91,156,255,.18)}
 .hero-reference-stage{z-index:4!important;overflow:visible!important}
-.hero-three-scene{filter:saturate(1.12) contrast(1.04);}
+.hero-three-scene{filter:saturate(1.12) contrast(1.04)}
 .hero-reference-shell .hero-three-scene canvas{filter:drop-shadow(0 0 38px rgba(70,133,255,.08))}
 .hero-founder-layer{z-index:18!important}
 .hero-founder-card{width:330px!important;height:540px!important;padding:9px!important;border-radius:26px!important;background:linear-gradient(145deg,rgba(11,30,53,.72),rgba(2,7,15,.84))!important;border-color:rgba(145,201,255,.54)!important;box-shadow:0 42px 100px rgba(0,0,0,.72),0 0 70px rgba(67,137,240,.16),inset 0 1px 0 rgba(255,255,255,.18),inset 0 0 34px rgba(94,161,255,.06)!important;backdrop-filter:blur(20px) saturate(1.15)!important}
@@ -34,7 +34,20 @@
 .windows-visual{width:88px!important;height:88px!important}
 .chip-visual{width:88px!important;height:88px!important}
 
-@media(max-width:1200px) and (min-width:801px){.hero-reference-shell{min-height:760px!important}.hero-reference-stage,.hero-reference-stage .hero-three-scene{height:760px!important}.hero-founder-card{width:285px!important;height:500px!important}.hero-founder-photo{height:295px!important}.hero-founder-body h2{font-size:18px!important}.hero-founder-description{font-size:9px!important}.hero-founder-contact{font-size:8px!important}.hero-reference-copy h1{font-size:clamp(54px,6.2vw,78px)!important}.hero-service-strip{margin-top:-92px!important}}
+/* Prominent physical M/W glass cube, layered over the existing Three.js atmosphere. */
+.hero-glass-cube-wrap{position:absolute;left:50%;top:445px;width:230px;height:230px;z-index:16;transform:translateX(-50%);pointer-events:none;perspective:1000px}
+.hero-glass-cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:heroCubeFloat 6s ease-in-out infinite}
+.hero-glass-cube-body{position:absolute;left:35px;top:35px;width:160px;height:160px;transform-style:preserve-3d;transform:rotateX(-17deg) rotateY(32deg) rotateZ(-4deg);filter:drop-shadow(0 28px 34px rgba(0,0,0,.55))}
+.cube-face{position:absolute;inset:0;display:grid;place-items:center;border:1px solid rgba(131,190,255,.8);border-radius:10px;background:linear-gradient(145deg,rgba(91,156,255,.18),rgba(4,12,23,.52) 55%,rgba(155,124,255,.12));backdrop-filter:blur(7px);color:#dcecff;font:800 31px 'Manrope',sans-serif;letter-spacing:-.08em;text-shadow:0 0 24px rgba(105,180,255,.65);box-shadow:inset 0 0 38px rgba(93,170,255,.12),inset -16px -18px 32px rgba(0,0,0,.25),0 0 20px rgba(82,151,255,.12)}
+.cube-front{transform:translateZ(80px)}.cube-back{transform:rotateY(180deg) translateZ(80px)}.cube-right{transform:rotateY(90deg) translateZ(80px)}.cube-left{transform:rotateY(-90deg) translateZ(80px)}.cube-top{transform:rotateX(90deg) translateZ(80px)}.cube-bottom{transform:rotateX(-90deg) translateZ(80px)}
+.hero-glass-cube-body:before{content:'';position:absolute;inset:-9px;border:1px solid rgba(98,183,255,.3);border-radius:15px;box-shadow:0 0 34px rgba(91,156,255,.12),inset 0 0 22px rgba(155,124,255,.08);transform:translateZ(-3px)}
+.hero-glass-cube-body:after{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:50%;background:#9bcaff;box-shadow:0 0 24px #62d7ff,0 0 45px rgba(155,124,255,.8);transform:translateZ(91px)}
+.hero-glass-cube-orbit{position:absolute;left:8px;top:73px;width:214px;height:82px;border:1px solid rgba(98,215,255,.48);border-radius:50%;transform-style:preserve-3d;box-shadow:0 0 14px rgba(98,215,255,.08)}
+.hero-glass-cube-orbit.orbit-x{transform:rotateX(68deg) rotateZ(-18deg)}.hero-glass-cube-orbit.orbit-y{width:170px;height:170px;left:30px;top:30px;border-color:rgba(155,124,255,.34);transform:rotateY(65deg) rotateZ(18deg)}
+.hero-glass-cube-shadow{position:absolute;left:30px;bottom:16px;width:170px;height:40px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.72),transparent 70%);filter:blur(12px);transform:rotateX(72deg)}
+@keyframes heroCubeFloat{0%,100%{transform:translateY(0) rotateZ(0deg)}50%{transform:translateY(-10px) rotateZ(.7deg)}}
+
+@media(max-width:1200px) and (min-width:801px){.hero-reference-shell{min-height:760px!important}.hero-reference-stage,.hero-reference-stage .hero-three-scene{height:760px!important}.hero-founder-card{width:285px!important;height:500px!important}.hero-founder-photo{height:295px!important}.hero-founder-body h2{font-size:18px!important}.hero-founder-description{font-size:9px!important}.hero-founder-contact{font-size:8px!important}.hero-reference-copy h1{font-size:clamp(54px,6.2vw,78px)!important}.hero-service-strip{margin-top:-92px!important}.hero-glass-cube-wrap{top:420px!important;transform:translateX(-50%) scale(.86)}}
 
 /* Mobile is a single continuous hero scene, with deliberate vertical composition. */
 @media(max-width:800px){
@@ -55,6 +68,10 @@
   .hero-reference-actions .text-link{padding:10px 13px!important;font-size:9px!important}
   .hero-trust{margin-top:15px!important;gap:7px!important;font-size:7px!important}
   .hero-trust div{gap:12px!important;font-size:9px!important;flex-wrap:wrap;justify-content:center}
+  .hero-glass-cube-wrap{top:360px!important;width:190px!important;height:190px!important;transform:translateX(-50%) scale(1)!important;z-index:17!important}
+  .hero-glass-cube-body{left:27px!important;top:27px!important;width:136px!important;height:136px!important;transform:rotateX(-17deg) rotateY(32deg) rotateZ(-4deg)!important}
+  .cube-face{font-size:27px!important}.cube-front{transform:translateZ(68px)}.cube-back{transform:rotateY(180deg) translateZ(68px)}.cube-right{transform:rotateY(90deg) translateZ(68px)}.cube-left{transform:rotateY(-90deg) translateZ(68px)}.cube-top{transform:rotateX(90deg) translateZ(68px)}.cube-bottom{transform:rotateX(-90deg) translateZ(68px)}
+  .hero-glass-cube-orbit{left:4px!important;top:61px!important;width:182px!important;height:68px!important}.hero-glass-cube-orbit.orbit-y{width:146px!important;height:146px!important;left:22px!important;top:22px!important}.hero-glass-cube-shadow{left:23px!important;width:145px!important}
 
   /* Founder cards become compact physical panels, not a tall stacked section. */
   .hero-founder-layer{position:absolute!important;inset:0!important;z-index:19!important;pointer-events:none!important}
@@ -101,6 +118,9 @@
   .hero-reference-copy h1{font-size:clamp(40px,11.7vw,56px)!important}
   .hero-reference-copy .hero-text{font-size:9px!important;max-width:315px!important}
   .hero-reference-actions .button.primary{min-width:145px!important}
+  .hero-glass-cube-wrap{top:350px!important;width:176px!important;height:176px!important}
+  .hero-glass-cube-body{left:25px!important;top:25px!important;width:126px!important;height:126px!important}
+  .cube-face{font-size:24px!important}.cube-front{transform:translateZ(63px)}.cube-back{transform:rotateY(180deg) translateZ(63px)}.cube-right{transform:rotateY(90deg) translateZ(63px)}.cube-left{transform:rotateY(-90deg) translateZ(63px)}.cube-top{transform:rotateX(90deg) translateZ(63px)}.cube-bottom{transform:rotateX(-90deg) translateZ(63px)}
   .hero-founder-card{width:calc(100vw - 28px)!important;height:275px!important}
   .hero-founder-card.blue{top:560px!important}
   .hero-founder-card.violet{top:850px!important}
@@ -115,4 +135,4 @@
   .service-visual{transform:translateZ(55px) rotateX(13deg) rotateY(-18deg) scale(.9)!important}
 }
 
-@media(prefers-reduced-motion:reduce){.hero-three-scene,.hero-founder-card,.hero-service-card{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.hero-three-scene,.hero-founder-card,.hero-service-card,.hero-glass-cube{animation:none!important;transition:none!important}}
