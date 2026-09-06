@@ -1,0 +1,225 @@
+:root{
+  --mw-glass-blue:#6ea8ff;
+  --mw-glass-cyan:#67d8ff;
+  --mw-glass-violet:#9b83ff;
+  --mw-glass-white:rgba(255,255,255,.9);
+  --mw-glass-shadow:rgba(0,0,0,.72);
+}
+
+/* A shared liquid-glass surface system inspired by the supplied Liquid Glass shader demo. */
+.hero-reference-shell,
+header,
+.navbar,
+.hero-founder-card,
+.hero-service-card,
+.service-module,
+.service-panel,
+.project-panel,
+.tech-orbit,
+.contact-card,
+.contact-dock,
+.button,
+.text-link{
+  --gx:50%;
+  --gy:18%;
+}
+
+.hero-reference-shell:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(34% 28% at 18% 34%,rgba(66,132,255,.12),transparent 72%),
+    radial-gradient(30% 26% at 82% 35%,rgba(151,119,255,.12),transparent 72%),
+    radial-gradient(26% 20% at 50% 66%,rgba(68,205,255,.07),transparent 72%);
+  filter:blur(22px);
+  opacity:.9;
+  animation:mwShaderDrift 16s ease-in-out infinite alternate;
+}
+
+@keyframes mwShaderDrift{
+  0%{transform:translate3d(-1%,0,0) scale(1)}
+  100%{transform:translate3d(1.5%,-1%,0) scale(1.04)}
+}
+
+/* Thick, beveled glass shell */
+.hero-founder-card,
+.hero-service-card{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(70% 55% at var(--gx) var(--gy),rgba(122,178,255,.16),transparent 62%),
+    linear-gradient(145deg,rgba(35,61,91,.66),rgba(6,14,25,.73) 44%,rgba(2,7,14,.87)) !important;
+  border:1px solid rgba(196,224,255,.48) !important;
+  box-shadow:
+    0 32px 90px var(--mw-glass-shadow),
+    0 0 0 1px rgba(93,164,255,.17),
+    0 0 42px rgba(78,145,255,.17),
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -1px 0 rgba(98,174,255,.20),
+    inset 10px 0 28px rgba(91,160,255,.045),
+    inset -10px 0 28px rgba(159,126,255,.035) !important;
+  backdrop-filter:blur(26px) saturate(1.24) contrast(1.02) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(1.24) contrast(1.02) !important;
+  transform-style:preserve-3d;
+}
+
+.hero-founder-card:before,
+.hero-service-card:before{
+  content:"";
+  position:absolute;
+  inset:1px;
+  z-index:1;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.06) 13%,transparent 28%,transparent 62%,rgba(107,173,255,.10) 78%,rgba(171,139,255,.08) 100%);
+  mix-blend-mode:screen;
+  opacity:.88;
+}
+
+.hero-founder-card:after,
+.hero-service-card:after{
+  content:"";
+  position:absolute;
+  inset:4px;
+  z-index:2;
+  pointer-events:none;
+  border-radius:calc(inherit - 4px);
+  border:1px solid rgba(255,255,255,.07);
+  background:
+    linear-gradient(105deg,transparent 0 36%,rgba(255,255,255,.07) 43%,transparent 50%),
+    repeating-linear-gradient(115deg,rgba(255,255,255,.012) 0 1px,transparent 1px 9px);
+  opacity:.52;
+  transform:translate3d(calc((var(--gx) - 50%)*.025),calc((var(--gy) - 50%)*.025),0);
+}
+
+.hero-founder-card:hover,
+.hero-service-card:hover{
+  border-color:rgba(178,220,255,.76) !important;
+  box-shadow:
+    0 42px 110px rgba(0,0,0,.77),
+    0 0 0 1px rgba(93,164,255,.24),
+    0 0 58px rgba(81,151,255,.21),
+    inset 0 1px 0 rgba(255,255,255,.36),
+    inset 0 -1px 0 rgba(110,180,255,.25) !important;
+}
+
+.hero-founder-photo{
+  background:
+    radial-gradient(circle at var(--gx) var(--gy),rgba(117,185,255,.18),transparent 50%),
+    linear-gradient(160deg,rgba(100,157,224,.20),rgba(3,10,18,.74)) !important;
+  border:1px solid rgba(210,232,255,.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -24px 42px rgba(1,6,12,.30),
+    0 18px 45px rgba(0,0,0,.40),
+    0 0 34px rgba(83,154,255,.13) !important;
+}
+
+.hero-founder-photo:before{
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.22),transparent 22%,transparent 54%,rgba(102,174,255,.14) 74%,rgba(155,126,255,.10)) !important;
+}
+
+.hero-founder-corner,
+.hero-founder-badge,
+.hero-founder-links a,
+.hero-reference-actions .text-link{
+  background:
+    linear-gradient(145deg,rgba(48,80,116,.48),rgba(6,14,25,.58)) !important;
+  border-color:rgba(192,220,255,.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(91,159,255,.11),
+    0 8px 24px rgba(0,0,0,.28) !important;
+  backdrop-filter:blur(16px) saturate(1.18) !important;
+}
+
+.hero-reference-actions .button.primary{
+  background:linear-gradient(145deg,#ffffff,#dce9fb) !important;
+  box-shadow:0 14px 40px rgba(79,143,255,.22),0 1px 0 rgba(255,255,255,.9) inset !important;
+}
+
+.hero-glass-cube-body{
+  background:
+    radial-gradient(circle at 30% 20%,rgba(255,255,255,.15),transparent 28%),
+    linear-gradient(145deg,rgba(82,144,210,.25),rgba(4,12,22,.54)) !important;
+  border:1.6px solid rgba(183,220,255,.62) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -28px 60px rgba(74,140,255,.10),
+    inset 8px 0 30px rgba(93,172,255,.08),
+    0 20px 44px rgba(0,0,0,.45),
+    0 0 44px rgba(90,158,255,.20) !important;
+  backdrop-filter:blur(18px) saturate(1.18) !important;
+}
+
+.hero-glass-cube-body:before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(125deg,rgba(255,255,255,.11),transparent 31%,transparent 66%,rgba(155,130,255,.08));
+}
+
+.hero-glass-cube-orbit{
+  filter:drop-shadow(0 0 8px rgba(92,177,255,.42)) drop-shadow(0 0 18px rgba(144,120,255,.16));
+}
+
+.service-visual{
+  filter:
+    drop-shadow(0 20px 28px rgba(0,0,0,.56))
+    drop-shadow(0 0 22px rgba(87,158,255,.17)) !important;
+}
+
+.browser-visual,
+.phone-visual,
+.windows-visual,
+.chip-visual{
+  position:relative;
+  overflow:visible;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    inset 0 0 28px rgba(98,173,255,.17),
+    0 16px 32px rgba(0,0,0,.42),
+    0 0 30px rgba(82,157,255,.16) !important;
+}
+
+.browser-visual:after,
+.phone-visual:after,
+.windows-visual:after,
+.chip-visual:after{
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border:1px solid rgba(128,190,255,.22);
+  border-radius:inherit;
+  transform:translateZ(-10px);
+  pointer-events:none;
+  box-shadow:0 0 22px rgba(90,164,255,.12);
+}
+
+/* Liquid reflection follows the pointer without changing layout. */
+.liquid-glass-surface:before{
+  background:
+    radial-gradient(240px 130px at var(--gx) var(--gy),rgba(255,255,255,.10),transparent 64%),
+    linear-gradient(120deg,rgba(255,255,255,.18),transparent 17%,transparent 60%,rgba(116,176,255,.08)) !important;
+}
+
+@media(max-width:800px){
+  .hero-reference-shell:after{opacity:.62;filter:blur(26px)}
+  .hero-founder-card,
+  .hero-service-card{
+    backdrop-filter:blur(22px) saturate(1.20) !important;
+    -webkit-backdrop-filter:blur(22px) saturate(1.20) !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .hero-reference-shell:after{animation:none}
+}
