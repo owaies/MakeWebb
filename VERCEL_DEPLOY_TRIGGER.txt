@@ -1,0 +1,1 @@
+Deployment trigger for the production rebuild. The ShaderGradient npm dependency has been removed and the R3F scene now uses a local GLSL atmospheric shader.
