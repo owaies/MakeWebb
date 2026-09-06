@@ -86,6 +86,7 @@ export default function AnimeEnhancements() {
         cursor.className = 'anime-cursor';
         cursor.innerHTML = '<span></span>';
         cursor.setAttribute('aria-hidden', 'true');
+        cursor.style.transform = 'translate3d(40px, 40px, 0)';
         document.body.appendChild(cursor);
         const onOver = (event: PointerEvent) => {
           const target = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-cursor]');
