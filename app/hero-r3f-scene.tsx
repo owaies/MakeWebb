@@ -73,12 +73,12 @@ function GlassCube() {
   </group>;
 }
 
-function Rings() {
+function Rings({ subtle = false }: { subtle?: boolean }) {
   const a = useRef<THREE.Mesh>(null); const b = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => { if (a.current) a.current.rotation.z += delta * 0.045; if (b.current) b.current.rotation.z -= delta * 0.032; });
   return <>
-    <mesh ref={a} rotation={[1.12, 0, -0.22]}><torusGeometry args={[2.8, 0.022, 8, 128]} /><meshBasicMaterial color={BLUE} transparent opacity={0.65} /></mesh>
-    <mesh ref={b} rotation={[0.3, 1.08, 0.35]}><torusGeometry args={[2.2, 0.016, 8, 128]} /><meshBasicMaterial color={VIOLET} transparent opacity={0.45} /></mesh>
+    <mesh ref={a} rotation={[1.12, 0, -0.22]}><torusGeometry args={[subtle ? 3.6 : 2.8, subtle ? 0.012 : 0.022, 8, 128]} /><meshBasicMaterial color={BLUE} transparent opacity={subtle ? 0.18 : 0.65} /></mesh>
+    <mesh ref={b} rotation={[0.3, 1.08, 0.35]}><torusGeometry args={[subtle ? 2.8 : 2.2, subtle ? 0.009 : 0.016, 8, 128]} /><meshBasicMaterial color={VIOLET} transparent opacity={subtle ? 0.12 : 0.45} /></mesh>
   </>;
 }
 
@@ -98,39 +98,37 @@ function ServiceObject({ kind, index }: { kind: 'web' | 'android' | 'windows' | 
   </group>;
 }
 
-function Particles({ quality }: { quality: Quality }) {
-  const count = quality === 'high' ? 220 : quality === 'medium' ? 120 : 55;
-  const positions = useMemo(() => { const a = new Float32Array(count * 3); for (let i=0;i<count;i++){a[i*3]=(Math.random()-.5)*15;a[i*3+1]=(Math.random()-.5)*9;a[i*3+2]=-2-Math.random()*7;} return a; }, [count]);
+function Particles({ quality, mobile = false }: { quality: Quality; mobile?: boolean }) {
+  const count = mobile ? (quality === 'high' ? 90 : quality === 'medium' ? 55 : 25) : (quality === 'high' ? 220 : quality === 'medium' ? 120 : 55);
+  const positions = useMemo(() => { const a = new Float32Array(count * 3); for (let i=0;i<count;i++){a[i*3]=(Math.random()-.5)*(mobile ? 12 : 15);a[i*3+1]=(Math.random()-.5)*(mobile ? 10 : 9);a[i*3+2]=-2-Math.random()*7;} return a; }, [count, mobile]);
   const ref = useRef<THREE.Points>(null);
-  useFrame((_, delta) => { if (ref.current) ref.current.rotation.y += delta * 0.006; });
-  return <points ref={ref}><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry><pointsMaterial color={CYAN} size={quality==='low'?.018:.024} transparent opacity={.65} sizeAttenuation /></points>;
+  useFrame((_, delta) => { if (ref.current) ref.current.rotation.y += delta * (mobile ? 0.003 : 0.006); });
+  return <points ref={ref}><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry><pointsMaterial color={CYAN} size={quality==='low'?.018:.024} transparent opacity={mobile ? .3 : .65} sizeAttenuation /></points>;
 }
 
 function SceneContent({ quality, mobile }: { quality: Quality; mobile: boolean }) {
   const root = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (!root.current) return;
-    root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, motionState.pointerX * 0.055, 0.045);
-    root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, -motionState.pointerY * 0.028, 0.045);
-    root.current.position.y = THREE.MathUtils.lerp(root.current.position.y, Math.sin(state.clock.elapsedTime * .22) * .08 - motionState.scroll * 0.06, .025);
+    root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, motionState.pointerX * (mobile ? 0.018 : 0.055), 0.045);
+    root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, -motionState.pointerY * (mobile ? 0.012 : 0.028), 0.045);
+    root.current.position.y = THREE.MathUtils.lerp(root.current.position.y, Math.sin(state.clock.elapsedTime * .22) * (mobile ? .04 : .08) - motionState.scroll * (mobile ? .018 : .06), .025);
   });
   const serviceKinds = ['web','android','windows','ai'] as const;
   return <>
-    <ambientLight intensity={quality==='high'?1.15:0.9} color={0xc7ddf5}/>
-    <directionalLight intensity={quality==='high'?2.2:1.55} position={[2,5,8]} color={0xffffff}/>
-    <pointLight intensity={quality==='high'?15:9} distance={15} position={[-5,2,4]} color={BLUE}/>
-    <pointLight intensity={quality==='high'?11:7} distance={13} position={[5,-1,4]} color={VIOLET}/>
+    <ambientLight intensity={mobile ? .7 : quality==='high'?1.15:0.9} color={0xc7ddf5}/>
+    <directionalLight intensity={mobile ? .25 : quality==='high'?2.2:1.55} position={[2,5,8]} color={0xffffff}/>
+    <pointLight intensity={mobile ? 5 : quality==='high'?15:9} distance={15} position={[-5,2,4]} color={BLUE}/>
+    <pointLight intensity={mobile ? 4 : quality==='high'?11:7} distance={13} position={[5,-1,4]} color={VIOLET}/>
     <group ref={root}>
-      {!mobile && <group position={[0,-1.45,1]}><GlassCube/><Rings/></group>}
-      {!mobile && quality !== 'low' && serviceKinds.map((kind,index)=><ServiceObject kind={kind} index={index} key={kind}/>)}
-      <Particles quality={quality}/>
+      {mobile ? <><Rings subtle /><Particles quality={quality} mobile /></> : <><group position={[0,-1.45,1]}><GlassCube/><Rings/></group>{quality !== 'low' && serviceKinds.map((kind,index)=><ServiceObject kind={kind} index={index} key={kind}/>)}<Particles quality={quality}/></>}
     </group>
   </>;
 }
 
-export default function HeroThreeScene() {
+export default function HeroThreeScene({ mode = 'desktop' }: { mode?: 'desktop' | 'mobile' }) {
   const quality = useQuality();
-  const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 800px)').matches;
+  const mobile = mode === 'mobile';
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [visible, setVisible] = useState(true);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -142,5 +140,6 @@ export default function HeroThreeScene() {
     return () => observer.disconnect();
   }, []);
   const frameMode = reduced ? 'demand' : visible ? 'always' : 'never';
-  return <div ref={hostRef} className="hero-three-scene" aria-hidden="true"><Canvas camera={{ position: [0,0,12.2], fov: 34, near: .1, far: 100 }} dpr={quality==='high'?[1,1.6]:quality==='medium'?[1,1.3]:[.8,1]} gl={{ antialias: quality !== 'low', alpha: true, powerPreference: 'high-performance' }} frameloop={frameMode}><SceneContent quality={quality} mobile={mobile}/></Canvas></div>;
+  const camera = mobile ? { position: [0,0,14] as [number,number,number], fov: 38 } : { position: [0,0,12.2] as [number,number,number], fov: 34 };
+  return <div ref={hostRef} className={`hero-three-scene hero-three-scene-${mode}`} aria-hidden="true"><Canvas camera={{ ...camera, near: .1, far: 100 }} dpr={mobile ? (quality==='high'?[1,1.25]:quality==='medium'?[.8,1.1]:[.7,.9]) : (quality==='high'?[1,1.6]:quality==='medium'?[1,1.3]:[.8,1])} gl={{ antialias: quality !== 'low', alpha: true, powerPreference: 'high-performance' }} frameloop={frameMode}><SceneContent quality={quality} mobile={mobile}/></Canvas></div>;
 }
