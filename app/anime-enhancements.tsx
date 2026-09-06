@@ -70,7 +70,11 @@ export default function AnimeEnhancements() {
         root.style.setProperty('--pointer-x', x.toFixed(4));
         root.style.setProperty('--pointer-y', y.toFixed(4));
         const cursor = document.querySelector<HTMLElement>('.anime-cursor');
-        if (cursor) cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+        if (cursor) {
+          const cursorX = Math.min(Math.max(event.clientX, 40), Math.max(40, window.innerWidth - 40));
+          const cursorY = Math.min(Math.max(event.clientY, 40), Math.max(40, window.innerHeight - 40));
+          cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+        }
       }
     });
 
@@ -148,7 +152,7 @@ export default function AnimeEnhancements() {
           const y = (event.clientY - (rect.top + rect.height / 2)) * 0.08;
           animate(node, { translateX: x, translateY: y, duration: 180, ease: 'out(3)' });
         });
-        const leave = () => animate(node, { translateX: 0, translateY: 0, duration: 320, ease: 'out(4)' });
+        const leave = () => animate(node, { translateX: 0, translateY: 0, duration: 320, ease: 'out(4)');
         node.addEventListener('pointermove', move, { passive: true });
         node.addEventListener('pointerleave', leave, { passive: true });
         cleanups.push(() => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerleave', leave); });
