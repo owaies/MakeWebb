@@ -17,15 +17,6 @@ jobs:
       - run: npm run build
       - run: npm install --no-save @playwright/test@1.55.0
       - run: npx playwright install chromium --with-deps
-      - name: Start Next.js
-        run: |
-          npm run dev -- -H 127.0.0.1 > /tmp/makewebb-next.log 2>&1 &
-          for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then exit 0; fi
-            sleep 1
-          done
-          cat /tmp/makewebb-next.log
-          exit 1
       - run: npx playwright test tests/mobile-hero.spec.mjs
       - name: Upload responsive evidence
         if: always()
