@@ -61,46 +61,50 @@ export default function AnimeEnhancements() {
     });
 
     const updatePointer = rafThrottle((event: PointerEvent) => {
-      if (coarse || reduced) return;
+      if (reduced) return;
       const x = event.clientX / Math.max(1, window.innerWidth) - 0.5;
       const y = event.clientY / Math.max(1, window.innerHeight) - 0.5;
       motionState.pointerX = x;
       motionState.pointerY = y;
-      root.style.setProperty('--pointer-x', x.toFixed(4));
-      root.style.setProperty('--pointer-y', y.toFixed(4));
-      const cursor = document.querySelector<HTMLElement>('.anime-cursor');
-      if (cursor) cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      if (!coarse) {
+        root.style.setProperty('--pointer-x', x.toFixed(4));
+        root.style.setProperty('--pointer-y', y.toFixed(4));
+        const cursor = document.querySelector<HTMLElement>('.anime-cursor');
+        if (cursor) cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      }
     });
 
-    if (!coarse && !reduced) {
-      const cursor = document.createElement('div');
-      cursor.className = 'anime-cursor';
-      cursor.innerHTML = '<span></span>';
-      cursor.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(cursor);
+    if (!reduced) {
       window.addEventListener('pointermove', updatePointer, { passive: true });
-      const onOver = (event: PointerEvent) => {
-        const target = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-cursor]');
-        if (!target) return;
-        const label = cursor.querySelector('span');
-        if (label) label.textContent = target.dataset.cursor || 'OPEN';
-        cursor.classList.add('has-label');
-      };
-      const onOut = (event: PointerEvent) => {
-        const next = (event.relatedTarget as HTMLElement | null)?.closest?.('[data-cursor]');
-        if (next) return;
-        const label = cursor.querySelector('span');
-        if (label) label.textContent = '';
-        cursor.classList.remove('has-label');
-      };
-      document.addEventListener('pointerover', onOver, { passive: true });
-      document.addEventListener('pointerout', onOut, { passive: true });
-      cleanups.push(() => {
-        window.removeEventListener('pointermove', updatePointer);
-        document.removeEventListener('pointerover', onOver);
-        document.removeEventListener('pointerout', onOut);
-        cursor.remove();
-      });
+      cleanups.push(() => window.removeEventListener('pointermove', updatePointer));
+      if (!coarse) {
+        const cursor = document.createElement('div');
+        cursor.className = 'anime-cursor';
+        cursor.innerHTML = '<span></span>';
+        cursor.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(cursor);
+        const onOver = (event: PointerEvent) => {
+          const target = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-cursor]');
+          if (!target) return;
+          const label = cursor.querySelector('span');
+          if (label) label.textContent = target.dataset.cursor || 'OPEN';
+          cursor.classList.add('has-label');
+        };
+        const onOut = (event: PointerEvent) => {
+          const next = (event.relatedTarget as HTMLElement | null)?.closest?.('[data-cursor]');
+          if (next) return;
+          const label = cursor.querySelector('span');
+          if (label) label.textContent = '';
+          cursor.classList.remove('has-label');
+        };
+        document.addEventListener('pointerover', onOver, { passive: true });
+        document.addEventListener('pointerout', onOut, { passive: true });
+        cleanups.push(() => {
+          document.removeEventListener('pointerover', onOver);
+          document.removeEventListener('pointerout', onOut);
+          cursor.remove();
+        });
+      }
     }
 
     scope.execute(() => {
