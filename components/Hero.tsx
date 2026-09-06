@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { animate, stagger } from 'animejs'
+import { getPresentation } from '@/lib/responsive'
 import StudioScene from './StudioScene'
 import { FounderCard } from './FounderCard'
 import { Glass } from './Glass'
@@ -14,6 +15,7 @@ const services=[['01','Web Design & Development','Modern, fast and scalable web 
 
 export default function Hero(){
  const ref=useRef<HTMLDivElement>(null);const[menu,setMenu]=useState(false)
+ useEffect(()=>{const setPresentation=()=>{document.documentElement.dataset.presentation=getPresentation()};setPresentation();window.addEventListener('resize',setPresentation,{passive:true});return()=>window.removeEventListener('resize',setPresentation)},[])
  useEffect(()=>{const root=ref.current;if(!root||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const a=animate(root.querySelectorAll('[data-hero]'),{opacity:[0,1],translateY:[22,0],delay:stagger(80),duration:800,ease:'out(4)'});return()=>a.pause()},[])
  return <section ref={ref} className="hero" id="home"><StudioScene/>
   <header className="nav glass-shell"><Link href="#home" className="brand" aria-label="MakeWebb home"><span className="brand-mark">M</span><span>MakeWebb</span></Link><nav className={`desktop-nav ${menu?'open':''}`}>{['Home','About','Services','Projects','Team','Contact'].map(x=><Link key={x} href={`#${x.toLowerCase()}`} onClick={()=>setMenu(false)}>{x}</Link>)}</nav><div className="nav-actions"><Link className="nav-cta" href="#contact">Start a Project <span>↗</span></Link><button className="menu-btn" onClick={()=>setMenu(v=>!v)} aria-label="Toggle menu" aria-expanded={menu}>☰</button></div></header>
