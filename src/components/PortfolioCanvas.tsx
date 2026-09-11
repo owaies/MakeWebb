@@ -25,6 +25,8 @@ function SpatialCard({ item, index, progress }: { item: typeof WORK[number]; ind
   const pointerY = useMotionValue(0);
   const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [5, -5]), { stiffness: 220, damping: 24 });
   const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-7, 7]), { stiffness: 220, damping: 24 });
+  const reflectionX = useTransform(pointerX, [-0.5, 0.5], [-80, 80]);
+  const reflectionY = useTransform(pointerY, [-0.5, 0.5], [-80, 80]);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!ref.current || e.pointerType === 'touch') return;
@@ -59,7 +61,7 @@ function SpatialCard({ item, index, progress }: { item: typeof WORK[number]; ind
       <motion.div
         className="pointer-events-none absolute -inset-24 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.16),transparent_55%)] blur-2xl"
         animate={{ opacity: hovered ? 0.7 : 0 }}
-        style={{ x: useTransform(pointerX, [-0.5, 0.5], [-80, 80]), y: useTransform(pointerY, [-0.5, 0.5], [-80, 80]) }}
+        style={{ x: reflectionX, y: reflectionY }}
       />
 
       <div className="absolute inset-5 rounded-[18px] border border-white/[0.06] bg-black/[0.12]" />
@@ -104,7 +106,7 @@ export const PortfolioCanvas: React.FC = () => {
   const fieldScale = useTransform(scrollYProgress, [0.62, 0.95], [0.82, 1.05]);
 
   return (
-    <section ref={sectionRef} id="portfolio" className="relative min-h-[230vh] overflow-hidden bg-[#07080c] text-white">
+    <section ref={sectionRef} id="projects" className="relative min-h-[230vh] overflow-hidden bg-[#07080c] text-white">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
         <motion.div style={{ y: headingY }} className="relative z-30 px-6 pt-24 sm:px-10 sm:pt-28">
           <div className="mx-auto flex max-w-[1400px] items-center justify-between font-mono text-[10px] tracking-[0.24em] text-white/45">
