@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: #02050f;
+    color: #f8fafc;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    selection-background-color: #3b82f6;
+    selection-color: #ffffff;
+  }
+}
+
+/* Custom 3D & Glass Glow Utilities */
+.glass-panel {
+  background: linear-gradient(135deg, rgba(15, 27, 60, 0.65) 0%, rgba(8, 16, 38, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  box-shadow: 0 0 40px -10px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-panel-glow {
+  background: linear-gradient(135deg, rgba(14, 28, 64, 0.7) 0%, rgba(6, 14, 34, 0.85) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 50px -5px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.neon-border-blue {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.neon-border-cyan {
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.45), inset 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 25px rgba(96, 165, 250, 0.6), 0 0 50px rgba(59, 130, 246, 0.3);
+}
+
+/* Floating animation */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-2deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orbitSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbitSpin 20s linear infinite;
+}
+
+/* 3D Thick Glass Photo Frame Levitation */
+@keyframes floating-left {
+  0%, 100% {
+    transform: rotateX(1.2deg) rotateY(5.5deg) translateY(0px);
+  }
+  50% {
+    transform: rotateX(2.2deg) rotateY(4.2deg) translateY(-10px);
+  }
+}
+
+@keyframes floating-right {
+  0%, 100% {
+    transform: rotateX(1.2deg) rotateY(-5.5deg) translateY(0px);
+  }
+  50% {
+    transform: rotateX(2.2deg) rotateY(-4.2deg) translateY(-10px);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #02050f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
