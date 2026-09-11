@@ -5,7 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 const WORK = [
   { index: '#01', title: 'Logan', meta: 'Architecture · Webcore', year: '2021', tone: 'violet' },
   { index: '#02', title: 'Zumar', meta: 'Web Creation · Development', year: '2024', tone: 'copper' },
-  { index: '#03', title: 'Nova', meta: 'Brand · Motion · Web', year: '2024', tone: 'blue', href: 'https://world-object-detector.netlify.app/' },
+  { index: '#03', title: 'Nova', meta: 'Brand · Motion · Web', year: '2024', tone: 'blue', featured: true },
   { index: '#04', title: 'Kiln', meta: 'Product · Interface', year: '2025', tone: 'bronze' },
   { index: '#05', title: 'Meridian', meta: 'Systems · Identity', year: '2026', tone: 'slate' },
 ] as const;
@@ -77,7 +77,7 @@ function SpatialCard({ item, index, progress }: { item: typeof WORK[number]; ind
           <h3 className="mt-3 font-display text-[clamp(4rem,8vw,7rem)] font-medium leading-[0.82] tracking-[-0.065em] text-white">{item.title}</h3>
           <div className="mt-7 flex items-end justify-between gap-5 border-t border-white/[0.08] pt-5">
             <span className="max-w-[230px] text-sm leading-6 text-white/55">{item.meta}</span>
-            {item.href && (
+            {item.featured && (
               <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono text-[10px] tracking-[0.14em] text-white transition-transform duration-300 group-hover:translate-x-1">
                 View project <ArrowUpRight size={13} />
               </span>
@@ -93,7 +93,7 @@ function SpatialCard({ item, index, progress }: { item: typeof WORK[number]; ind
     </motion.div>
   );
 
-  return item.href ? <a href={item.href} target="_blank" rel="noopener noreferrer" className="group block shrink-0">{content}</a> : <div className="shrink-0">{content}</div>;
+  return <div className="group block shrink-0">{content}</div>;
 }
 
 export const PortfolioCanvas: React.FC = () => {
