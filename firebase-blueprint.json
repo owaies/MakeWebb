@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "StudioProject": {
+      "title": "Studio Project",
+      "description": "Selected digital product case study showcase entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "technology": { "type": "string" },
+        "description": { "type": "string" },
+        "accent": { "type": "string" },
+        "url": { "type": "string" },
+        "stats": { "type": "string" },
+        "status": { "type": "string" },
+        "previewType": { "type": "string" },
+        "orderIndex": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "code", "title", "type", "technology", "description", "accent", "url", "stats", "status", "previewType"]
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Dynamic telemetry, hero copy, and studio contact parameters",
+      "type": "object",
+      "properties": {
+        "heroTag": { "type": "string" },
+        "heroHeadline": { "type": "string" },
+        "heroSubtitle": { "type": "string" },
+        "telemetryStatus": { "type": "string" },
+        "disciplinesText": { "type": "string" },
+        "latencyStat": { "type": "string" },
+        "fpsStat": { "type": "string" },
+        "vitalsStat": { "type": "string" },
+        "topologyStat": { "type": "string" },
+        "manifestoPrefix": { "type": "string" },
+        "manifestoMiddle": { "type": "string" },
+        "manifestoHighlight": { "type": "string" },
+        "manifestoDescription": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "githubUrl": { "type": "string" },
+        "linkedinUrl": { "type": "string" }
+      }
+    },
+    "ProjectInquiry": {
+      "title": "Project Inquiry",
+      "description": "Direct client engagement brief and lead inquiry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "disciplines": { "type": "array" },
+        "budget": { "type": "string" },
+        "timeline": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "email", "disciplines", "budget", "timeline"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "StudioProject",
+      "description": "Public read case study projects, admin writable"
+    },
+    "/site_settings/{settingId}": {
+      "schema": "SiteSettings",
+      "description": "Global studio copy, telemetry benchmarks, and contact endpoints"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "ProjectInquiry",
+      "description": "Incoming project briefs submitted by prospective clients"
+    }
+  }
+}

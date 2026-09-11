@@ -1,8 +1,16 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Terminal, Cpu, Globe, Layers } from 'lucide-react';
+import { useStudioData } from '../context/StudioDataContext';
 
 export const GridTransitionScene: React.FC = () => {
+  const { siteSettings } = useStudioData();
+
+  const latencyStat = siteSettings?.latencyStat || '14ms';
+  const fpsStat = siteSettings?.fpsStat || '60 FPS';
+  const vitalsStat = siteSettings?.vitalsStat || '99.8%';
+  const topologyStat = siteSettings?.topologyStat || 'V3 / TS';
+
   return (
     <section
       id="grid-morph"
@@ -41,7 +49,7 @@ export const GridTransitionScene: React.FC = () => {
                 <Cpu className="w-4 h-4 text-cyan-400" />
                 <span className="font-mono text-[9px] tracking-widest uppercase">LATENCY</span>
               </div>
-              <div className="font-mono text-2xl font-bold text-white tracking-tight">14ms</div>
+              <div className="font-mono text-2xl font-bold text-white tracking-tight">{latencyStat}</div>
               <div className="font-mono text-[10px] text-slate-400 mt-1 uppercase">Edge Inference Benchmark</div>
             </div>
 
@@ -50,7 +58,7 @@ export const GridTransitionScene: React.FC = () => {
                 <Layers className="w-4 h-4 text-indigo-400" />
                 <span className="font-mono text-[9px] tracking-widest uppercase">PIPELINE</span>
               </div>
-              <div className="font-mono text-2xl font-bold text-white tracking-tight">60 FPS</div>
+              <div className="font-mono text-2xl font-bold text-white tracking-tight">{fpsStat}</div>
               <div className="font-mono text-[10px] text-slate-400 mt-1 uppercase">Continuous GPU Render</div>
             </div>
 
@@ -59,7 +67,7 @@ export const GridTransitionScene: React.FC = () => {
                 <Globe className="w-4 h-4 text-emerald-400" />
                 <span className="font-mono text-[9px] tracking-widest uppercase">CORE VITALS</span>
               </div>
-              <div className="font-mono text-2xl font-bold text-white tracking-tight">99.8%</div>
+              <div className="font-mono text-2xl font-bold text-white tracking-tight">{vitalsStat}</div>
               <div className="font-mono text-[10px] text-slate-400 mt-1 uppercase">Lighthouse Metric SLA</div>
             </div>
 
@@ -68,7 +76,7 @@ export const GridTransitionScene: React.FC = () => {
                 <Terminal className="w-4 h-4 text-amber-400" />
                 <span className="font-mono text-[9px] tracking-widest uppercase">TOPOLOGY</span>
               </div>
-              <div className="font-mono text-2xl font-bold text-white tracking-tight">V3 / TS</div>
+              <div className="font-mono text-2xl font-bold text-white tracking-tight">{topologyStat}</div>
               <div className="font-mono text-[10px] text-slate-400 mt-1 uppercase">Fully Typed Architecture</div>
             </div>
           </div>

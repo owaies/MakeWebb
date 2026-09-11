@@ -2,18 +2,19 @@ import React from 'react';
 import { motion } from 'motion/react';
 
 interface SceneIndicatorProps {
-  currentScene: number; // 1 to 7
+  currentScene: number; // 1 to 8
   onSelectScene: (sceneIndex: number) => void;
 }
 
 const SCENE_NAMES = [
-  '01 SCULPTURE',
-  '02 GRID MORPH',
-  '03 SELECTED WORK',
-  '04 MANIFESTO',
+  '01 HERO',
+  '02 MANIFESTO',
+  '03 CAPABILITIES',
+  '04 SELECTED WORK',
   '05 THE FOUNDERS',
-  '06 ORBITAL MATRIX',
-  '07 SYNTHESIS',
+  '06 PHILOSOPHY',
+  '07 TECHNOLOGY',
+  '08 CONTACT',
 ];
 
 export const SceneIndicator: React.FC<SceneIndicatorProps> = ({
@@ -23,8 +24,8 @@ export const SceneIndicator: React.FC<SceneIndicatorProps> = ({
   return (
     <aside aria-label="Scene Navigator" className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-3 select-none">
       <div className="flex items-center gap-2 mb-2 font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase">
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-        <span>SCENE 0{currentScene} / 07</span>
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        <span>SCENE 0{currentScene} / 08</span>
       </div>
 
       <nav aria-label="Scenes list" className="flex flex-col gap-2.5 items-end">
@@ -36,7 +37,7 @@ export const SceneIndicator: React.FC<SceneIndicatorProps> = ({
             <button
               key={name}
               onClick={() => onSelectScene(sceneNumber)}
-              className="group flex items-center gap-3 py-0.5 text-right transition-all"
+              className="group flex items-center gap-3 py-0.5 text-right transition-all cursor-pointer"
             >
               <span
                 className={`font-mono text-[10px] tracking-wider transition-all duration-300 ${

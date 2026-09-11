@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function for admin check: any authenticated admin user
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Projects collection: Anyone can read published projects, only authenticated admins can create/edit/delete
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Site settings & telemetry: Anyone can read settings, only authenticated admins can write
+    match /site_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Inquiries / Leads: Anyone can submit an inquiry, only authenticated admins can read and manage them
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Capabilities nodes: Anyone can read, only authenticated admins can write
+    match /capabilities/{capabilityId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

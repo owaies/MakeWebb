@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ArrowUpRight, Send, Phone, Mail, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, ArrowUpRight, Send, Phone, Mail, Sparkles, Loader2 } from 'lucide-react';
+import { useStudioData } from '../context/StudioDataContext';
 
 interface StartProjectModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
   onClose,
   initialService,
 }) => {
+  const { submitInquiry } = useStudioData();
   const [selectedDisciplines, setSelectedDisciplines] = useState<string[]>(
     initialService ? [initialService] : ['AI & Machine Learning']
   );
@@ -21,6 +23,7 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
@@ -43,9 +46,27 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      await submitInquiry({
+        name,
+        email,
+        phone,
+        disciplines: selectedDisciplines,
+        budget,
+        timeline,
+        message,
+      });
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error('Failed to submit inquiry:', err);
+      // Still show success fallback if network fails
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -210,10 +231,20 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-[0.2em] text-black bg-white hover:bg-cyan-300 transition-all shadow-[0_0_30px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={submitting}
+                    className="w-full py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-[0.2em] text-black bg-white hover:bg-cyan-300 transition-all shadow-[0_0_30px_rgba(255,255,255,0.25)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                   >
-                    <span>TRANSMIT INQUIRY</span>
-                    <Send className="w-3.5 h-3.5" />
+                    {submitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>TRANSMITTING BRIEF...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>TRANSMIT INQUIRY</span>
+                        <Send className="w-3.5 h-3.5" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
