@@ -1,47 +1,664 @@
-/* Responsive stability + compact tablet/desktop-mode layer */
-html{overflow-x:hidden;overscroll-behavior-x:none}body{width:100%;min-width:0;overflow-x:hidden;-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility}img,svg,video,canvas{max-width:100%}button,a{touch-action:manipulation}
-.match-nav{left:14px!important;right:14px!important;top:max(10px,env(safe-area-inset-top))!important;width:auto!important;max-width:1050px!important;margin-left:auto!important;margin-right:auto!important;transform:none!important}
-@media (hover:none),(pointer:coarse){.ref-device{will-change:auto}.founder-image img{transform:none!important}}
-.match-hero{min-height:100svh;min-height:100dvh}.match-sticky{height:100svh;height:100dvh}.statement{min-height:100svh;min-height:100dvh}.match-cta{min-height:100svh;min-height:100dvh}
-@media (max-width:600px){
- .match-nav{height:46px;padding:4px 6px}.brand{font-size:9px;letter-spacing:.11em;min-width:0}.brand span{width:27px;height:27px;flex:0 0 27px}.menu-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(0,0,0,.1)}
- .match-hero{padding:88px 18px 18px}.hero-grid{width:100%;gap:12px;align-content:center}.hero-copy h1{font-size:clamp(3.35rem,15.5vw,5.8rem);line-height:.8;letter-spacing:-.075em;margin:16px 0 18px;max-width:100%}.hero-copy p{font-size:11px;line-height:1.55;max-width:330px;margin:0}.hero-copy button{font-size:7px;padding:10px 13px;margin:10px 5px 0 0}.device-stage{height:245px;width:calc(100% + 30px);margin:0 -15px;transform:scale(.84);transform-origin:50% 50%;overflow:visible}.ref-device{width:118px;height:232px;border-radius:19px;padding:5px}.device-screen{border-radius:14px;padding:17px 10px}.device-screen b{font-size:15px}.d0{left:2%;top:34px}.d1{left:34%;top:0}.d2{right:2%;top:40px}.hero-bottom{font-size:7px;letter-spacing:.13em}.hero-bottom span:last-child{display:none}.star{font-size:23px;top:58%;z-index:1}
- .manifesto{min-height:100svh;min-height:100dvh;padding:88px 18px 30px}.manifesto-copy{min-height:calc(100dvh - 125px);gap:12px;justify-content:center}.manifesto h2{font-size:clamp(3.35rem,15vw,5.5rem);line-height:.82;letter-spacing:-.08em;margin:0;width:100%}.manifesto-devices{height:260px;width:100%;transform:scale(.72) rotate(-7deg);margin-top:-6px}.manifesto-devices .ref-device{width:118px;height:232px}
- .capability{min-height:auto;padding:88px 18px 70px}.cap-head{font-size:clamp(4rem,17vw,6.8rem);line-height:.76;margin:58px 0 52px}.cap-grid{grid-template-columns:1fr 1fr}.cap-grid div{min-height:108px;padding:14px 10px}.cap-grid b{font-size:16px;line-height:.95}.cap-grid small,.cap-grid span{font-size:7px}.cap-grid span{line-height:1.3}
- .match-work{height:150svh;height:150dvh;min-height:0}.match-sticky{padding:78px 18px 20px}.match-canvas{height:calc(100% - 30px)}.match-track{gap:12px;padding-left:0}.match-card{flex-basis:255px;width:255px;height:330px;border-radius:15px;padding:17px}.match-card.active{flex-basis:285px;height:355px}.match-card h3{font-size:24px;margin:15px 0 6px}.match-card p{font-size:7px;line-height:1.35}.preview{height:155px;margin-top:15px;border-radius:10px}.preview>div{padding:11px}.preview b{font-size:17px}.archive{right:18px;bottom:17px;font-size:7px}
- .founders{min-height:auto!important;padding:70px 18px 55px}.founder-grid{gap:38px;margin-top:35px}.founder-image{height:min(105vw,390px)}.founder-info h3{font-size:clamp(2.1rem,11vw,4rem);margin:18px 0 8px}.founder-info>div{gap:12px;flex-wrap:wrap}
- .statement{min-height:100svh;min-height:100dvh;padding:88px 18px}.statement h2{font-size:clamp(4.2rem,18vw,7.5rem);line-height:.74;margin:58px 0 0}.match-purple{min-height:80svh;padding:88px 18px 55px}.tech>div{margin:65px auto 0;gap:0 12px}.tech b{font-size:clamp(2.55rem,11vw,5rem);line-height:.88}.match-cta{min-height:100svh;min-height:100dvh;padding:88px 18px 40px}.match-cta h2{font-size:clamp(4rem,17vw,7rem);line-height:.74;margin:58px 0 18px}.match-cta p{font-size:11px;line-height:1.6;max-width:290px}.ref-chrome{width:175px;height:175px;right:-42px;top:57%;transform:rotateX(55deg) rotateZ(-20deg)}.ref-chrome>div{width:67px;height:67px}.match-footer{min-height:170px;padding:25px 18px;grid-template-columns:1fr 1fr;gap:18px 10px}.match-footer b{font-size:20px}.match-footer span{font-size:7px;line-height:1.35}
+/* Responsive stability & layout compaction layer
+   Prevents excessive blank voids on mobile, desktop-site mode on phones, tablets, and tall viewports */
+
+html {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
-@media (min-width:601px) and (max-width:1100px){
- .match-nav{left:22px!important;right:22px!important;max-width:1050px!important}
- .match-hero{min-height:100svh;min-height:100dvh;padding-top:0;padding-bottom:0}
- .hero-grid{grid-template-columns:1fr .8fr;gap:15px}
- .hero-copy h1{font-size:clamp(4.2rem,9vw,7rem)}
- .device-stage{transform:scale(.84);transform-origin:center right}
- .manifesto{min-height:auto!important;height:auto!important;padding:72px 5vw 70px}
- .manifesto-copy{min-height:0!important;height:auto!important;gap:10px;justify-content:flex-start}
- .manifesto h2{font-size:clamp(4rem,8vw,7rem);margin:0 0 8px}
- .manifesto-devices{height:300px;transform:scale(.72) rotate(-7deg);transform-origin:center center;margin:0}
- .capability,.founders,.match-cta,.match-purple,.statement{padding-left:5vw;padding-right:5vw}
- .capability{min-height:auto!important;padding-top:72px;padding-bottom:70px}
- .cap-head{font-size:clamp(5rem,10vw,9rem);margin:48px 0 45px}
- .cap-grid{grid-template-columns:repeat(2,1fr);gap:0}
- .cap-grid div{min-height:115px}
- .match-work{height:125svh;height:125dvh;min-height:0}
- .match-sticky{padding:72px 5vw 18px}
- .match-card{flex-basis:300px;width:300px;height:380px}
- .match-card.active{flex-basis:335px;height:410px}
- .founders{min-height:auto!important;padding-top:72px;padding-bottom:70px}
- .founder-grid{gap:18px;margin-top:35px}
- .founder-image{height:390px}
- .founder-info h3{font-size:clamp(2.8rem,5vw,5rem);margin:18px 0 8px}
- .statement{min-height:75svh;min-height:75dvh;padding-top:72px;padding-bottom:70px}
- .statement h2,.match-cta h2{font-size:clamp(5rem,11vw,10rem)}
- .match-purple{min-height:65svh;padding-top:72px;padding-bottom:60px}
- .match-cta{min-height:80svh;min-height:80dvh;padding-top:72px;padding-bottom:60px}
+body {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
 }
-@media (max-height:560px) and (max-width:1100px){
- .match-hero{padding-top:65px;padding-bottom:12px}.hero-grid{grid-template-columns:1.1fr .9fr;gap:8px}.hero-copy h1{font-size:clamp(3rem,10vw,5.4rem);margin:10px 0}.hero-copy p{font-size:10px;line-height:1.4}.device-stage{height:230px;transform:scale(.7)}.hero-bottom{display:none}
- .manifesto{padding-top:55px;padding-bottom:55px}.manifesto-devices{height:250px}.capability{padding-top:55px;padding-bottom:55px}.match-work{height:115svh;height:115dvh}.founders{padding-top:55px;padding-bottom:55px}.statement{min-height:90svh;min-height:90dvh}.match-purple{min-height:75svh}.match-cta{min-height:90svh;min-height:90dvh}
+img, svg, video, canvas {
+  max-width: 100%;
 }
-.match-page,.match-hero,.manifesto,.capability,.match-work,.founders,.statement,.match-purple,.match-cta,.match-footer{max-width:100%;overflow-x:hidden}
+button, a {
+  touch-action: manipulation;
+}
+
+/* Floating Navigation */
+.match-nav {
+  left: 14px !important;
+  right: 14px !important;
+  top: max(10px, env(safe-area-inset-top)) !important;
+  width: auto !important;
+  max-width: 1050px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  transform: none !important;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ref-device {
+    will-change: auto;
+  }
+  .founder-image img {
+    transform: none !important;
+  }
+}
+
+/* Global Reset of Artificial Inflation:
+   Content sections should size naturally around their content with proportional padding. */
+.manifesto,
+.capability,
+.founders,
+.statement,
+.match-purple,
+.match-cta {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+/* =========================================================================
+   1. TARGET: MOBILE DESKTOP SITE MODE & PORTRAIT / TALL VIEWPORTS
+   When users enable "Desktop site" on mobile (or use portrait tablets/monitors),
+   viewport width is ~980px-1280px while viewport height is ~1800px-2600px.
+   Aspect ratio is < 1.15. We strip all huge vh/svh heights so there is zero empty space.
+   ========================================================================= */
+@media (max-aspect-ratio: 1.15), (orientation: portrait) {
+  .match-hero {
+    min-height: auto !important;
+    height: auto !important;
+    padding-top: clamp(80px, 9vh, 110px) !important;
+    padding-bottom: clamp(24px, 3vh, 36px) !important;
+    gap: clamp(20px, 3vh, 32px) !important;
+  }
+  .hero-grid {
+    gap: 20px !important;
+  }
+  .hero-copy h1 {
+    margin: 16px 0 !important;
+  }
+  .device-stage {
+    height: 330px !important;
+    transform: scale(0.9) !important;
+    transform-origin: center center !important;
+  }
+  .manifesto {
+    padding-top: clamp(55px, 6vh, 85px) !important;
+    padding-bottom: clamp(50px, 6vh, 80px) !important;
+  }
+  .manifesto-copy {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    gap: 24px !important;
+  }
+  .manifesto-devices {
+    height: 340px !important;
+    transform: scale(0.85) rotate(-7deg) !important;
+    transform-origin: center center !important;
+  }
+  .capability {
+    padding-top: clamp(55px, 6vh, 85px) !important;
+    padding-bottom: clamp(55px, 6vh, 85px) !important;
+  }
+  .cap-head {
+    margin: clamp(28px, 4vh, 48px) 0 clamp(24px, 3.5vh, 42px) !important;
+  }
+  .cap-grid div {
+    min-height: 105px !important;
+    padding: 16px !important;
+  }
+  /* Work section: convert from 230vh vertical cavern to clean horizontal swipe/carousel */
+  .match-work {
+    height: auto !important;
+    min-height: auto !important;
+    padding-top: clamp(55px, 6vh, 80px) !important;
+    padding-bottom: clamp(40px, 5vh, 65px) !important;
+  }
+  .match-sticky {
+    height: auto !important;
+    max-height: none !important;
+    position: relative !important;
+    top: auto !important;
+    padding: 0 6vw !important;
+    background: transparent !important;
+  }
+  .match-canvas {
+    height: auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 18px 0 24px !important;
+  }
+  .match-canvas::-webkit-scrollbar {
+    display: none;
+  }
+  .match-track {
+    transform: none !important;
+    padding-left: 0 !important;
+    gap: 18px !important;
+  }
+  .match-card {
+    flex: 0 0 310px !important;
+    width: 310px !important;
+    height: 380px !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .match-card.active {
+    flex: 0 0 330px !important;
+    width: 330px !important;
+    height: 395px !important;
+  }
+  .archive {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin-top: 14px !important;
+    display: block !important;
+    text-align: right !important;
+  }
+  .founders {
+    padding-top: clamp(55px, 6vh, 85px) !important;
+    padding-bottom: clamp(55px, 6vh, 85px) !important;
+  }
+  .founder-grid {
+    margin-top: clamp(25px, 3vh, 45px) !important;
+    gap: 24px !important;
+  }
+  .founder-image {
+    height: clamp(320px, 42vh, 460px) !important;
+  }
+  .founder-info {
+    padding: 14px 0 !important;
+  }
+  .founder-info h3 {
+    margin: 14px 0 6px !important;
+  }
+  .statement {
+    padding-top: clamp(65px, 7vh, 95px) !important;
+    padding-bottom: clamp(65px, 7vh, 95px) !important;
+  }
+  .statement h2 {
+    margin-top: clamp(20px, 3vh, 40px) !important;
+  }
+  .match-purple {
+    padding-top: clamp(55px, 6vh, 85px) !important;
+    padding-bottom: clamp(55px, 6vh, 85px) !important;
+  }
+  .tech > div {
+    margin: clamp(28px, 4vh, 48px) auto 0 !important;
+  }
+  .match-cta {
+    padding-top: clamp(65px, 7vh, 95px) !important;
+    padding-bottom: clamp(65px, 7vh, 95px) !important;
+  }
+  .match-cta h2 {
+    margin: clamp(22px, 3vh, 38px) 0 18px !important;
+  }
+  .ref-chrome {
+    width: 190px !important;
+    height: 190px !important;
+    right: 5% !important;
+    top: 50% !important;
+    transform: translateY(-50%) rotateX(55deg) rotateZ(-20deg) !important;
+    opacity: 0.75 !important;
+  }
+}
+
+/* =========================================================================
+   2. MOBILE PHONES (Narrow width <= 600px)
+   ========================================================================= */
+@media (max-width: 600px) {
+  .match-nav {
+    height: 46px;
+    padding: 4px 6px;
+  }
+  .brand {
+    font-size: 9px;
+    letter-spacing: 0.11em;
+    min-width: 0;
+  }
+  .brand span {
+    width: 27px;
+    height: 27px;
+    flex: 0 0 27px;
+  }
+  .menu-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .match-hero {
+    padding: 82px 18px 22px !important;
+    gap: 16px !important;
+  }
+  .hero-grid {
+    width: 100%;
+    gap: 12px;
+    align-content: center;
+  }
+  .hero-copy h1 {
+    font-size: clamp(3.35rem, 15.5vw, 5.8rem);
+    line-height: 0.8;
+    letter-spacing: -0.075em;
+    margin: 12px 0 16px;
+    max-width: 100%;
+  }
+  .hero-copy p {
+    font-size: 11px;
+    line-height: 1.55;
+    max-width: 330px;
+    margin: 0;
+  }
+  .hero-copy button {
+    font-size: 7px;
+    padding: 10px 13px;
+    margin: 10px 5px 0 0;
+  }
+  .device-stage {
+    height: 240px !important;
+    width: calc(100% + 30px);
+    margin: 0 -15px;
+    transform: scale(0.82) !important;
+    transform-origin: 50% 50%;
+    overflow: visible;
+  }
+  .ref-device {
+    width: 118px;
+    height: 232px;
+    border-radius: 19px;
+    padding: 5px;
+  }
+  .device-screen {
+    border-radius: 14px;
+    padding: 17px 10px;
+  }
+  .device-screen b {
+    font-size: 15px;
+  }
+  .d0 { left: 2%; top: 34px; }
+  .d1 { left: 34%; top: 0; }
+  .d2 { right: 2%; top: 40px; }
+  .hero-bottom {
+    font-size: 7px;
+    letter-spacing: 0.13em;
+  }
+  .hero-bottom span:last-child {
+    display: none;
+  }
+  .star {
+    font-size: 23px;
+    top: 58%;
+    z-index: 1;
+  }
+  .manifesto {
+    padding: 60px 18px 50px !important;
+  }
+  .manifesto-copy {
+    gap: 16px !important;
+    justify-content: center;
+  }
+  .manifesto h2 {
+    font-size: clamp(3.35rem, 15vw, 5.5rem);
+    line-height: 0.82;
+    letter-spacing: -0.08em;
+    margin: 0;
+    width: 100%;
+  }
+  .manifesto-devices {
+    height: 250px !important;
+    width: 100%;
+    transform: scale(0.72) rotate(-7deg) !important;
+    margin-top: -6px;
+  }
+  .manifesto-devices .ref-device {
+    width: 118px;
+    height: 232px;
+  }
+  .capability {
+    padding: 60px 18px 50px !important;
+  }
+  .cap-head {
+    font-size: clamp(4rem, 17vw, 6.8rem);
+    line-height: 0.76;
+    margin: 35px 0 30px !important;
+  }
+  .cap-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cap-grid div {
+    min-height: 100px !important;
+    padding: 14px 10px !important;
+  }
+  .cap-grid b {
+    font-size: 16px;
+    line-height: 0.95;
+  }
+  .cap-grid small,
+  .cap-grid span {
+    font-size: 7px;
+  }
+  .cap-grid span {
+    line-height: 1.3;
+  }
+  .match-work {
+    padding: 60px 0 45px !important;
+  }
+  .match-sticky {
+    padding: 0 18px !important;
+  }
+  .match-track {
+    gap: 12px !important;
+  }
+  .match-card {
+    flex: 0 0 255px !important;
+    width: 255px !important;
+    height: 330px !important;
+    border-radius: 15px;
+    padding: 17px;
+  }
+  .match-card.active {
+    flex: 0 0 275px !important;
+    width: 275px !important;
+    height: 345px !important;
+  }
+  .match-card h3 {
+    font-size: 24px;
+    margin: 15px 0 6px;
+  }
+  .match-card p {
+    font-size: 7px;
+    line-height: 1.35;
+  }
+  .preview {
+    height: 155px;
+    margin-top: 15px;
+    border-radius: 10px;
+  }
+  .preview > div {
+    padding: 11px;
+  }
+  .preview b {
+    font-size: 17px;
+  }
+  .archive {
+    font-size: 7px;
+  }
+  .founders {
+    padding: 60px 18px 50px !important;
+  }
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 32px !important;
+    margin-top: 25px !important;
+  }
+  .founder-image {
+    height: min(100vw, 360px) !important;
+  }
+  .founder-info h3 {
+    font-size: clamp(2.1rem, 11vw, 3.8rem);
+    margin: 14px 0 6px !important;
+  }
+  .founder-info > div {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .statement {
+    padding: 60px 18px !important;
+  }
+  .statement h2 {
+    font-size: clamp(4.2rem, 18vw, 7.5rem);
+    line-height: 0.74;
+    margin: 28px 0 0 !important;
+  }
+  .match-purple {
+    padding: 60px 18px 50px !important;
+  }
+  .tech > div {
+    margin: 35px auto 0 !important;
+    gap: 0 12px;
+  }
+  .tech b {
+    font-size: clamp(2.55rem, 11vw, 5rem);
+    line-height: 0.88;
+  }
+  .match-cta {
+    padding: 60px 18px 40px !important;
+  }
+  .match-cta h2 {
+    font-size: clamp(4rem, 17vw, 7rem);
+    line-height: 0.74;
+    margin: 28px 0 16px !important;
+  }
+  .match-cta p {
+    font-size: 11px;
+    line-height: 1.6;
+    max-width: 290px;
+  }
+  .ref-chrome {
+    width: 155px !important;
+    height: 155px !important;
+    right: -30px !important;
+    top: 60% !important;
+    transform: rotateX(55deg) rotateZ(-20deg) !important;
+  }
+  .ref-chrome > div {
+    width: 60px;
+    height: 60px;
+  }
+  .match-footer {
+    min-height: 160px;
+    padding: 25px 18px;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 10px;
+  }
+  .match-footer b {
+    font-size: 20px;
+  }
+  .match-footer span {
+    font-size: 7px;
+    line-height: 1.35;
+  }
+}
+
+/* =========================================================================
+   3. TABLETS & MID-SIZED DESKTOPS (601px - 1100px)
+   ========================================================================= */
+@media (min-width: 601px) and (max-width: 1100px) {
+  .match-nav {
+    left: 22px !important;
+    right: 22px !important;
+    max-width: 1050px !important;
+  }
+  .hero-grid {
+    grid-template-columns: 1fr 0.85fr;
+    gap: 18px;
+  }
+  .hero-copy h1 {
+    font-size: clamp(4.2rem, 9vw, 7rem);
+  }
+  .device-stage {
+    transform: scale(0.85);
+    transform-origin: center right;
+  }
+  .manifesto {
+    padding: 60px 5vw !important;
+  }
+  .manifesto-copy {
+    gap: 14px;
+  }
+  .manifesto h2 {
+    font-size: clamp(4rem, 8vw, 7rem);
+    margin: 0 0 8px;
+  }
+  .manifesto-devices {
+    height: 310px;
+    transform: scale(0.78) rotate(-7deg);
+    transform-origin: center center;
+    margin: 0;
+  }
+  .capability,
+  .founders,
+  .match-cta,
+  .match-purple,
+  .statement {
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
+  }
+  .capability {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+  .cap-head {
+    font-size: clamp(5rem, 10vw, 9rem);
+    margin: 36px 0 32px !important;
+  }
+  .cap-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .cap-grid div {
+    min-height: 110px;
+  }
+  .founders {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+  .founder-grid {
+    gap: 20px !important;
+    margin-top: 30px !important;
+  }
+  .founder-image {
+    height: 380px !important;
+  }
+  .founder-info h3 {
+    font-size: clamp(2.6rem, 5vw, 4.5rem);
+    margin: 16px 0 8px !important;
+  }
+  .statement {
+    padding-top: 65px !important;
+    padding-bottom: 65px !important;
+  }
+  .statement h2,
+  .match-cta h2 {
+    font-size: clamp(5rem, 11vw, 9.5rem);
+  }
+  .match-purple {
+    padding-top: 60px !important;
+    padding-bottom: 55px !important;
+  }
+  .match-cta {
+    padding-top: 65px !important;
+    padding-bottom: 55px !important;
+  }
+}
+
+/* Landscape short screens (e.g. mobile rotated landscape) */
+@media (max-height: 560px) and (max-width: 1100px) {
+  .match-hero {
+    padding-top: 60px !important;
+    padding-bottom: 12px !important;
+  }
+  .hero-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 8px;
+  }
+  .hero-copy h1 {
+    font-size: clamp(3rem, 10vw, 5.2rem);
+    margin: 8px 0 !important;
+  }
+  .hero-copy p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .device-stage {
+    height: 220px !important;
+    transform: scale(0.68) !important;
+  }
+  .hero-bottom {
+    display: none !important;
+  }
+  .manifesto {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+  .manifesto-devices {
+    height: 230px !important;
+  }
+  .capability {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+  .founders {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+  .statement {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+  .match-purple {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+  .match-cta {
+    padding-top: 45px !important;
+    padding-bottom: 45px !important;
+  }
+}
+
+.match-page,
+.match-hero,
+.manifesto,
+.capability,
+.match-work,
+.founders,
+.statement,
+.match-purple,
+.match-cta,
+.match-footer,
+.carousel-showcase-section {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 3D Infinite Perspective Carousel Enhancements */
+.carousel-showcase-section {
+  position: relative;
+  background-color: #f5f4f6;
+}
+
+.carousel-3d-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.carousel-3d-track {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.carousel-3d-card {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+.carousel-3d-card[data-active="true"] {
+  cursor: pointer;
+}
+
+.carousel-3d-card[data-active="true"]:hover {
+  filter: brightness(1.04);
+}
+
+@media (max-width: 600px) {
+  .carousel-3d-stage {
+    perspective: 880px;
+  }
+}
+
