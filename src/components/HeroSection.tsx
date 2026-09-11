@@ -1,107 +1,139 @@
 import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import { AmbientFloatingCube } from './ThreeDAssets';
+import { motion } from 'motion/react';
+import { ChevronDown, Sparkles, Activity } from 'lucide-react';
 
 interface HeroSectionProps {
-  onBuildTogether: () => void;
-  onViewWork: () => void;
+  onExploreClick: () => void;
+  onOpenProjectModal: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
-  onBuildTogether,
-  onViewWork,
+  onExploreClick,
+  onOpenProjectModal,
 }) => {
   return (
-    <section id="home" className="relative pt-8 pb-12 md:pt-14 md:pb-16 overflow-hidden">
-      {/* Background Glows & Nebula */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[400px] bg-gradient-to-b from-blue-600/20 via-cyan-500/15 to-transparent blur-3xl pointer-events-none -z-10" />
+    <section
+      id="hero"
+      className="relative min-h-screen flex flex-col justify-between items-center px-6 sm:px-12 pt-28 pb-12 overflow-hidden select-none"
+    >
+      {/* Top Telemetry Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="w-full max-w-7xl mx-auto flex items-center justify-between font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase pt-2"
+      >
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span>EST. 2026 / DIGITAL PRODUCT STUDIO</span>
+        </div>
 
-      {/* Floating 3D Ambient Cubes (Left & Right as seen in image) */}
-      <AmbientFloatingCube
-        size={54}
-        className="top-6 left-6 md:left-24 animate-float-slow opacity-80"
-      />
-      <AmbientFloatingCube
-        size={46}
-        className="top-24 left-12 md:left-36 animate-float-reverse opacity-70"
-      />
-      <AmbientFloatingCube
-        size={58}
-        className="top-10 right-8 md:right-28 animate-float-slow opacity-85"
-      />
-      <AmbientFloatingCube
-        size={42}
-        className="top-36 right-14 md:right-44 animate-float-reverse opacity-60"
-      />
-
-      {/* Vertical Atmospheric Typographic Columns */}
-      <div className="hidden lg:flex flex-col space-y-4 absolute left-8 xl:left-14 top-20 text-[13px] tracking-[0.25em] font-semibold text-slate-400/70 select-none uppercase pointer-events-none font-['Outfit']">
-        <span>PEOPLE</span>
-        <span>IDEAS</span>
-        <span>TECHNOLOGY</span>
-        <span>IMPACT</span>
-      </div>
-
-      <div className="hidden lg:flex flex-col space-y-4 absolute right-8 xl:right-14 top-20 text-[13px] tracking-[0.25em] font-semibold text-slate-400/70 select-none uppercase pointer-events-none text-right font-['Outfit']">
-        <span>MODERN</span>
-        <span>SCALABLE</span>
-        <span>BEAUTIFUL</span>
-        <span>TOGETHER</span>
-      </div>
-
-      {/* Main Center Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
-        {/* Top Pill Badge */}
-        <div className="inline-flex items-center justify-center">
-          <div className="inline-flex items-center px-6 py-1.5 rounded-full border border-blue-400/40 bg-blue-950/40 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
-            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] text-blue-200 uppercase font-['Outfit']">
-              BUILDING A BETTER DIGITAL WORLD
-            </span>
+        <div className="hidden sm:flex items-center gap-6">
+          <div className="flex items-center gap-1.5">
+            <Activity className="w-3 h-3 text-cyan-400" />
+            <span>NEURAL ENGINES ACTIVE</span>
           </div>
+          <span className="text-white/20">|</span>
+          <span>AWARDS-GRADE CREATIVE DEV</span>
         </div>
+      </motion.div>
 
-        {/* Main Title Block */}
-        <div className="mt-7 sm:mt-9 space-y-1 sm:space-y-2">
-          {/* Brand Wordmark */}
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight font-['Outfit'] text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]">
-            MakeWebb
-          </h1>
+      {/* Center Monumental Typography Composition */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center justify-center text-center my-auto py-8">
+        {/* Monogram Pill */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.3 }}
+          className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl mb-6 sm:mb-8 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
+        >
+          <span className="font-mono text-[10px] tracking-[0.25em] text-cyan-400 font-semibold uppercase">
+            SCENE 01 / LIQUID SCULPTURE
+          </span>
+          <span className="w-1 h-1 rounded-full bg-white/30" />
+          <span className="font-mono text-[10px] tracking-widest text-slate-400">
+            MW MONOGRAM 3D
+          </span>
+        </motion.div>
 
-          {/* Sub-headline lines */}
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight font-['Outfit']">
-            Web. Android. Windows.
-          </h2>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight font-['Outfit']">
-            Ideas into real products.
-          </h2>
-        </div>
+        {/* Huge Title: MAKEWEBB */}
+        <motion.h1
+          initial={{ opacity: 0, y: 35 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display font-black text-6xl sm:text-8xl md:text-9xl lg:text-[11.5rem] tracking-[-0.04em] leading-[0.88] text-white uppercase drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+        >
+          <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-slate-100 to-slate-400">
+            MAKEWEBB
+          </span>
+        </motion.h1>
 
-        {/* Subtitle Description */}
-        <p className="mt-5 sm:mt-6 max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-300 font-normal leading-relaxed">
-          We design and develop modern digital experiences with 3D, AI and next-gen technologies.
-        </p>
+        {/* Supporting Statement */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-lg sm:text-2xl md:text-3xl text-slate-200 font-medium tracking-tight mt-6 sm:mt-8 max-w-2xl mx-auto"
+        >
+          We build intelligent digital experiences.
+        </motion.p>
 
-        {/* Action Buttons */}
-        <div className="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-4">
-          {/* Primary Action Button */}
+        {/* Secondary Disciplines: AI · WEB · DATA · DESIGN */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.9 }}
+          className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-xs sm:text-sm tracking-[0.35em] text-cyan-400/90 uppercase mt-4 sm:mt-5"
+        >
+          <span>AI</span>
+          <span className="text-white/30">•</span>
+          <span>WEB</span>
+          <span className="text-white/30">•</span>
+          <span>DATA</span>
+          <span className="text-white/30">•</span>
+          <span>DESIGN</span>
+        </motion.div>
+
+        {/* Dual CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.1 }}
+          className="flex flex-wrap items-center justify-center gap-4 mt-8 sm:mt-10"
+        >
           <button
-            onClick={onBuildTogether}
-            className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-sm sm:text-base font-bold text-slate-950 bg-white hover:bg-slate-100 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.35)] hover:shadow-[0_0_40px_rgba(255,255,255,0.55)] cursor-pointer"
+            onClick={onOpenProjectModal}
+            className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-white text-black font-mono text-xs tracking-[0.2em] uppercase font-bold hover:bg-cyan-300 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_40px_rgba(56,189,248,0.5)]"
           >
-            <span>Let's Build Together</span>
-            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <Sparkles className="w-3.5 h-3.5 text-black" />
+            <span>DISCUSS AN ENGAGEMENT</span>
           </button>
 
-          {/* Secondary Action Button */}
           <button
-            onClick={onViewWork}
-            className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-sm sm:text-base font-semibold text-white bg-slate-900/70 border border-slate-700/80 hover:border-blue-400/70 hover:bg-slate-800/80 transition-all duration-300 shadow-[0_0_20px_rgba(30,41,59,0.5)] cursor-pointer"
+            onClick={onExploreClick}
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 text-white font-mono text-xs tracking-[0.2em] uppercase backdrop-blur-xl transition-all duration-300"
           >
-            <span>View Our Work</span>
-            <ArrowUpRight className="w-4 h-4 text-cyan-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <span>VIEW SHOWCASE</span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Understated Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 1.3 }}
+        className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center pt-6"
+      >
+        <button
+          onClick={onExploreClick}
+          className="group flex flex-col items-center gap-2 font-mono text-[10px] tracking-[0.3em] text-slate-400 hover:text-white uppercase transition-colors"
+        >
+          <span>SCROLL TO EXPLORE ↓</span>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-white/40 via-cyan-400/80 to-transparent group-hover:h-12 transition-all duration-300" />
+        </button>
+      </motion.div>
     </section>
   );
 };

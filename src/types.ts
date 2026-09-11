@@ -1,48 +1,38 @@
-export interface TeamMember {
+export interface Founder {
   id: string;
   name: string;
   role: string;
-  badge: string;
+  focus: string;
   tagline: string;
-  categoryTag: string;
-  phone: string;
+  portfolio: string;
+  github: string;
+  linkedin: string;
   email: string;
-  photoUrl: string;
-  portfolioUrl: string;
-  githubUrl: string;
-  linkedinUrl: string;
+  phone: string;
+  visualDirection: string;
+  accentColor: string;
+  techHighlights: string[];
 }
 
-export interface ServiceCardItem {
+export interface StudioProject {
   id: string;
-  number: string;
+  code: string; // e.g. "MW / 001"
   title: string;
+  type: string; // e.g. "AI PRODUCT"
+  technology: string; // e.g. "Next.js · AI · Analytics"
+  url: string;
   description: string;
-  category: 'web' | 'android' | 'windows' | 'ai';
-  iconType: 'browser' | 'android' | 'windows' | 'ai';
-  deliverables?: string[];
-  techStack?: string[];
+  status: string;
+  stats: string;
+  accent: string;
+  previewType: 'ai-tracker' | 'examiner' | 'detector' | 'ecommerce' | 'gesture';
 }
 
-export interface DetailedService {
+export interface CapabilityItem {
   id: string;
-  number: string;
-  title: string;
-  subtitle: string;
+  name: string;
+  category: 'AI' | 'Engineering' | 'Experience';
   description: string;
-  deliveryTime: string;
-  startingPrice: string;
-  techStack: string[];
-  features: string[];
-  deliverables: string[];
-}
-
-export interface ProjectItem {
-  id: string;
-  title: string;
-  platform: 'Web' | 'Android' | 'Windows' | 'AI / ML';
-  description: string;
-  image: string;
   metrics: string;
-  link: string;
+  angle: number; // For 3D orbital positioning
 }

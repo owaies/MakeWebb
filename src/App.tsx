@@ -1,137 +1,130 @@
 import React, { useState, useEffect } from 'react';
+import { ThreeCanvas } from './components/ThreeCanvas';
+import { CustomCursor } from './components/CustomCursor';
 import { Navbar } from './components/Navbar';
+import { SceneIndicator } from './components/SceneIndicator';
 import { HeroSection } from './components/HeroSection';
-import { CenterShowcase } from './components/CenterShowcase';
-import { ServiceCardsRow } from './components/ServiceCardsRow';
-import { TickerRibbon } from './components/TickerRibbon';
-import { ServicesSection } from './components/ServicesSection';
+import { GridTransitionScene } from './components/GridTransitionScene';
 import { ProjectsSection } from './components/ProjectsSection';
 import { AboutSection } from './components/AboutSection';
-import { Footer } from './components/Footer';
+import { FoundersSection } from './components/FoundersSection';
+import { CapabilitiesOrbital } from './components/CapabilitiesOrbital';
+import { ContactSection } from './components/ContactSection';
 import { StartProjectModal } from './components/StartProjectModal';
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState('home');
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeScene, setActiveScene] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalService, setModalService] = useState<string | undefined>(undefined);
-  const [selectedServiceId, setSelectedServiceId] = useState<string>('websites');
 
-  // Handle section scrolling
-  const handleNavigate = (sectionId: string) => {
-    setActiveSection(sectionId);
+  // Monitor scroll progression across the 7 scenes
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? Math.min(Math.max(scrollY / maxScroll, 0), 1) : 0;
+      setScrollProgress(progress);
+
+      // Map progress to active scene (1 to 7)
+      if (progress < 0.12) {
+        setActiveScene(1);
+      } else if (progress < 0.26) {
+        setActiveScene(2);
+      } else if (progress < 0.46) {
+        setActiveScene(3);
+      } else if (progress < 0.62) {
+        setActiveScene(4);
+      } else if (progress < 0.78) {
+        setActiveScene(5);
+      } else if (progress < 0.90) {
+        setActiveScene(6);
+      } else {
+        setActiveScene(7);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleNavigateSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  // Open modal with specific service
-  const handleOpenStartProject = (serviceName?: string) => {
-    setModalService(serviceName);
-    setIsModalOpen(true);
-  };
-
-  // When clicking on a feature service card (01 to 04)
-  const handleServiceCardClick = (serviceId: string) => {
-    let mappedTab = 'websites';
-    if (serviceId === 'android') mappedTab = 'android-apps';
-    if (serviceId === 'windows') mappedTab = 'windows-software';
-    if (serviceId === 'ai') mappedTab = 'ai-ml';
-    setSelectedServiceId(mappedTab);
-
-    // Scroll to services section
-    const servicesEl = document.getElementById('services');
-    if (servicesEl) {
-      servicesEl.scrollIntoView({ behavior: 'smooth' });
+  const handleJumpToScene = (sceneIndex: number) => {
+    const sceneIds = [
+      'hero',
+      'grid-morph',
+      'projects',
+      'about',
+      'founders',
+      'capabilities',
+      'contact',
+    ];
+    const targetId = sceneIds[sceneIndex - 1];
+    if (targetId) {
+      handleNavigateSection(targetId);
     }
   };
 
-  // Scroll spy to update active navbar link
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'team', 'services', 'projects', 'about', 'contact'];
-      const scrollY = window.scrollY + 180;
-
-      for (const sec of sections) {
-        const el = document.getElementById(sec);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollY >= top && scrollY < top + height) {
-            setActiveSection(sec);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#02050f] text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-blue-500 selection:text-white">
-      {/* Background Starry Glow & Subtle Grid Texture */}
-      <div className="fixed inset-0 pointer-events-none -z-20 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(37,99,235,0.2),rgba(255,255,255,0))]" />
-      <div
-        className="fixed inset-0 pointer-events-none -z-20 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, #38bdf8 1px, transparent 1px), linear-gradient(to bottom, #38bdf8 1px, transparent 1px)',
-          backgroundSize: '4rem 4rem',
-        }}
-      />
+    <div className="relative min-h-screen bg-[#050608] text-white selection:bg-cyan-400 selection:text-black overflow-x-hidden font-sans">
+      {/* Custom Fluid Magnetic Cursor */}
+      <CustomCursor />
 
-      {/* Global Navigation */}
+      {/* WebGL Real-time 3D Scene Background (Liquid Glass MW Sculpture) */}
+      <ThreeCanvas scrollProgress={scrollProgress} />
+
+      {/* Noise Texture Overlay for Film Grain / Editorial Feel */}
+      <div className="fixed inset-0 bg-noise pointer-events-none z-10 opacity-30" />
+
+      {/* Minimal Luxury Floating Navbar */}
       <Navbar
-        activeSection={activeSection}
-        onNavigate={handleNavigate}
-        onOpenStartProject={() => handleOpenStartProject()}
+        onOpenProjectModal={() => setIsModalOpen(true)}
+        onNavigateSection={handleNavigateSection}
       />
 
-      {/* Main Page Flow */}
-      <main className="flex-1">
-        {/* Hero Section */}
+      {/* 7-Scene Narrative Journey Indicator */}
+      <SceneIndicator
+        activeScene={activeScene}
+        onSelectScene={handleJumpToScene}
+      />
+
+      {/* Main Continuous Narrative Flow */}
+      <main className="relative z-20">
+        {/* Scene 01: Hero with Monumental Typography & 3D Object */}
         <HeroSection
-          onBuildTogether={() => handleOpenStartProject()}
-          onViewWork={() => handleNavigate('projects')}
+          onExploreClick={() => handleNavigateSection('grid-morph')}
+          onOpenProjectModal={() => setIsModalOpen(true)}
         />
 
-        {/* Center Ecosystem & Profile Cards Showcase (Mohammed Owaies & Mohammed Afaf Hassan + 3D Cube + Tech Badges) */}
-        <CenterShowcase
-          onOpenProjectModal={() => handleOpenStartProject()}
-        />
+        {/* Scene 02: Grid Transition & Spatial Telemetry */}
+        <GridTransitionScene />
 
-        {/* 4 Feature Service Cards (01 Web, 02 Android, 03 Windows, 04 AI) */}
-        <ServiceCardsRow onSelectService={handleServiceCardClick} />
+        {/* Scene 03: Selected Work - 5 Editorial Case Studies */}
+        <ProjectsSection />
 
-        {/* Ticker Divider Ribbon */}
-        <TickerRibbon />
+        {/* Scene 04: Manifesto - We Don't Just Build Websites */}
+        <AboutSection />
 
-        {/* Detailed Services Section (One studio. Many surfaces.) */}
-        <ServicesSection
-          onSelectServiceForProject={(title) => handleOpenStartProject(title)}
-          selectedServiceId={selectedServiceId}
-        />
+        {/* Scene 05: The People Behind The System - Mohammed Owaies & Mohammed Afaf Hassan */}
+        <FoundersSection />
 
-        {/* Featured Projects Work */}
-        <ProjectsSection onStartProject={() => handleOpenStartProject()} />
+        {/* Scene 06: Spatial Technology & Capabilities Orbital Matrix */}
+        <CapabilitiesOrbital />
 
-        {/* About & Founders Story */}
-        <AboutSection onStartProject={() => handleOpenStartProject()} />
+        {/* Scene 07: Dramatic Synthesis & Contact */}
+        <ContactSection onOpenProjectModal={() => setIsModalOpen(true)} />
       </main>
-
-      {/* Footer & Direct Contact */}
-      <Footer
-        onOpenStartProject={() => handleOpenStartProject()}
-        onNavigate={handleNavigate}
-      />
 
       {/* Interactive Project Inquiry Modal */}
       <StartProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        initialService={modalService}
       />
     </div>
   );

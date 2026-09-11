@@ -1,78 +1,113 @@
 import React from 'react';
-import { ArrowUpRight, ShieldCheck, Zap, Code2, Users } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Sparkles, Compass, Zap, Shield } from 'lucide-react';
 
-export const AboutSection: React.FC<{ onStartProject: () => void }> = ({ onStartProject }) => {
-  const pillars = [
-    {
-      icon: <Code2 className="w-5 h-5 text-cyan-400" />,
-      title: 'Full-Surface Engineering',
-      desc: 'We do not stop at web. We build native Android apps, Windows desktop systems, and integrated AI backbones.',
-    },
-    {
-      icon: <Zap className="w-5 h-5 text-blue-400" />,
-      title: 'Sub-Second Performance',
-      desc: 'Modern digital experiences require frictionless speed. Every millisecond of interaction latency is optimized.',
-    },
-    {
-      icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />,
-      title: 'Direct Founder Collaboration',
-      desc: 'Work directly with Mohammed Owaies & Mohammed Afaf Hassan from architecture blueprint to deployment.',
-    },
-    {
-      icon: <Users className="w-5 h-5 text-indigo-400" />,
-      title: 'Product-First Mindset',
-      desc: 'We engineer with product traction, revenue, and scale in mind — turning raw ideas into tangible market assets.',
-    },
-  ];
-
+export const AboutSection: React.FC = () => {
   return (
-    <section id="about" className="relative py-16 md:py-24 border-t border-blue-500/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Text */}
-          <div className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-semibold tracking-[0.25em] text-cyan-400 font-mono uppercase">
-              ABOUT MAKEWEBB
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white font-['Outfit'] leading-tight">
-              Crafting Next-Gen <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-300">
-                Digital Experiences.
-              </span>
-            </h2>
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-              MakeWebb is a modern software studio founded to bridge the gap between creative visual artistry and robust engineering. Founded by <strong className="text-white">Mohammed Owaies</strong> (AI/ML Engineer) and <strong className="text-white">Mohammed Afaf Hassan</strong> (Web Developer), we construct unified ecosystems that run everywhere users live — browsers, mobile devices, desktop workstations, and autonomous AI agents.
-            </p>
+    <section
+      id="about"
+      className="relative min-h-screen flex flex-col justify-center px-6 sm:px-12 py-32 border-b border-white/[0.06] overflow-hidden select-none"
+    >
+      <div className="max-w-7xl mx-auto w-full">
+        {/* Telemetry Header */}
+        <div className="flex items-center justify-between font-mono text-[10px] tracking-[0.25em] text-slate-400 uppercase mb-12">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span>SCENE 04 / STUDIO MANIFESTO</span>
+          </div>
+          <span>MAKEWEBB CORE THESIS</span>
+        </div>
 
-            <div className="pt-2">
-              <button
-                onClick={onStartProject}
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-slate-950 bg-white hover:bg-slate-100 transition-all shadow-[0_0_25px_rgba(255,255,255,0.3)] cursor-pointer"
-              >
-                <span>Initiate A Collaboration</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Monumental Editorial Headline with Dynamic Word Depths */}
+        <div className="space-y-2 sm:space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            className="font-display font-extrabold text-4xl sm:text-6xl md:text-8xl lg:text-[7.5rem] tracking-[-0.04em] leading-[0.92] text-white uppercase"
+          >
+            WE DON'T JUST
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.15 }}
+            className="font-display font-extrabold text-4xl sm:text-6xl md:text-8xl lg:text-[7.5rem] tracking-[-0.04em] leading-[0.92] uppercase text-slate-400"
+          >
+            BUILD WEBSITES.
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.3 }}
+            className="font-display font-black text-5xl sm:text-7xl md:text-9xl lg:text-[8.5rem] tracking-[-0.04em] leading-[0.9] uppercase text-gradient-glow pt-2"
+          >
+            WE BUILD EXPERIENCES.
+          </motion.div>
+        </div>
+
+        {/* Supporting Editorial Copy */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-16 sm:mt-24 pt-12 border-t border-white/[0.08]">
+          <div className="lg:col-span-6">
+            <p className="font-sans text-xl sm:text-2xl md:text-3xl text-slate-200 font-light leading-relaxed tracking-tight">
+              MakeWebb combines artificial intelligence, engineering, data and design to create
+              digital products that feel as intelligent as they function.
+            </p>
           </div>
 
-          {/* Right Cards: Pillars */}
-          <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {pillars.map((p, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-2xl bg-[#07122b]/80 border border-blue-500/20 backdrop-blur-xl hover:border-cyan-400/40 transition-all shadow-[0_0_20px_rgba(37,99,235,0.1)]"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center mb-4">
-                  {p.icon}
-                </div>
-                <h3 className="text-base font-bold text-white font-['Outfit'] mb-2">
-                  {p.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {p.desc}
-                </p>
+          <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl">
+              <div className="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400 mb-4">
+                <Sparkles className="w-5 h-5" />
               </div>
-            ))}
+              <div className="font-mono text-xs font-bold text-white tracking-widest uppercase">
+                01. ARTIFICIAL REASONING
+              </div>
+              <p className="font-sans text-sm text-slate-400 mt-2 leading-relaxed">
+                Embedding autonomous machine learning into everyday user experiences to predict, adapt, and empower.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl">
+              <div className="w-10 h-10 rounded-xl bg-indigo-400/10 border border-indigo-400/20 flex items-center justify-center text-indigo-400 mb-4">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div className="font-mono text-xs font-bold text-white tracking-widest uppercase">
+                02. SPATIAL ELEGANCE
+              </div>
+              <p className="font-sans text-sm text-slate-400 mt-2 leading-relaxed">
+                Sculpting depth, light caustics, and liquid motion to transcend static templates into living digital art.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl">
+              <div className="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/20 flex items-center justify-center text-emerald-400 mb-4">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div className="font-mono text-xs font-bold text-white tracking-widest uppercase">
+                03. ZERO COMPROMISE
+              </div>
+              <p className="font-sans text-sm text-slate-400 mt-2 leading-relaxed">
+                Sub-30ms execution pipelines, native TypeScript type-safety, and production-hardened microservices.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-xl">
+              <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 mb-4">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div className="font-mono text-xs font-bold text-white tracking-widest uppercase">
+                04. MEASURABLE IMPACT
+              </div>
+              <p className="font-sans text-sm text-slate-400 mt-2 leading-relaxed">
+                Building scalable digital equity for founders and enterprises with uncompromising craftsmanship.
+              </p>
+            </div>
           </div>
         </div>
       </div>
