@@ -2,13 +2,22 @@ import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 
-const WORK = [
+interface WorkItem {
+  index: string;
+  title: string;
+  meta: string;
+  year: string;
+  tone: string;
+  featured?: boolean;
+}
+
+const WORK: WorkItem[] = [
   { index: '#01', title: 'Logan', meta: 'Architecture · Webcore', year: '2021', tone: 'violet' },
   { index: '#02', title: 'Zumar', meta: 'Web Creation · Development', year: '2024', tone: 'copper' },
   { index: '#03', title: 'Nova', meta: 'Brand · Motion · Web', year: '2024', tone: 'blue', featured: true },
   { index: '#04', title: 'Kiln', meta: 'Product · Interface', year: '2025', tone: 'bronze' },
   { index: '#05', title: 'Meridian', meta: 'Systems · Identity', year: '2026', tone: 'slate' },
-] as const;
+];
 
 const toneStyles: Record<string, string> = {
   violet: 'from-violet-500/30 via-fuchsia-500/10 to-transparent',
@@ -18,7 +27,7 @@ const toneStyles: Record<string, string> = {
   slate: 'from-slate-400/20 via-blue-500/10 to-transparent',
 };
 
-function SpatialCard({ item, index, progress }: { item: typeof WORK[number]; index: number; progress: any }) {
+function SpatialCard({ item, index, progress }: { item: WorkItem; index: number; progress: any }) {
   const ref = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
   const pointerX = useMotionValue(0);
