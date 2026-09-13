@@ -75,6 +75,7 @@ export function ScrollStory() {
   const secondLineX = useTransform(scrollYProgress, [0.65, 0.94], ["70vw", "-170vw"]);
   const secondLineOpacity = useTransform(scrollYProgress, [0.62, 0.7, 0.9, 0.96], [0, 1, 1, 0]);
   const cardsOpacity = useTransform(scrollYProgress, [0, 0.08, 0.93, 0.99], [0, 1, 1, 0]);
+  const serviceOpacity = useTransform(scrollYProgress, [0.04, 0.1, 0.5, 0.6], [0, 1, 1, 0]);
   const introOpacity = useTransform(scrollYProgress, [0, 0.08, 0.18], [1, 1, 0]);
   const firstProjectOpacity = useTransform(scrollYProgress, [0.58, 0.65, 0.76, 0.83], [0, 1, 1, 0]);
   const secondProjectOpacity = useTransform(scrollYProgress, [0.77, 0.85, 0.94, 0.99], [0, 1, 1, 0]);
@@ -95,8 +96,8 @@ export function ScrollStory() {
       <motion.p aria-hidden className="story-runner story-runner-dark" style={{ x: firstLineX, opacity: firstLineOpacity }}>WE BUILD WHAT MOVES</motion.p>
       <motion.p aria-hidden className="story-runner story-runner-light" style={{ x: secondLineX, opacity: secondLineOpacity }}>DESIGN THAT SHIPS</motion.p>
 
-      <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center" style={{ opacity: cardsOpacity }}>
-        {slots.map((index) => <StoryCard key={`service-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={light} />)}
+      <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center" style={{ opacity: serviceOpacity }}>
+        {slots.map((index) => <StoryCard key={`service-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={false} />)}
       </motion.div>
 
       <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center pointer-events-none" style={{ opacity: firstProjectOpacity }}>
