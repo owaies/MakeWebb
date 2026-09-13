@@ -1,9 +1,24 @@
-/* Final scene architecture: the hero, persistent card, carousel and transition overlays
-   all live inside one long scroll range. Later document sections cannot appear early. */
+/*
+ * DEBUG BRANCH ONLY: cinematic sticky foundation.
+ * This file deliberately isolates the scene from the production choreography.
+ */
+
+/* Use clipping, not an overflow scrolling/containing context. */
+html,
+body {
+  overflow-x: clip !important;
+}
+
+.mw-cinematic-site {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
+
+/* One long scroll range containing one viewport-pinned scene. */
 .mw-cinematic {
-  height: 680vh !important;
-  min-height: 680vh !important;
   position: relative !important;
+  height: 760vh !important;
+  min-height: 760vh !important;
   overflow: visible !important;
   background: #7319dd !important;
 }
@@ -15,9 +30,15 @@
   min-height: 100svh !important;
   max-height: none !important;
   overflow: visible !important;
-  perspective: 1400px !important;
-  transform-style: preserve-3d !important;
-  isolation: isolate !important;
+
+  /* Remove unnecessary containing/3D context while proving sticky behavior. */
+  perspective: none !important;
+  transform: none !important;
+  transform-style: flat !important;
+  isolation: auto !important;
+  filter: none !important;
+  contain: none !important;
+  will-change: auto !important;
 }
 
 .mw-card-anchor {
@@ -25,16 +46,17 @@
   inset: 0 !important;
   z-index: 100 !important;
   overflow: visible !important;
-  transform-style: preserve-3d !important;
-  perspective: 1400px !important;
+  transform: none !important;
+  transform-style: flat !important;
+  perspective: none !important;
   pointer-events: none !important;
 }
 
 .mw-card {
-  overflow: visible !important;
-  backface-visibility: visible !important;
-  transform-style: preserve-3d !important;
   will-change: transform !important;
+  backface-visibility: visible !important;
+  transform-style: flat !important;
+  overflow: visible !important;
 }
 
 .mw-persistent-card {
@@ -42,33 +64,55 @@
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
+  pointer-events: auto !important;
 }
 
-.mw-orbit-card { z-index: 110 !important; }
-.mw-white-stage { z-index: 1 !important; }
-.mw-hero-layer { z-index: 2 !important; }
-.mw-stage-head { z-index: 130 !important; }
-.mw-type { z-index: 125 !important; }
-.mw-collection-pill { z-index: 135 !important; }
-.mw-beyond { z-index: 200 !important; }
+/* Keep the existing hero/card visual design, but remove all scene choreography. */
+.mw-hero-layer {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 
-/* A reduced-motion preference must not collapse the pinned scene. The user can
-   still scroll through the same geometry; this prevents a 1-viewport jump into
-   the following sections. */
-@media (prefers-reduced-motion: reduce) {
-  .mw-cinematic {
-    height: 680vh !important;
-    min-height: 680vh !important;
-  }
-  .mw-sticky {
-    position: sticky !important;
-    height: 100svh !important;
-    min-height: 100svh !important;
-    overflow: visible !important;
-  }
-  .mw-card {
-    transform: none !important;
-  }
+.mw-debug-panel {
+  position: fixed !important;
+  top: 8px !important;
+  right: 8px !important;
+  z-index: 9999 !important;
+  width: min(176px, calc(100vw - 16px)) !important;
+  max-height: 38vh !important;
+  overflow: auto !important;
+  padding: 9px !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 8px !important;
+  background: rgba(5, 5, 8, 0.92) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
+  font: 600 8px/1.45 var(--font-mono) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.mw-debug-panel b {
+  display: block !important;
+  margin-bottom: 5px !important;
+  font: 700 9px/1.2 var(--font-mono) !important;
+  letter-spacing: 0.08em !important;
+}
+
+.mw-debug-panel details {
+  margin-top: 6px !important;
+}
+
+.mw-debug-panel summary {
+  cursor: pointer !important;
+  margin-bottom: 4px !important;
+}
+
+.mw-debug-chain {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  margin: 3px 0 !important;
 }
 
 @media (max-width: 900px) {
@@ -76,20 +120,26 @@
     height: 760vh !important;
     min-height: 760vh !important;
   }
+
   .mw-sticky {
     height: 100svh !important;
     min-height: 100svh !important;
-    perspective: 1100px !important;
   }
-  .mw-card-anchor {
-    perspective: 1100px !important;
-  }
+
   .mw-card {
     width: 185px !important;
     height: 300px !important;
     margin: -150px 0 0 -92.5px !important;
     left: 50% !important;
     top: 50% !important;
-    backface-visibility: visible !important;
+  }
+
+  .mw-debug-panel {
+    width: 176px !important;
   }
 }
+
+/*
+ * Intentionally no prefers-reduced-motion transform override here.
+ * The diagnostic card owns the single transform used for this test.
+ */

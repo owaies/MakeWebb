@@ -1,204 +1,252 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
-
-const projects = [
-  ['AI JOB TRACKER', 'AI PRODUCT', 'AI · ANALYTICS', 'purple'],
-  ['E-EXAMINER', 'EDTECH', 'WEB · ASSESSMENTS', 'silver'],
-  ['WORLD OBJECT DETECTOR', 'COMPUTER VISION', 'VISION · PYTHON', 'green'],
-  ['SILSILA BURQA HOUSE', 'E-COMMERCE', 'COMMERCE · WEB', 'lilac'],
-  ['HAND GESTURE CONTROLLER', 'INTERACTION', 'VISION · MOTION', 'blue'],
-] as const;
-
-const caps = [
-  ['01', 'AI / MACHINE LEARNING', 'Intelligent systems and practical automation.'],
-  ['02', 'WEB APPLICATIONS', 'Fast, resilient products designed around people.'],
-  ['03', 'COMPUTER VISION', 'Real-time visual intelligence and interaction.'],
-  ['04', 'DATA SYSTEMS', 'Pipelines, analytics and information architecture.'],
-  ['05', 'UI / UX', 'Interfaces with hierarchy, clarity and motion.'],
-  ['06', 'INTERACTIVE 3D', 'Spatial experiences for the modern web.'],
-];
+import { ArrowUpRight } from 'lucide-react';
 
 type ProgressValue = ReturnType<typeof useScroll>['scrollYProgress'];
-type Project = typeof projects[number];
 
-const slot = {
-  x: [-1.55, -0.78, 0, 0.78, 1.55],
-  y: [24, 5, -7, 5, 24],
-  z: [0, 105, 210, 105, 0],
-  ry: [20, 8, 0, -8, -20],
-  rz: [4, 2, 0, -2, -4],
-  scale: [0.68, 0.86, 1, 0.86, 0.68],
-};
-
-function clamp(v: number, a = 0, b = 1) { return Math.max(a, Math.min(b, v)); }
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
-function cyc(values: number[], t: number) {
-  const n = values.length;
-  const x = ((t % n) + n) % n;
-  const a = Math.floor(x);
-  const b = (a + 1) % n;
-  return lerp(values[a], values[b], x - a);
+function clamp(v: number, a = 0, b = 1) {
+  return Math.max(a, Math.min(b, v));
 }
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+
 function pathTransform(x: number, y: number, z: number, ry: number, rz: number, scale: number) {
   return `translate3d(calc(-50% + ${x}vw), calc(-50% + ${y}px), ${z}px) rotateY(${ry}deg) rotateZ(${rz}deg) scale(${scale})`;
 }
 
-function CardFace({ title, tag, tech, accent, index }: { title: string; tag: string; tech: string; accent: string; index: number }) {
+function CardFace() {
   return <>
-    <div className="mw-card-top"><span>{tag}</span><ArrowUpRight size={14} /></div>
-    <div className={`mw-card-art mw-art-${accent}`}>
+    <div className="mw-card-top"><span>AI PRODUCT</span><ArrowUpRight size={14} /></div>
+    <div className="mw-card-art mw-art-purple">
       <div className="mw-card-ui">
-        <span>MAKEWEBB / {String(index + 1).padStart(2, '0')}</span>
-        <strong>{title}</strong>
-        <small>{index === 0 ? 'Systems that answer first.' : index === 1 ? 'Assess. Understand. Improve.' : index === 2 ? 'See what the model sees.' : index === 3 ? 'Crafted for digital commerce.' : 'Interfaces that respond.'}</small>
+        <span>MAKEWEBB / 01</span>
+        <strong>AI JOB<br />TRACKER</strong>
+        <small>Systems that answer first.</small>
         <i />
       </div>
     </div>
-    <h3>{title}</h3>
-    <div className="mw-card-foot"><span>{tech}</span><span>VIEW ↗</span></div>
+    <h3>AI JOB TRACKER</h3>
+    <div className="mw-card-foot"><span>AI · ANALYTICS</span><span>VIEW ↗</span></div>
   </>;
 }
 
-function PersistentHeroCard({ progress }: { progress: ProgressValue }) {
+function DiagnosticCard({
+  progress,
+  cardRef,
+}: {
+  progress: ProgressValue;
+  cardRef: React.RefObject<HTMLAnchorElement | null>;
+}) {
   const transform = useTransform(progress, p => {
-    // The card has one continuous path. There is no visibility/opacity handoff.
-    if (p <= 0.30) {
-      const t = clamp(p / 0.30);
-      const e = t * t * (3 - 2 * t);
-      return pathTransform(
-        lerp(29, 9, e),
-        lerp(-8, -1, e),
-        lerp(0, 150, e),
-        lerp(-7, -18, e),
-        lerp(0, -2, e),
-        lerp(1.02, 0.91, e),
-      );
+    const stops = [
+      { p: 0.00, x: 22, y: 0, z: 0, ry: 0, rz: 0, scale: 1 },
+      { p: 0.25, x: 10, y: 0, z: 20, ry: 0, rz: 0, scale: 0.98 },
+      { p: 0.50, x: 0, y: 0, z: 45, ry: 0, rz: 0, scale: 0.95 },
+      { p: 0.75, x: 0, y: 0, z: 70, ry: 16, rz: 0, scale: 0.91 },
+      { p: 1.00, x: -12, y: 0, z: 85, ry: -18, rz: 0, scale: 0.88 },
+    ];
+
+    const q = clamp(p);
+    for (let i = 1; i < stops.length; i += 1) {
+      if (q <= stops[i].p) {
+        const a = stops[i - 1];
+        const b = stops[i];
+        const t = (q - a.p) / (b.p - a.p);
+        return pathTransform(
+          lerp(a.x, b.x, t),
+          lerp(a.y, b.y, t),
+          lerp(a.z, b.z, t),
+          lerp(a.ry, b.ry, t),
+          lerp(a.rz, b.rz, t),
+          lerp(a.scale, b.scale, t),
+        );
+      }
     }
 
-    // Continue the exact same DOM card into the formation and then around it.
-    const orbit = clamp((p - 0.30) / 0.52);
-    const t = 1.0 + orbit * 5.2;
-    return pathTransform(
-      cyc(slot.x, t) * 25,
-      cyc(slot.y, t),
-      cyc(slot.z, t),
-      cyc(slot.ry, t),
-      cyc(slot.rz, t),
-      cyc(slot.scale, t),
-    );
+    const last = stops[stops.length - 1];
+    return pathTransform(last.x, last.y, last.z, last.ry, last.rz, last.scale);
   });
 
   return <motion.a
+    ref={cardRef}
     href="#contact"
     className="mw-card mw-persistent-card mw-accent-purple"
     style={{ transform }}
     aria-label="AI Job Tracker"
   >
-    <CardFace title={projects[0][0]} tag={projects[0][1]} tech={projects[0][2]} accent={projects[0][3]} index={0} />
+    <CardFace />
   </motion.a>;
 }
 
-function OrbitCard({ index, progress }: { index: number; progress: ProgressValue }) {
-  const transform = useTransform(progress, p => {
-    const formation = clamp((p - 0.20) / 0.20);
-    const orbit = clamp((p - 0.30) / 0.52);
-    const t = 1.0 + orbit * 5.2 + index;
-    const lift = (1 - formation) * 78;
-    const scale = cyc(slot.scale, t) * lerp(0.72, 1, formation);
-    return pathTransform(
-      cyc(slot.x, t) * 25,
-      cyc(slot.y, t) + lift,
-      cyc(slot.z, t),
-      cyc(slot.ry, t),
-      cyc(slot.rz, t),
-      scale,
-    );
-  });
+type DebugSnapshot = {
+  progress: number;
+  scrollY: number;
+  documentScrollTop: number;
+  stickyTop: number;
+  stickyHeight: number;
+  cardLeft: number;
+  cardTop: number;
+  cardWidth: number;
+  cardHeight: number;
+  opacity: string;
+  visibility: string;
+  position: string;
+  overflow: string;
+  transform: string;
+  ancestors: string[];
+};
 
-  const opacity = useTransform(progress, p => 0.98 * clamp((p - 0.20) / 0.10));
-  const project = projects[index] as Project;
+const initialDebug: DebugSnapshot = {
+  progress: 0,
+  scrollY: 0,
+  documentScrollTop: 0,
+  stickyTop: 0,
+  stickyHeight: 0,
+  cardLeft: 0,
+  cardTop: 0,
+  cardWidth: 0,
+  cardHeight: 0,
+  opacity: '1',
+  visibility: 'visible',
+  position: 'sticky',
+  overflow: 'visible',
+  transform: 'none',
+  ancestors: [],
+};
 
-  return <motion.a
-    href="#contact"
-    className={`mw-card mw-orbit-card mw-accent-${project[3]}`}
-    style={{ transform, opacity }}
-  >
-    <CardFace title={project[0]} tag={project[1]} tech={project[2]} accent={project[3]} index={index} />
-  </motion.a>;
+function CinematicDebugPanel({
+  progress,
+  stickyRef,
+  cardRef,
+}: {
+  progress: ProgressValue;
+  stickyRef: React.RefObject<HTMLDivElement | null>;
+  cardRef: React.RefObject<HTMLAnchorElement | null>;
+}) {
+  const [debug, setDebug] = useState<DebugSnapshot>(initialDebug);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      const sticky = stickyRef.current;
+      const card = cardRef.current;
+
+      if (sticky && card) {
+        const stickyRect = sticky.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        const stickyStyle = getComputedStyle(sticky);
+        const cardStyle = getComputedStyle(card);
+
+        const ancestors: string[] = [];
+        let node: Element | null = sticky;
+        while (node) {
+          const style = getComputedStyle(node);
+          const className = node instanceof HTMLElement && typeof node.className === 'string'
+            ? node.className.trim().replace(/\s+/g, '.')
+            : '';
+          const label = className ? `.${className}` : node.tagName.toLowerCase();
+
+          ancestors.push(
+            `${label} | pos:${style.position} ov:${style.overflow} x:${style.overflowX} y:${style.overflowY} ` +
+            `transform:${style.transform} filter:${style.filter} perspective:${style.perspective} ` +
+            `contain:${style.contain} will:${style.willChange}`,
+          );
+
+          if (node === document.documentElement) break;
+          node = node.parentElement;
+        }
+
+        setDebug({
+          progress: Number(progress.get().toFixed(3)),
+          scrollY: Math.round(window.scrollY),
+          documentScrollTop: Math.round(document.documentElement.scrollTop),
+          stickyTop: Number(stickyRect.top.toFixed(1)),
+          stickyHeight: Number(stickyRect.height.toFixed(1)),
+          cardLeft: Number(cardRect.left.toFixed(1)),
+          cardTop: Number(cardRect.top.toFixed(1)),
+          cardWidth: Number(cardRect.width.toFixed(1)),
+          cardHeight: Number(cardRect.height.toFixed(1)),
+          opacity: cardStyle.opacity,
+          visibility: cardStyle.visibility,
+          position: stickyStyle.position,
+          overflow: stickyStyle.overflow,
+          transform: stickyStyle.transform,
+          ancestors,
+        });
+      }
+
+      frame = window.requestAnimationFrame(update);
+    };
+
+    frame = window.requestAnimationFrame(update);
+    return () => window.cancelAnimationFrame(frame);
+  }, [cardRef, progress, stickyRef]);
+
+  return <aside className="mw-debug-panel" aria-label="Cinematic debug diagnostics">
+    <b>CINEMATIC DEBUG</b>
+    <div>progress: {debug.progress.toFixed(2)}</div>
+    <div>scrollY: {debug.scrollY}</div>
+    <div>document.scrollTop: {debug.documentScrollTop}</div>
+    <div>sticky.top: {debug.stickyTop}</div>
+    <div>sticky.height: {debug.stickyHeight}</div>
+    <div>card.left: {debug.cardLeft}</div>
+    <div>card.top: {debug.cardTop}</div>
+    <div>card.width: {debug.cardWidth}</div>
+    <div>card.height: {debug.cardHeight}</div>
+    <div>opacity: {debug.opacity}</div>
+    <div>visibility: {debug.visibility}</div>
+    <div>position: {debug.position}</div>
+    <div>overflow: {debug.overflow}</div>
+    <div>sticky.transform: {debug.transform}</div>
+    <details>
+      <summary>ANCESTOR CHAIN</summary>
+      {debug.ancestors.map((entry, index) => (
+        <div key={`${entry}-${index}`} className="mw-debug-chain">{entry}</div>
+      ))}
+    </details>
+  </aside>;
 }
 
 function CinematicScene() {
   const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const progress = scrollYProgress;
-  const [state, setState] = useState('HERO');
-
-  useEffect(() => progress.on('change', p => {
-    setState(p < 0.30 ? 'HERO' : p < 0.78 ? 'ORBIT' : 'ESTABLISHED');
-  }), [progress]);
-
-  const white = useTransform(progress, [0.00, 0.10, 0.20, 0.34, 0.86, 0.94], [0, 0, 0.12, 1, 1, 0]);
-  const black = useTransform(progress, [0.78, 0.82, 0.87], [0, 1, 0]);
-  const blackY = useTransform(progress, [0.78, 0.82, 0.87], ['100%', '0%', '-100%']);
-  const type1 = useTransform(progress, [0.26, 0.38, 0.56], ['120vw', '0vw', '-125vw']);
-  const type1o = useTransform(progress, [0.26, 0.31, 0.52, 0.59], [0, 1, 1, 0]);
-  const type2 = useTransform(progress, [0.47, 0.60, 0.76], ['-120vw', '0vw', '120vw']);
-  const type2o = useTransform(progress, [0.47, 0.53, 0.71, 0.78], [0, 1, 1, 0]);
-  const heroOpacity = useTransform(progress, [0.10, 0.27, 0.90, 0.97], [1, 0, 0, 1]);
+  const stickyRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLAnchorElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end end'],
+  });
 
   return <section ref={ref} id="work" className="mw-cinematic">
-    <div className="mw-sticky">
-      <motion.div className="mw-white-stage" style={{ opacity: white }} />
-      <motion.div className="mw-hero-layer" style={{ opacity: heroOpacity }}>
-        <div className="mw-meta"><span>MAKEWEBB / 001 · DIGITAL PRODUCT STUDIO</span><span>AI · WEB · DATA · EXPERIENCE</span></div>
+    <div ref={stickyRef} className="mw-sticky">
+      <div className="mw-hero-layer">
+        <div className="mw-meta">
+          <span>MAKEWEBB / DEBUG · STICKY FOUNDATION</span>
+          <span>390 × 844 TEST</span>
+        </div>
         <div className="mw-hero-copy">
           <small>MAKEWEBB / 2026</small>
           <h1>Systems that<br /><em>answer first.</em></h1>
-          <p>We design and build intelligent digital products across web, apps, AI, data and interactive experiences.</p>
+          <p>Sticky foundation diagnostic. The hero stays pinned while the AI JOB TRACKER card moves inside the viewport.</p>
         </div>
-        <div className="mw-hero-bottom"><span>✦</span><span>SCROLL / EXPLORE</span></div>
-      </motion.div>
-
-      <div className="mw-stage-head"><span>MAKEWEBB / 002</span><span>{state} / ONE CARD</span><span>SCROLL TO EXPLORE</span></div>
-
-      {/* One scene, one anchor, one persistent AI JOB TRACKER card. */}
-      <div className="mw-card-anchor">
-        <PersistentHeroCard progress={progress} />
-        {[1, 2, 3, 4].map(i => <OrbitCard key={i} index={i} progress={progress} />)}
+        <div className="mw-hero-bottom"><span>✦</span><span>SCROLL / DIAGNOSTIC</span></div>
       </div>
 
-      <motion.div className="mw-type mw-type-one" style={{ x: type1, opacity: type1o }}>DESIGN THAT SHIPS.</motion.div>
-      <motion.div className="mw-type mw-type-two" style={{ x: type2, opacity: type2o }}>PROMISES TO SPEED WITH EVERY INTERFACE.</motion.div>
-      <div className="mw-collection-pill">EXPLORE THE COLLECTION</div>
-      <motion.div className="mw-beyond" style={{ opacity: black, y: blackY }}>
-        <div><span>MAKEWEBB / 003</span><h2>Beyond<br /><em>every limit.</em></h2></div>
-      </motion.div>
+      <div className="mw-card-anchor">
+        <DiagnosticCard progress={scrollYProgress} cardRef={cardRef} />
+      </div>
+
+      <CinematicDebugPanel
+        progress={scrollYProgress}
+        stickyRef={stickyRef}
+        cardRef={cardRef}
+      />
     </div>
   </section>;
 }
 
-function OtherSections() {
-  return <>
-    <section id="capabilities" className="mw-section mw-dark"><div className="mw-inner"><span className="mw-kicker">MAKEWEBB / 004 · CAPABILITIES</span><h2>BUILDING<br /><em>WHAT MOVES.</em></h2><div className="mw-cap-grid">{caps.map(c => <article key={c[0]}><span>{c[0]}</span><h3>{c[1]}</h3><p>{c[2]}</p></article>)}</div></div></section>
-    <section id="founders" className="mw-section mw-paper"><div className="mw-inner"><span className="mw-kicker">MAKEWEBB / 005 · FOUNDERS</span><h2>PEOPLE<br /><em>BEHIND THE SYSTEM.</em></h2><div className="mw-founders"><article><img src="/founders/owaies.jpg" /><span>FOUNDER · AI / ML</span><h3>MOHAMMED OWAIES</h3></article><article><img src="/founders/afaf.jpg" /><span>FOUNDER · WEB / APPS</span><h3>MOHAMMED AFAF HASSAN</h3></article></div></div></section>
-    <section className="mw-section mw-purple"><div className="mw-inner"><span className="mw-kicker">MAKEWEBB / 006 · TECHNOLOGY</span><div className="mw-techwords">AI <i>ML</i> DATA PYTHON NEXT.JS REACT JAVASCRIPT COMPUTER VISION UI/UX WEB APPS AUTOMATION</div></div></section>
-    <section id="contact" className="mw-section mw-contact"><div className="mw-inner"><span className="mw-kicker">MAKEWEBB / 007 · CONTACT</span><h2>BUILD<br /><em>WHAT'S NEXT.</em></h2><p>Have a product, system or impossible interface in mind? Let's make it real.</p><a href="mailto:makewebb@gmail.com">START A PROJECT ↗</a></div></section>
-    <footer className="mw-footer"><b>MAKEWEBB</b><span>DIGITAL PRODUCT STUDIO · 2026</span><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>BACK TO TOP ↑</button></footer>
-  </>;
-}
-
 export default function MakeWebbCinematic() {
-  const [menu, setMenu] = useState(false);
-  const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  return <div className="mw-cinematic-site">
-    <header className="mw-nav">
-      <button className="mw-logo" onClick={() => go('work')}><b>MW</b> MAKEWEBB</button>
-      <nav><button onClick={() => go('work')}>WORK</button><button onClick={() => go('capabilities')}>CAPABILITIES</button><button onClick={() => go('founders')}>FOUNDERS</button><button onClick={() => go('contact')}>CONTACT</button></nav>
-      <button className="mw-start" onClick={() => go('contact')}>GET STARTED</button>
-      <button className="mw-menu" onClick={() => setMenu(true)}><Menu size={17} /></button>
-    </header>
-    {menu && <div className="mw-mobile-menu"><button onClick={() => setMenu(false)}><X /></button>{['work', 'capabilities', 'founders', 'contact'].map(x => <button key={x} onClick={() => { setMenu(false); go(x); }}>{x.toUpperCase()}</button>)}</div>}
-    <main><CinematicScene /><OtherSections /></main>
-  </div>;
+  return <div className="mw-cinematic-site"><main><CinematicScene /></main></div>;
 }
