@@ -1,6 +1,5 @@
-import React from 'react';
-import MakeWebbCinematic from './MakeWebbCinematic';
+import LovableSite from './LovableSite';
 
 export default function App() {
-  return <MakeWebbCinematic />;
+  return <LovableSite />;
 }
