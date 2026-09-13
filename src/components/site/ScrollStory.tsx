@@ -11,6 +11,7 @@ type StoryCardProps = {
   projectIndex: number;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
   light: boolean;
+  colorIndex: number;
 };
 
 const cardIcons: Record<number, ComponentType<{ className?: string }>> = {
@@ -29,7 +30,7 @@ const positions: Record<StoryIndex, { x: string[]; y: string[]; rotateY: number[
   2: { x: ["80vw", "31vw", "31vw", "25vw", "26vw"], y: ["44vh", "5vh", "5vh", "-3vh", "3vh"], rotateY: [75, 18, -18, 14, 25], rotateZ: [14, 6, -3, 5, 8], scale: [0.68, 0.88, 1, 0.94, 0.88] },
 };
 
-function StoryCard({ index, serviceIndex, projectIndex, progress, light }: StoryCardProps) {
+function StoryCard({ index, serviceIndex, projectIndex, progress, light, colorIndex }: StoryCardProps) {
   const layout = positions[index];
   const x = useTransform(progress, [0.08, 0.25, 0.48, 0.7, 0.9], layout.x);
   const y = useTransform(progress, [0.08, 0.25, 0.48, 0.7, 0.9], layout.y);
@@ -41,7 +42,7 @@ function StoryCard({ index, serviceIndex, projectIndex, progress, light }: Story
   const project = projects[projectIndex];
   if (!service || !project) return null;
 
-  return <motion.article className={`story-card story-card-${index + 1}`} style={{ x, y, rotateY, rotateZ, scale }}>
+  return <motion.article className={`story-card story-card-${index + 1} story-card-color-${(colorIndex % 6) + 1}`} style={{ x, y, rotateY, rotateZ, scale }}>
     <div className="story-card-shine" />
     <div className="relative z-10 flex h-full flex-col justify-between">
       <div className="flex items-center justify-between text-[10px] uppercase">
@@ -98,17 +99,17 @@ export function ScrollStory() {
       <motion.p aria-hidden className="story-runner story-runner-light" style={{ x: secondLineX, opacity: secondLineOpacity }}>DESIGN THAT SHIPS</motion.p>
 
       <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center" style={{ opacity: serviceAOpacity }}>
-        {slots.map((index) => <StoryCard key={`service-a-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={false} />)}
+        {slots.map((index) => <StoryCard key={`service-a-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={false} colorIndex={index} />)}
       </motion.div>
       <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center" style={{ opacity: serviceBOpacity }}>
-        {slots.map((index) => <StoryCard key={`service-b-${index}`} index={index} serviceIndex={index + 3} projectIndex={index + 3} progress={scrollYProgress} light={false} />)}
+        {slots.map((index) => <StoryCard key={`service-b-${index}`} index={index} serviceIndex={index + 3} projectIndex={index + 3} progress={scrollYProgress} light={false} colorIndex={index + 3} />)}
       </motion.div>
 
       <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center pointer-events-none" style={{ opacity: firstProjectOpacity }}>
-        {slots.map((index) => <StoryCard key={`project-a-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={true} />)}
+        {slots.map((index) => <StoryCard key={`project-a-${index}`} index={index} serviceIndex={index} projectIndex={index} progress={scrollYProgress} light={true} colorIndex={index} />)}
       </motion.div>
       <motion.div className="story-card-field absolute inset-0 z-20 flex items-center justify-center pointer-events-none" style={{ opacity: secondProjectOpacity }}>
-        {slots.map((index) => <StoryCard key={`project-b-${index}`} index={index} serviceIndex={index + 3} projectIndex={index + 3} progress={scrollYProgress} light={true} />)}
+        {slots.map((index) => <StoryCard key={`project-b-${index}`} index={index} serviceIndex={index + 3} projectIndex={index + 3} progress={scrollYProgress} light={true} colorIndex={index + 3} />)}
       </motion.div>
 
       <motion.div className="absolute inset-x-0 bottom-7 z-30 flex justify-center" style={{ opacity: cardsOpacity }}><Link to="/work" className={`story-action ${light ? "story-action-light" : ""}`}>Explore our work <ArrowUpRight className="h-4 w-4" /></Link></motion.div>
