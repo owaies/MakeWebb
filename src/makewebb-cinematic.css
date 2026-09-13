@@ -1,0 +1,27 @@
+/* Cinematic choreography layer: keeps the reference sequence as the visual centerpiece. */
+.exact-work{height:420vh;isolation:isolate}
+.exact-work-sticky{background:#f6f5f7}
+.exact-work-bg-shift{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 44%,rgba(255,255,255,.9),transparent 34%),linear-gradient(180deg,#eeecf0,#f7f6f8 55%,#e8e5ea)}
+.exact-work-head{z-index:40}
+.exact-orbit{z-index:12;pointer-events:none}
+.exact-work-card{pointer-events:auto}
+.exact-card-window small{font:500 10px/1.2 var(--font-sans);color:rgba(255,255,255,.66);max-width:90%;letter-spacing:-.01em}
+.exact-type{z-index:7;mix-blend-mode:multiply;will-change:transform,opacity}
+.exact-type-one{top:47%;transform:translateY(-50%)}
+.exact-type-two{top:59%;transform:translateY(-50%);font-size:clamp(4rem,8.5vw,10rem)}
+.exact-work-button{z-index:40}
+.exact-beyond{z-index:60}
+.exact-beyond-copy{position:relative;z-index:2}
+.exact-beyond h2{font-size:clamp(5rem,11.5vw,13rem)}
+
+@media(max-width:900px){
+  .exact-work{height:330vh}
+  .exact-work-bg-shift{background:linear-gradient(180deg,#efedf1,#f8f7f8)}
+  .exact-type-one{top:45%}
+  .exact-type-two{top:58%;font-size:12vw}
+  .exact-card-window small{font-size:8px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .exact-work{height:100svh}
+}
