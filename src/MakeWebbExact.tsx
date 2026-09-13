@@ -19,6 +19,23 @@ const capabilities = [
   ['06', 'INTERACTIVE 3D', 'Spatial experiences for the modern web.'],
 ];
 
+const sceneCards = [
+  [
+    ['AI JOB TRACKER', 'AI PRODUCT', 'Find signal before the noise.'],
+    ['E-EXAMINER', 'EDTECH', 'Assess. Understand. Improve.'],
+    ['WORLD OBJECT DETECTOR', 'COMPUTER VISION', 'See what the model sees.'],
+    ['SILSILA BURQA HOUSE', 'E-COMMERCE', 'Crafted for digital commerce.'],
+    ['HAND GESTURE CONTROLLER', 'INTERACTION', 'Interfaces that respond.'],
+  ],
+  [
+    ['INTELLIGENT SYSTEMS', 'AI / ML', 'Systems that answer first.'],
+    ['PRODUCT EXPERIENCES', 'WEB / APPS', 'Interfaces made to move.'],
+    ['REAL-TIME VISION', 'COMPUTER VISION', 'Perception becomes interaction.'],
+    ['DATA IN MOTION', 'DATA', 'Turn information into direction.'],
+    ['NEXT INTERFACE', 'EXPERIMENTAL', 'Built for what comes next.'],
+  ],
+];
+
 function go(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -39,16 +56,25 @@ function Device({ label, index, small = false }: { label: string; index: number;
   );
 }
 
-const slots = {
-  x: [-1.45, -0.72, 0, 0.72, 1.45],
-  y: [32, 5, -10, 5, 32],
-  z: [0, 170, 430, 170, 0],
-  rotate: [22, 10, 0, -10, -22],
-  scale: [0.66, 0.86, 1.03, 0.86, 0.66],
-  opacity: [0.35, 0.78, 1, 0.78, 0.35],
+const slotsA = {
+  x: [-1.72, -0.86, 0, 0.86, 1.72],
+  y: [28, 5, -12, 5, 28],
+  z: [0, 170, 460, 170, 0],
+  rotate: [24, 11, 0, -11, -24],
+  scale: [0.64, 0.86, 1.04, 0.86, 0.64],
+  opacity: [0.32, 0.78, 1, 0.78, 0.32],
 };
 
-function slotValue(values: number[], t: number) {
+const slotsB = {
+  x: [-1.35, -0.64, 0, 0.64, 1.35],
+  y: [12, -8, 5, -8, 12],
+  z: [35, 250, 500, 250, 35],
+  rotate: [30, 8, 0, -8, -30],
+  scale: [0.7, 0.9, 1.08, 0.9, 0.7],
+  opacity: [0.48, 0.86, 1, 0.86, 0.48],
+};
+
+function circularValue(values: number[], t: number) {
   const n = values.length;
   const x = ((t % n) + n) % n;
   const a = Math.floor(x);
@@ -57,69 +83,101 @@ function slotValue(values: number[], t: number) {
   return values[a] + (values[b] - values[a]) * f;
 }
 
+function mixSlot(a: number[], b: number[], t: number, index: number) {
+  const av = circularValue(a, index);
+  const bv = circularValue(b, index);
+  return av + (bv - av) * t;
+}
+
+function WorkCard({
+  item,
+  index,
+  progress,
+  scene,
+}: {
+  item: (typeof work)[number];
+  index: number;
+  progress: ReturnType<typeof useSpring>;
+  scene: number;
+}) {
+  const orbit = useTransform(progress, v => v * 3.1 + index * 0.92);
+  const arrangement = useTransform(progress, v => Math.max(0, Math.min(1, (v - 0.43) / 0.24)));
+  const entrance = useTransform(progress, v => Math.max(0, Math.min(1, v / 0.16)));
+  const x = useTransform([orbit, arrangement], ([o, a]) => `${mixSlot(slotsA.x, slotsB.x, Number(a), Number(o)) * 25.5}vw`);
+  const y = useTransform([orbit, arrangement, entrance], ([o, a, e]) => mixSlot(slotsA.y, slotsB.y, Number(a), Number(o)) + (1 - Number(e)) * 120);
+  const z = useTransform([orbit, arrangement], ([o, a]) => mixSlot(slotsA.z, slotsB.z, Number(a), Number(o)));
+  const rotate = useTransform([orbit, arrangement], ([o, a]) => mixSlot(slotsA.rotate, slotsB.rotate, Number(a), Number(o)));
+  const scale = useTransform([orbit, arrangement, entrance], ([o, a, e]) => mixSlot(slotsA.scale, slotsB.scale, Number(a), Number(o)) * (0.72 + Number(e) * 0.28));
+  const opacity = useTransform([orbit, arrangement, entrance], ([o, a, e]) => mixSlot(slotsA.opacity, slotsB.opacity, Number(a), Number(o)) * Number(e));
+  const cardScene = scene === 0 ? sceneCards[0][index] : sceneCards[1][index];
+
+  return (
+    <motion.a
+      href="#contact"
+      className={`exact-work-card accent-${item.accent.toLowerCase()}`}
+      style={{ x, y, z, rotateY: rotate, scale, opacity }}
+    >
+      <div className="exact-card-top"><span>{cardScene[1]}</span><ArrowUpRight size={13} /></div>
+      <div className="exact-card-art">
+        <div className="exact-card-window">
+          <span>MW / {String(index + 1).padStart(2, '0')}</span>
+          <b>{cardScene[0]}</b>
+          <small>{cardScene[2]}</small>
+          <i />
+        </div>
+      </div>
+      <h3>{cardScene[0]}</h3>
+      <div className="exact-card-foot"><span>{item.tech}</span><span>VIEW ↗</span></div>
+    </motion.a>
+  );
+}
+
 function WorkStage() {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const progress = useSpring(scrollYProgress, { stiffness: 70, damping: 24, mass: 0.7 });
-  const [active, setActive] = useState(0);
+  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 25, mass: 0.7 });
+  const [scene, setScene] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = progress.on('change', (v) => setActive(Math.round(v * 4) % 5));
+    const unsubscribe = progress.on('change', v => setScene(v > 0.48 ? 1 : 0));
     return unsubscribe;
   }, [progress]);
+
+  const whiteShift = useTransform(progress, [0, 0.4, 0.62, 0.82, 1], [0, 0, 1, 0, 0]);
+  const blackSection = useTransform(progress, [0.76, 0.86, 0.98], [0, 1, 1]);
+  const blackY = useTransform(progress, [0.76, 0.86], ['100%', '0%']);
+  const typeOneX = useTransform(progress, [0.22, 0.39, 0.55], ['115vw', '0vw', '-125vw']);
+  const typeOneOpacity = useTransform(progress, [0.2, 0.25, 0.54, 0.58], [0, 1, 1, 0]);
+  const typeTwoX = useTransform(progress, [0.55, 0.69, 0.82], ['-125vw', '0vw', '120vw']);
+  const typeTwoOpacity = useTransform(progress, [0.53, 0.58, 0.78, 0.84], [0, 1, 1, 0]);
+  const secondBg = useTransform(whiteShift, v => `rgba(239,237,241,${Number(v) * 0.78})`);
 
   return (
     <section ref={ref} id="work" className="exact-work">
       <div className="exact-work-sticky">
+        <motion.div className="exact-work-bg-shift" style={{ opacity: whiteShift }} />
         <div className="exact-work-head">
           <span>MAKEWEBB / 002</span>
-          <span>WORK / {String(active + 1).padStart(2, '0')}</span>
+          <span>WORK / CINEMATIC SYSTEM</span>
           <span>SCROLL TO EXPLORE</span>
         </div>
 
-        <div className="exact-type exact-type-one">DESIGN THAT SHIPS.</div>
-        <div className="exact-type exact-type-two">PROMISES TO SPEED WITH EVERY INTERFACE.</div>
+        <motion.div className="exact-type exact-type-one" style={{ x: typeOneX, opacity: typeOneOpacity }}>
+          DESIGN THAT SHIPS.
+        </motion.div>
+        <motion.div className="exact-type exact-type-two" style={{ x: typeTwoX, opacity: typeTwoOpacity }}>
+          SPEED WITH EVERY INTERFACE.
+        </motion.div>
 
         <div className="exact-orbit">
-          {work.map((item, i) => {
-            const t = useTransform(progress, (v) => v * 5 + i);
-            const x = useTransform(t, (v) => `${slotValue(slots.x, v) * 28}vw`);
-            const y = useTransform(t, (v) => slotValue(slots.y, v));
-            const z = useTransform(t, (v) => slotValue(slots.z, v));
-            const rotate = useTransform(t, (v) => slotValue(slots.rotate, v));
-            const scale = useTransform(t, (v) => slotValue(slots.scale, v));
-            const opacity = useTransform(t, (v) => slotValue(slots.opacity, v));
-            return (
-              <motion.a
-                key={item.title}
-                href="#contact"
-                className={`exact-work-card accent-${item.accent.toLowerCase()}`}
-                style={{ x, y, z, rotateY: rotate, scale, opacity }}
-              >
-                <div className="exact-card-top"><span>{item.tag}</span><ArrowUpRight size={13} /></div>
-                <div className="exact-card-art">
-                  <div className="exact-card-window">
-                    <span>MW / {String(i + 1).padStart(2, '0')}</span>
-                    <b>{i === 0 ? 'Summarise the thread' : i === 1 ? 'Browse our templates' : i === 2 ? 'See what the model sees' : i === 3 ? 'Crafted for elegance' : 'Ship it on a Tuesday'}</b>
-                    <i />
-                  </div>
-                </div>
-                <h3>{item.title}</h3>
-                <div className="exact-card-foot"><span>{item.tech}</span><span>VIEW ↗</span></div>
-              </motion.a>
-            );
-          })}
+          {work.map((item, i) => (
+            <WorkCard key={item.title} item={item} index={i} progress={progress} scene={scene} />
+          ))}
         </div>
 
         <div className="exact-work-button">EXPLORE THE COLLECTION</div>
 
-        <motion.div
-          className="exact-beyond"
-          style={{
-            opacity: useTransform(progress, [0.76, 0.88, 0.98], [0, 1, 1]),
-            y: useTransform(progress, [0.76, 0.88], ['100%', '0%']),
-          }}
-        >
+        <motion.div className="exact-beyond" style={{ opacity: blackSection, y: blackY }}>
           <div className="exact-beyond-copy">
             <span>MAKEWEBB / 003</span>
             <h2>Beyond<br /><em>every limit.</em></h2>
