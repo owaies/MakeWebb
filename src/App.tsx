@@ -1,6 +1,6 @@
 import React from 'react';
-import MakeWebbExact from './MakeWebbExact';
+import MakeWebbCinematic from './MakeWebbCinematic';
 
 export default function App() {
-  return <MakeWebbExact />;
+  return <MakeWebbCinematic />;
 }
