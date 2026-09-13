@@ -1,5 +1,5 @@
-import LovableSite from './LovableSite';
+import MakeWebb from './MakeWebb';
 
 export default function App() {
-  return <LovableSite />;
+  return <MakeWebb />;
 }
