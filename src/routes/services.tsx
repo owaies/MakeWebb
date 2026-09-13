@@ -1,94 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bot, Code2, Database, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, Box, Code2, Database, PenTool, Sparkles, Workflow } from "lucide-react";
+import { motion } from "motion/react";
 import { Reveal, RevealWords } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/site/TiltCard";
 import { services } from "@/lib/site-data";
 
 export const Route = createFileRoute("/services")({
-  head: () => ({ meta: [
-    { title: "Services — Websites, Apps, AI & Automation | MakeWebb" },
-    { name: "description", content: "MakeWebb services across web, apps, AI integration and automation, illustrated with shipped project examples." },
-  ] }),
+  head: () => ({ meta: [{ title: "Services — Websites, Apps, AI & Automation | MakeWebb" }, { name: "description", content: "MakeWebb services across web, apps, AI integration and automation, illustrated with shipped project examples." }] }),
   component: ServicesPage,
 });
+const process=[{step:"01",title:"Scope",text:"A short call, a written plan, a fixed price and timeline."},{step:"02",title:"Design",text:"Interface and motion prototyped before a line of product code."},{step:"03",title:"Build",text:"Shipped in weekly slices you can click, not screenshots."},{step:"04",title:"Run",text:"Deploy, monitor, automate and keep improving after launch."}];
+const serviceIcons=[Code2,Database,Sparkles,Bot,PenTool,Box,Workflow];
+const serviceExamples=[["Web","Silsila Burqa House","Commerce UX + responsive storefront"],["Apps","AI Job Tracker","Next.js product + analytics"],["AI","World Object Detector","Python vision + live inference"],["Automation","Job + assessment workflows","Data, agents + repeatable operations"]];
 
-const process = [
-  { step: "01", title: "Scope", text: "A short call, a written plan, a fixed price and timeline." },
-  { step: "02", title: "Design", text: "Interface and motion prototyped before a line of product code." },
-  { step: "03", title: "Build", text: "Shipped in weekly slices you can click, not screenshots." },
-  { step: "04", title: "Run", text: "Deploy, monitor, automate and keep improving after launch." },
-];
-const serviceIcons = [Code2, Database, Sparkles, Bot];
-const serviceExamples = [
-  ["Web", "Silsila Burqa House", "Commerce UX + responsive storefront"],
-  ["Apps", "AI Job Tracker", "Next.js product + analytics"],
-  ["AI", "World Object Detector", "Python vision + live inference"],
-  ["Automation", "Job + assessment workflows", "Data, agents + repeatable operations"],
-];
-
-function ServicesPage() {
-  return (
-    <main>
-      <section className="aurora grain px-5 pt-40 pb-20 md:px-10 md:pb-24">
-        <div className="mx-auto max-w-6xl">
-          <p className="text-xs tracking-[0.3em] text-foreground/70 uppercase">Services</p>
-          <h1 className="text-huge mt-6 max-w-5xl">
-            <RevealWords text="Build the product." />
-            <span className="block text-foreground/45"><RevealWords text="Then make it intelligent." /></span>
-          </h1>
-          <p className="mt-8 max-w-2xl text-sm leading-7 text-foreground/65 sm:text-base">
-            Web, app, AI integration and automation services backed by working examples. We combine product engineering with the model, data and interaction layer when the problem calls for it.
-          </p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 py-16 md:px-10 md:py-24">
-        <div className="grid gap-5 md:grid-cols-2">
-          {services.map((s, i) => {
-            const Icon = serviceIcons[i];
-            return (
-              <Reveal key={s.id} delay={i * 0.08}>
-                <TiltCard intensity={10} className="glass h-full p-7 sm:p-8">
-                  <div className="flex items-start justify-between">
-                    <div><span className="font-display text-sm text-primary">{s.id}</span><h2 className="mt-7 text-3xl font-semibold">{s.title}</h2></div>
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">{s.blurb}</p>
-                  <div className="mt-6 flex flex-wrap gap-2">{s.tags.map((t) => <span key={t} className="rounded-full bg-secondary px-3 py-1 text-xs">{t}</span>)}</div>
-                  <div className="mt-7 border-t border-border pt-5">
-                    <p className="text-[10px] tracking-[.18em] text-primary uppercase">Relevant projects</p>
-                    <div className="mt-3 flex flex-wrap gap-2">{s.examples.map((e) => <span key={e} className="rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground">{e}</span>)}</div>
-                  </div>
-                </TiltCard>
-              </Reveal>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 pb-20 md:px-10">
-        <Reveal>
-          <div className="rounded-[2rem] border border-border p-6 sm:p-10">
-            <div className="grid gap-8 md:grid-cols-4">
-              {serviceExamples.map(([label, example, detail]) => (
-                <div key={label}>
-                  <p className="text-[10px] tracking-[.18em] text-primary uppercase">{label}</p>
-                  <h3 className="mt-4 text-lg font-semibold">{example}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 pb-28 md:px-10">
-        <Reveal><h2 className="text-big">How we work</h2></Reveal>
-        <div className="mt-12 grid gap-4 md:grid-cols-4">
-          {process.map((p, i) => <Reveal key={p.step} delay={i * 0.08}><div className="h-full rounded-2xl border border-border p-6"><span className="font-display text-xs text-primary">{p.step}</span><h3 className="mt-6 text-xl font-semibold">{p.title}</h3><p className="mt-2 text-sm text-muted-foreground">{p.text}</p></div></Reveal>)}
-        </div>
-        <Reveal delay={0.2} className="mt-14"><Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background">Start a project <ArrowRight className="h-4 w-4" /></Link></Reveal>
-      </section>
-    </main>
-  );
-}
+function ServicesHero(){return <section className="aurora grain relative overflow-hidden px-5 pt-32 pb-24 md:px-10 md:pt-40 md:pb-28"><div className="pointer-events-none absolute inset-0 overflow-hidden"><motion.div className="absolute -right-20 top-10 h-80 w-80 rounded-full blur-3xl" style={{background:"radial-gradient(circle,oklch(.68 .24 305 / .45),transparent 68%)"}} animate={{x:[0,-35,0],y:[0,20,0],scale:[1,1.08,1]}} transition={{duration:8,repeat:Infinity,ease:"easeInOut"}}/><motion.div className="absolute left-[55%] top-24 h-48 w-48 rounded-full border border-white/10" animate={{rotate:360}} transition={{duration:20,repeat:Infinity,ease:"linear"}}/><span className="absolute right-[17%] top-24 h-2 w-2 rounded-full bg-primary shadow-[0_0_30px_var(--violet-glow)]"/></div><div className="relative mx-auto max-w-6xl"><p className="text-xs tracking-[0.3em] text-foreground/70 uppercase">Services</p><h1 className="text-huge mt-6 max-w-5xl"><RevealWords text="Build the product."/><span className="block text-foreground/45"><RevealWords text="Then make it intelligent."/></span></h1><p className="mt-8 max-w-2xl text-sm leading-7 text-foreground/65 sm:text-base">Web, app, AI integration and automation services backed by working examples. We combine product engineering with the model, data and interaction layer when the problem calls for it.</p><div className="mt-10 flex flex-wrap gap-2 text-[10px] uppercase tracking-[.16em]">{["WEB","APPS","AI","AUTOMATION","UI/UX","3D","DATA"].map((item,i)=><motion.span key={item} className="glass rounded-full px-3 py-2" animate={{y:[0,i%2?-5:5,0]}} transition={{duration:3+i*.2,repeat:Infinity,ease:"easeInOut"}}>{item}</motion.span>)}</div></div></section>}
+function ServicesPage(){return <main><ServicesHero/><section className="mx-auto max-w-6xl px-5 py-16 md:px-10 md:py-24"><div className="grid gap-5 md:grid-cols-2">{services.map((s,i)=>{const Icon=serviceIcons[i]??Sparkles;return <Reveal key={s.id} delay={i*.08}><TiltCard intensity={10} className="glass h-full p-7 sm:p-8"><div className="flex items-start justify-between"><div><span className="font-display text-sm text-primary">{s.id}</span><h2 className="mt-7 text-3xl font-semibold">{s.title}</h2></div><Icon className="h-6 w-6 text-primary"/></div><p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">{s.blurb}</p><div className="mt-6 flex flex-wrap gap-2">{s.tags.map(t=><span key={t} className="rounded-full bg-secondary px-3 py-1 text-xs">{t}</span>)}</div><div className="mt-7 border-t border-border pt-5"><p className="text-[10px] tracking-[.18em] text-primary uppercase">Relevant projects</p><div className="mt-3 flex flex-wrap gap-2">{s.examples.map(e=><span key={e} className="rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground">{e}</span>)}</div></div></TiltCard></Reveal>})}</div></section><section className="mx-auto max-w-6xl px-5 pb-20 md:px-10"><Reveal><div className="rounded-[2rem] border border-border p-6 sm:p-10"><div className="grid gap-8 md:grid-cols-4">{serviceExamples.map(([label,example,detail])=><div key={label}><p className="text-[10px] tracking-[.18em] text-primary uppercase">{label}</p><h3 className="mt-4 text-lg font-semibold">{example}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p></div>)}</div></div></Reveal></section><section className="mx-auto max-w-6xl px-5 pb-28 md:px-10"><Reveal><h2 className="text-big">How we work</h2></Reveal><div className="mt-12 grid gap-4 md:grid-cols-4">{process.map((p,i)=><Reveal key={p.step} delay={i*.08}><div className="h-full rounded-2xl border border-border p-6"><span className="font-display text-xs text-primary">{p.step}</span><h3 className="mt-6 text-xl font-semibold">{p.title}</h3><p className="mt-2 text-sm text-muted-foreground">{p.text}</p></div></Reveal>)}</div><Reveal delay={.2} className="mt-14"><Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background">Start a project <ArrowRight className="h-4 w-4"/></Link></Reveal></section></main>}
