@@ -11,7 +11,6 @@ body {
 
 .mw-cinematic-site {
   overflow-x: clip !important;
-  overflow-y: visible !important;
 }
 
 /* One long scroll range containing one viewport-pinned scene. */
@@ -52,11 +51,29 @@ body {
   pointer-events: none !important;
 }
 
-.mw-card {
+/* Same production card geometry/appearance, with a debug-only class so the
+   legacy reduced-motion rule cannot override the diagnostic transform. */
+.mw-debug-card {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: min(315px, 25vw) !important;
+  height: 405px !important;
+  margin: -202px 0 0 -157.5px !important;
+  border-radius: 20px !important;
+  padding: 17px !important;
+  background: #111218 !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 42px 100px rgba(0, 0, 0, 0.24) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  text-decoration: none !important;
+  transform-style: flat !important;
   will-change: transform !important;
   backface-visibility: visible !important;
-  transform-style: flat !important;
   overflow: visible !important;
+  pointer-events: auto !important;
 }
 
 .mw-persistent-card {
@@ -64,7 +81,6 @@ body {
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
-  pointer-events: auto !important;
 }
 
 /* Keep the existing hero/card visual design, but remove all scene choreography. */
@@ -126,12 +142,13 @@ body {
     min-height: 100svh !important;
   }
 
-  .mw-card {
+  .mw-debug-card {
     width: 185px !important;
     height: 300px !important;
     margin: -150px 0 0 -92.5px !important;
     left: 50% !important;
     top: 50% !important;
+    padding: 12px !important;
   }
 
   .mw-debug-panel {
@@ -139,7 +156,4 @@ body {
   }
 }
 
-/*
- * Intentionally no prefers-reduced-motion transform override here.
- * The diagnostic card owns the single transform used for this test.
- */
+/* Intentionally no prefers-reduced-motion transform override here. */

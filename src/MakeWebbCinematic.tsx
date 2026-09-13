@@ -72,7 +72,7 @@ function DiagnosticCard({
   return <motion.a
     ref={cardRef}
     href="#contact"
-    className="mw-card mw-persistent-card mw-accent-purple"
+    className="mw-debug-card mw-persistent-card mw-accent-purple"
     style={{ transform }}
     aria-label="AI Job Tracker"
   >
