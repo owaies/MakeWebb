@@ -11,6 +11,9 @@ export const services = [
   { id: "02", title: "Applications", blurb: "Product-grade web and mobile experiences with real auth, data, dashboards, workflows and responsive UX.", tags: ["Next.js", "Web Apps", "Analytics"], examples: ["AI Job Tracker", "E-Examiner", "DocFlow"] },
   { id: "03", title: "AI Integration", blurb: "Useful AI inside products: assistants, extraction, search, generation, vision and intelligent decision support.", tags: ["Python", "LLMs", "Vision"], examples: ["AI Job Tracker", "AI Retail Shelf Intelligence", "World Object Detector", "Hand Gesture Controller", "DocFlow"] },
   { id: "04", title: "AI Automation", blurb: "Automated pipelines and agents that connect data, models and business workflows without adding manual overhead.", tags: ["Agents", "Data", "Workflows"], examples: ["Job tracking workflows", "Document workflows with DocFlow", "Retail vision pipelines", "Assessment operations"] },
+  { id: "05", title: "UI/UX Design", blurb: "Clear, high-conversion product interfaces with thoughtful flows, interaction design and responsive systems.", tags: ["Product Design", "Prototyping", "Design Systems"], examples: ["AI Job Tracker", "E-Examiner", "MakeWebb product interfaces"] },
+  { id: "06", title: "3D / Interactive Experiences", blurb: "Immersive web experiences with 3D visuals, motion, interactive storytelling and responsive spatial interfaces.", tags: ["3D", "WebGL", "Motion"], examples: ["Interactive portfolio experiences", "3D product showcases", "Cinematic web sections"] },
+  { id: "07", title: "Analytics & Data", blurb: "Decision-ready dashboards and data experiences that turn product activity into signals teams can act on.", tags: ["Analytics", "Python", "Data"], examples: ["AI Job Tracker", "Retail intelligence", "Assessment analytics"] },
 ];
 
 export const founders = [
