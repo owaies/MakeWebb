@@ -1,13 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { company, founders } from "@/lib/site-data";
-import { HeroModel } from "@/components/site/HeroModel";
 
 export function Footer() {
   return (
-    <footer className="relative mt-32 overflow-hidden border-t border-border bg-ink px-5 py-16 md:px-10">
-      <div className="pointer-events-none absolute inset-0 opacity-70">
-        <HeroModel />
-      </div>
+    <footer className="relative mt-32 border-t border-border bg-ink px-5 py-16 md:px-10">
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
