@@ -11,7 +11,7 @@ export function HeroModel() {
     let cleanup: (() => void) | undefined;
 
     async function init() {
-      const [{ default: THREE }, { GLTFLoader }] = await Promise.all([
+      const [THREE, { GLTFLoader }] = await Promise.all([
         import("three"),
         import("three/examples/jsm/loaders/GLTFLoader.js"),
       ]);
@@ -37,23 +37,19 @@ export function HeroModel() {
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       scene.add(new THREE.HemisphereLight(0xffffff, 0x14101e, 2.4));
-
       const key = new THREE.DirectionalLight(0xffffff, 4.2);
       key.position.set(3, 5, 4);
       key.castShadow = true;
       scene.add(key);
-
       const rim = new THREE.PointLight(0x9b6cff, 18, 9, 2);
       rim.position.set(-3.5, 2.2, -1.5);
       scene.add(rim);
-
       const fill = new THREE.PointLight(0x4b9dff, 9, 8, 2);
       fill.position.set(3.5, 1, 1.5);
       scene.add(fill);
 
       const group = new THREE.Group();
       scene.add(group);
-
       const loader = new GLTFLoader();
       const gltf = await loader.loadAsync(MODEL_URL);
       if (disposed) return;
@@ -63,26 +59,19 @@ export function HeroModel() {
         if (!object.isMesh) return;
         object.castShadow = true;
         object.receiveShadow = true;
-        if (object.material) {
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
-          materials.forEach((material: any) => {
-            material.envMapIntensity = 1.15;
-          });
-        }
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.15; });
       });
 
       const bounds = new THREE.Box3().setFromObject(model);
       const size = bounds.getSize(new THREE.Vector3());
       const center = bounds.getCenter(new THREE.Vector3());
-      const height = Math.max(size.y, 0.001);
-      const targetHeight = window.innerWidth < 768 ? 4.1 : 4.8;
-      const scale = targetHeight / height;
-
+      const scale = (window.innerWidth < 768 ? 4.1 : 4.8) / Math.max(size.y, 0.001);
       model.scale.setScalar(scale);
       model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
       group.add(model);
 
-      const pointer = { x: 0, y: 0, dragX: 0, dragY: 0 };
+      const pointer = { x: 0, y: 0 };
       let dragging = false;
       let lastX = 0;
       let lastY = 0;
@@ -92,41 +81,31 @@ export function HeroModel() {
 
       const onPointerMove = (event: PointerEvent) => {
         const rect = canvas.getBoundingClientRect();
-        pointer.x = (event.clientX - rect.left) / rect.width * 2 - 1;
-        pointer.y = (event.clientY - rect.top) / rect.height * 2 - 1;
-
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
         if (!dragging) return;
         userRotation += (event.clientX - lastX) * 0.012;
-        userTilt += (event.clientY - lastY) * 0.006;
-        userTilt = THREE.MathUtils.clamp(userTilt, -0.32, 0.32);
+        userTilt = THREE.MathUtils.clamp(userTilt + (event.clientY - lastY) * 0.006, -0.32, 0.32);
         lastX = event.clientX;
         lastY = event.clientY;
       };
-
       const onPointerDown = (event: PointerEvent) => {
         dragging = true;
         lastX = event.clientX;
         lastY = event.clientY;
         canvas.setPointerCapture?.(event.pointerId);
       };
-
       const onPointerUp = (event: PointerEvent) => {
         dragging = false;
         canvas.releasePointerCapture?.(event.pointerId);
       };
-
       const onPointerLeave = () => {
-        if (!dragging) {
-          pointer.x *= 0.35;
-          pointer.y *= 0.35;
-        }
+        if (!dragging) { pointer.x *= 0.35; pointer.y *= 0.35; }
       };
-
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
         zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.0008, 0.78, 1.3);
       };
-
       const onResize = () => {
         const width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
@@ -148,24 +127,20 @@ export function HeroModel() {
 
       const clock = new THREE.Clock();
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
         const idle = reduceMotion.matches ? 0 : elapsed * 0.16;
-
         if (!dragging) userRotation *= 0.985;
         group.rotation.y = idle + userRotation + pointer.x * 0.16;
         group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.055 + userTilt, 0.08);
         group.position.y = Math.sin(elapsed * 0.75) * 0.035 + pointer.y * -0.035;
-
         const baseZ = window.innerWidth < 768 ? 5.9 : 5.35;
         camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseZ / zoom, 0.07);
         camera.lookAt(0, 0.15, 0);
         renderer.render(scene, camera);
       };
-
       animate();
 
       cleanup = () => {
@@ -178,24 +153,22 @@ export function HeroModel() {
         canvas.removeEventListener("wheel", onWheel);
         window.removeEventListener("resize", onResize);
         model.traverse((object: any) => {
-          if (object.isMesh) {
-            object.geometry?.dispose?.();
-            const materials = Array.isArray(object.material) ? object.material : [object.material];
-            materials.forEach((material: any) => {
-              material?.dispose?.();
-              material?.map?.dispose?.();
-              material?.normalMap?.dispose?.();
-              material?.roughnessMap?.dispose?.();
-              material?.metalnessMap?.dispose?.();
-            });
-          }
+          if (!object.isMesh) return;
+          object.geometry?.dispose?.();
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          materials.forEach((material: any) => {
+            material?.map?.dispose?.();
+            material?.normalMap?.dispose?.();
+            material?.roughnessMap?.dispose?.();
+            material?.metalnessMap?.dispose?.();
+            material?.dispose?.();
+          });
         });
         renderer.dispose();
       };
     }
 
     init().catch((error) => console.error("Hero model failed to load", error));
-
     return () => {
       disposed = true;
       cleanup?.();
