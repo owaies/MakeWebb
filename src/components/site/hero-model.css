@@ -1,6 +1,15 @@
+.hero-services-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+
 .hero-model-layer {
-  position: absolute;
-  inset: 0;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  margin-bottom: -100svh;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
@@ -21,8 +30,6 @@
 
 .hero-model-canvas:active { cursor: grabbing; }
 
-/* Keep the center of the model readable while still letting the character be the
-   dominant visual. The falloff is symmetrical instead of pushing the model to one side. */
 .hero-model-vignette {
   position: absolute;
   inset: 0;
