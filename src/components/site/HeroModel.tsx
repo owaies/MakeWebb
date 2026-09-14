@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import "./hero-model.css";
 
 const MODEL_URL = "/models/sasuke.glb";
 
@@ -15,20 +16,13 @@ export function HeroModel() {
         import("three"),
         import("three/examples/jsm/loaders/GLTFLoader.js"),
       ]);
-
       if (disposed || !canvasRef.current) return;
 
       const canvas = canvasRef.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 100);
       camera.position.set(0, 1.25, 5.4);
-
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: true,
-        powerPreference: "high-performance",
-      });
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -50,10 +44,8 @@ export function HeroModel() {
 
       const group = new THREE.Group();
       scene.add(group);
-      const loader = new GLTFLoader();
-      const gltf = await loader.loadAsync(MODEL_URL);
+      const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
       if (disposed) return;
-
       const model = gltf.scene;
       model.traverse((object: any) => {
         if (!object.isMesh) return;
@@ -177,8 +169,8 @@ export function HeroModel() {
   }, []);
 
   return (
-    <div className="hero-model-layer" aria-hidden="true">
-      <canvas ref={canvasRef} className="hero-model-canvas" />
+    <div className="hero-model-layer">
+      <canvas ref={canvasRef} className="hero-model-canvas" aria-label="Interactive 3D MakeWebb hero model" />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
       <div className="hero-model-hint">Drag to rotate · Scroll to zoom</div>
