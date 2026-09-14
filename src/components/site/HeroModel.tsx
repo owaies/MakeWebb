@@ -51,7 +51,6 @@ export function HeroModel() {
         materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.1; });
       });
 
-      // Normalize around the actual rendered bounds, preserving proportions.
       const bounds = new THREE.Box3().setFromObject(model);
       const size = bounds.getSize(new THREE.Vector3());
       const center = bounds.getCenter(new THREE.Vector3());
@@ -60,12 +59,17 @@ export function HeroModel() {
       model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
       group.add(model);
 
-      // Play the animation embedded in the new GLB when available.
       let mixer: THREE.AnimationMixer | undefined;
-      if (gltf.animations.length) {
+      if (gltf.animations.length > 0) {
         mixer = new THREE.AnimationMixer(model);
         const action = mixer.clipAction(gltf.animations[0]);
-        action.reset().fadeIn(0.35).play();
+        action.reset();
+        action.setLoop(THREE.LoopRepeat, Infinity);
+        action.clampWhenFinished = false;
+        action.enabled = true;
+        action.setEffectiveTimeScale(1);
+        action.setEffectiveWeight(1);
+        action.play();
       }
 
       const normalizedBounds = new THREE.Box3().setFromObject(model);
@@ -157,8 +161,12 @@ export function HeroModel() {
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
-        const elapsed = clock.getElapsedTime();
-        mixer?.update(clock.getDelta());
+
+        // Consume delta exactly once per frame so AnimationMixer advances correctly.
+        const delta = clock.getDelta();
+        const elapsed = clock.elapsedTime;
+        mixer?.update(delta);
+
         if (!dragging) userRotation *= 0.985;
         const idle = reduceMotion.matches ? 0 : elapsed * 0.08;
         group.rotation.y = idle + userRotation + pointer.x * 0.06;
