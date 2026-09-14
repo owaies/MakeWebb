@@ -51,12 +51,12 @@ export function HeroModel() {
         materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.1; });
       });
 
-      const bounds = new THREE.Box3().setFromObject(model);
-      const size = bounds.getSize(new THREE.Vector3());
-      const center = bounds.getCenter(new THREE.Vector3());
-      const modelScale = 2.2 / Math.max(size.y, 0.001);
+      const rawBounds = new THREE.Box3().setFromObject(model);
+      const rawSize = rawBounds.getSize(new THREE.Vector3());
+      const rawCenter = rawBounds.getCenter(new THREE.Vector3());
+      const modelScale = 2.0 / Math.max(rawSize.y, 0.001);
       model.scale.setScalar(modelScale);
-      model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
+      model.position.set(-rawCenter.x * modelScale, -rawCenter.y * modelScale, -rawCenter.z * modelScale);
       group.add(model);
 
       let mixer: THREE.AnimationMixer | undefined;
@@ -72,8 +72,6 @@ export function HeroModel() {
         action.play();
       }
 
-      const normalizedBounds = new THREE.Box3().setFromObject(model);
-      const sphere = normalizedBounds.getBoundingSphere(new THREE.Sphere());
       const pointer = { x: 0, y: 0 };
       let dragging = false;
       let lastX = 0;
@@ -81,35 +79,38 @@ export function HeroModel() {
       let userRotation = 0;
       let userTilt = 0;
       let zoom = 1;
-      let baseDistance = 5;
-      let baseY = 0;
+      let fitDistance = 5;
+      const fitTarget = new THREE.Vector3();
+      const fitBox = new THREE.Box3();
 
-      const fit = () => {
+      const updateViewport = () => {
         const width = canvas.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || window.innerHeight;
-        const aspect = width / Math.max(height, 1);
-        const portrait = height > width;
-        const shortSide = Math.min(width, height);
-        const mobile = shortSide < 768;
-        const tablet = shortSide >= 768 && shortSide < 1100;
-        const fov = portrait ? 38 : tablet ? 35 : 33;
-        camera.fov = fov;
-        camera.aspect = aspect;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65));
+        renderer.setSize(width, height, false);
+        camera.aspect = width / Math.max(height, 1);
+        camera.fov = height > width ? 39 : width < 1100 ? 35 : 32;
         camera.updateProjectionMatrix();
+      };
 
-        const vAngle = THREE.MathUtils.degToRad(fov / 2);
-        const hAngle = Math.atan(Math.tan(vAngle) * aspect);
-        const halfH = (normalizedBounds.max.y - normalizedBounds.min.y) * 0.5;
-        const halfW = (normalizedBounds.max.x - normalizedBounds.min.x) * 0.5;
-        const verticalFit = halfH / Math.tan(vAngle);
-        const horizontalFit = halfW / Math.max(Math.tan(hAngle), 0.01);
-        const sphereFit = sphere.radius / Math.max(Math.sin(vAngle), 0.01);
-        const fitDistance = Math.max(verticalFit, horizontalFit, sphereFit);
-        const fillRatio = mobile && portrait ? 0.68 : mobile ? 0.72 : tablet ? 0.76 : aspect > 2 ? 0.8 : 0.78;
-        baseDistance = (fitDistance / fillRatio) * 0.94;
-        baseY = portrait ? -0.02 : 0;
-        camera.position.set(0, baseY, baseDistance / zoom);
-        camera.lookAt(0, baseY, 0);
+      const fitAnimatedCharacter = () => {
+        // The animation changes the skinned pose, so calculate the bounds after
+        // the mixer update instead of fitting only the model's bind pose.
+        fitBox.setFromObject(group);
+        const center = fitBox.getCenter(fitTarget);
+        const radius = fitBox.getBoundingSphere(new THREE.Sphere()).radius;
+        const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
+        const horizontalAngle = Math.atan(Math.tan(verticalAngle) * camera.aspect);
+        const limitingAngle = Math.max(0.05, Math.min(verticalAngle, horizontalAngle));
+        const margin = camera.aspect < 0.75 ? 1.34 : camera.aspect < 1.2 ? 1.25 : 1.18;
+        const required = (radius / Math.tan(limitingAngle)) * margin;
+        fitDistance = THREE.MathUtils.lerp(fitDistance, required, 0.14);
+
+        const centerY = THREE.MathUtils.lerp(0, center.y, 0.35);
+        camera.position.x = THREE.MathUtils.lerp(camera.position.x, center.x, 0.12);
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, centerY, 0.12);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, center.z + fitDistance / zoom, 0.12);
+        camera.lookAt(center.x, centerY, center.z);
       };
 
       const onPointerMove = (event: PointerEvent) => {
@@ -135,15 +136,9 @@ export function HeroModel() {
       const onPointerLeave = () => { if (!dragging) { pointer.x *= 0.35; pointer.y *= 0.35; } };
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
-        zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.00065, 0.86, 1.16);
+        zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.00065, 0.9, 1.12);
       };
-      const onResize = () => {
-        const width = canvas.clientWidth || window.innerWidth;
-        const height = canvas.clientHeight || window.innerHeight;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65));
-        renderer.setSize(width, height, false);
-        fit();
-      };
+      const onResize = () => updateViewport();
 
       canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerdown", onPointerDown);
@@ -153,7 +148,6 @@ export function HeroModel() {
       canvas.addEventListener("wheel", onWheel, { passive: false });
       window.addEventListener("resize", onResize);
       window.visualViewport?.addEventListener("resize", onResize);
-      window.visualViewport?.addEventListener("scroll", onResize);
       onResize();
 
       const clock = new THREE.Clock();
@@ -162,18 +156,19 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        // Consume delta exactly once per frame so AnimationMixer advances correctly.
         const delta = clock.getDelta();
         const elapsed = clock.elapsedTime;
         mixer?.update(delta);
 
         if (!dragging) userRotation *= 0.985;
-        const idle = reduceMotion.matches ? 0 : elapsed * 0.08;
-        group.rotation.y = idle + userRotation + pointer.x * 0.06;
-        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.025 + userTilt, 0.08);
-        group.position.y = THREE.MathUtils.lerp(group.position.y, baseY + (reduceMotion.matches ? 0 : Math.sin(elapsed * 0.6) * 0.014) + pointer.y * -0.01, 0.08);
-        camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseDistance / zoom, 0.08);
-        camera.lookAt(0, baseY, 0);
+        const idle = reduceMotion.matches ? 0 : elapsed * 0.055;
+        group.rotation.y = idle + userRotation + pointer.x * 0.045;
+        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.018 + userTilt, 0.08);
+        group.position.y = Math.sin(elapsed * 0.55) * 0.008;
+
+        // Refit every frame because the rig animation changes the character's
+        // visible bounds while moving arms, legs, clothing and the sword.
+        fitAnimatedCharacter();
         renderer.render(scene, camera);
       };
       animate();
@@ -188,7 +183,6 @@ export function HeroModel() {
         canvas.removeEventListener("wheel", onWheel);
         window.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("resize", onResize);
-        window.visualViewport?.removeEventListener("scroll", onResize);
         mixer?.stopAllAction();
         model.traverse((object: any) => {
           if (!object.isMesh) return;
