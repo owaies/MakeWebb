@@ -58,9 +58,12 @@ export function HeroModel() {
       const bounds = new THREE.Box3().setFromObject(model);
       const size = bounds.getSize(new THREE.Vector3());
       const center = bounds.getCenter(new THREE.Vector3());
-      const scale = (window.innerWidth < 768 ? 4.1 : 4.8) / Math.max(size.y, 0.001);
+      const isMobile = window.innerWidth < 768;
+      const targetHeight = isMobile ? 2.85 : 3.9;
+      const scale = targetHeight / Math.max(size.y, 0.001);
       model.scale.setScalar(scale);
       model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+      group.position.set(isMobile ? 1.05 : 1.45, isMobile ? -0.05 : 0.05, 0);
       group.add(model);
 
       const pointer = { x: 0, y: 0 };
@@ -69,7 +72,7 @@ export function HeroModel() {
       let lastY = 0;
       let userRotation = 0;
       let userTilt = 0;
-      let zoom = window.innerWidth < 768 ? 1.08 : 1;
+      let zoom = 1;
 
       const onPointerMove = (event: PointerEvent) => {
         const rect = canvas.getBoundingClientRect();
@@ -77,7 +80,7 @@ export function HeroModel() {
         pointer.y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
         if (!dragging) return;
         userRotation += (event.clientX - lastX) * 0.012;
-        userTilt = THREE.MathUtils.clamp(userTilt + (event.clientY - lastY) * 0.006, -0.32, 0.32);
+        userTilt = THREE.MathUtils.clamp(userTilt + (event.clientY - lastY) * 0.006, -0.28, 0.28);
         lastX = event.clientX;
         lastY = event.clientY;
       };
@@ -96,13 +99,13 @@ export function HeroModel() {
       };
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
-        zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.0008, 0.78, 1.3);
+        zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.0008, 0.84, 1.18);
       };
       const onResize = () => {
         const width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
         camera.aspect = width / Math.max(height, 1);
-        camera.fov = width < 768 ? 34 : 30;
+        camera.fov = width < 768 ? 36 : 30;
         camera.updateProjectionMatrix();
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 768 ? 1.35 : 1.75));
         renderer.setSize(width, height, false);
@@ -123,14 +126,14 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-        const idle = reduceMotion.matches ? 0 : elapsed * 0.16;
+        const idle = reduceMotion.matches ? 0 : elapsed * 0.12;
         if (!dragging) userRotation *= 0.985;
-        group.rotation.y = idle + userRotation + pointer.x * 0.16;
-        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.055 + userTilt, 0.08);
-        group.position.y = Math.sin(elapsed * 0.75) * 0.035 + pointer.y * -0.035;
-        const baseZ = window.innerWidth < 768 ? 5.9 : 5.35;
+        group.rotation.y = idle + userRotation + pointer.x * 0.11;
+        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.035 + userTilt, 0.08);
+        group.position.y = (isMobile ? -0.05 : 0.05) + Math.sin(elapsed * 0.7) * 0.025 + pointer.y * -0.02;
+        const baseZ = isMobile ? 6.4 : 5.8;
         camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseZ / zoom, 0.07);
-        camera.lookAt(0, 0.15, 0);
+        camera.lookAt(0, 0.05, 0);
         renderer.render(scene, camera);
       };
       animate();
