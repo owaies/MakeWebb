@@ -16,77 +16,93 @@
   pointer-events: auto;
   cursor: grab;
   touch-action: pan-y;
-  opacity: 0.86;
+  opacity: 0.94;
 }
 
 .hero-model-canvas:active { cursor: grabbing; }
 
+/* Keep the center of the model readable while still letting the character be the
+   dominant visual. The falloff is symmetrical instead of pushing the model to one side. */
 .hero-model-vignette {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 92%, transparent) 27%, color-mix(in oklab, var(--background) 35%, transparent) 58%, transparent 82%),
-    linear-gradient(180deg, color-mix(in oklab, var(--background) 88%, transparent) 0%, transparent 22%, transparent 72%, var(--background) 100%);
+    radial-gradient(circle at 50% 48%, transparent 0%, transparent 31%, color-mix(in oklab, var(--background) 20%, transparent) 58%, var(--background) 100%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background) 84%, transparent) 0%, transparent 22%, transparent 68%, color-mix(in oklab, var(--background) 88%, transparent) 100%);
 }
 
 .hero-model-glow {
   position: absolute;
   z-index: 1;
-  width: min(48vw, 680px);
-  height: min(48vw, 680px);
-  right: 2%;
-  top: 17%;
+  width: min(58vw, 820px);
+  height: min(58vw, 820px);
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, oklch(0.63 0.24 295 / 0.2) 0%, oklch(0.52 0.2 310 / 0.08) 34%, transparent 70%);
-  filter: blur(18px);
-  animation: hero-model-pulse 5s ease-in-out infinite;
+  background: radial-gradient(circle, oklch(0.63 0.24 295 / 0.22) 0%, oklch(0.52 0.2 310 / 0.09) 34%, transparent 70%);
+  filter: blur(20px);
+  animation: hero-model-pulse 5.5s ease-in-out infinite;
 }
 
 .hero-model-hint {
   position: absolute;
   z-index: 2;
-  right: clamp(1.25rem, 4vw, 3rem);
-  bottom: 1.5rem;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1rem, 3vw, 1.5rem);
   border: 1px solid oklch(1 0 0 / 0.1);
   border-radius: 999px;
-  padding: 0.55rem 0.8rem;
-  color: oklch(0.9 0.02 290 / 0.5);
+  padding: 0.5rem 0.75rem;
+  color: oklch(0.9 0.02 290 / 0.48);
   background: oklch(0.04 0.01 290 / 0.28);
   backdrop-filter: blur(14px);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   letter-spacing: 0.04em;
   pointer-events: none;
 }
 
 @keyframes hero-model-pulse {
-  0%, 100% { transform: scale(0.94); opacity: 0.65; }
-  50% { transform: scale(1.06); opacity: 1; }
+  0%, 100% { transform: translate(-50%, -50%) scale(0.94); opacity: 0.65; }
+  50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+}
+
+@media (max-width: 1099px) {
+  .hero-model-canvas { opacity: 0.9; }
 }
 
 @media (max-width: 767px) {
-  .hero-model-canvas { opacity: 0.76; }
+  .hero-model-canvas { opacity: 0.82; }
 
   .hero-model-vignette {
     background:
-      linear-gradient(90deg, color-mix(in oklab, var(--background) 98%, transparent) 0%, color-mix(in oklab, var(--background) 76%, transparent) 34%, color-mix(in oklab, var(--background) 22%, transparent) 67%, transparent 92%),
-      linear-gradient(180deg, color-mix(in oklab, var(--background) 90%, transparent) 0%, transparent 24%, color-mix(in oklab, var(--background) 10%, transparent) 62%, var(--background) 100%);
+      radial-gradient(circle at 50% 48%, transparent 0%, transparent 27%, color-mix(in oklab, var(--background) 26%, transparent) 55%, var(--background) 100%),
+      linear-gradient(180deg, color-mix(in oklab, var(--background) 90%, transparent) 0%, transparent 28%, transparent 66%, var(--background) 100%);
   }
 
   .hero-model-glow {
-    width: 82vw;
-    height: 82vw;
-    right: -8%;
-    top: 29%;
+    width: 92vw;
+    height: 92vw;
+    left: 50%;
+    top: 48%;
   }
 
   .hero-model-hint {
-    right: 1rem;
-    bottom: 1rem;
-    font-size: 0.58rem;
+    right: 0.85rem;
+    bottom: 0.85rem;
+    font-size: 0.56rem;
   }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .hero-model-canvas { opacity: 0.9; }
+  .hero-model-hint { bottom: 0.65rem; }
+}
+
+@media (min-width: 1600px) {
+  .hero-model-canvas { opacity: 0.96; }
 }
 
 @media (prefers-reduced-motion: reduce) {
