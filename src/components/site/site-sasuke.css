@@ -1,0 +1,67 @@
+.site-sasuke-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+  opacity: 0.3;
+}
+
+.site-sasuke-backdrop .hero-model-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-sasuke-backdrop .hero-model-canvas {
+  pointer-events: none;
+  cursor: default;
+  opacity: 1;
+}
+
+.site-sasuke-backdrop .hero-model-vignette {
+  background:
+    radial-gradient(circle at 68% 48%, transparent 0%, transparent 24%, color-mix(in oklab, var(--background) 46%, transparent) 62%, var(--background) 100%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background) 72%, transparent), transparent 30%, color-mix(in oklab, var(--background) 82%, transparent));
+}
+
+.site-sasuke-backdrop .hero-model-glow {
+  width: min(62vw, 760px);
+  height: min(62vw, 760px);
+  left: 68%;
+  top: 52%;
+  opacity: 0.65;
+}
+
+.site-sasuke-backdrop .hero-model-hint {
+  display: none;
+}
+
+.site-content-layer {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 767px) {
+  .site-sasuke-backdrop {
+    opacity: 0.22;
+  }
+
+  .site-sasuke-backdrop .hero-model-glow {
+    width: 95vw;
+    height: 95vw;
+    left: 72%;
+    top: 52%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-sasuke-backdrop .hero-model-glow {
+    animation: none;
+  }
+}
