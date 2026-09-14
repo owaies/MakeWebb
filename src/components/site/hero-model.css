@@ -1,0 +1,99 @@
+.hero-model-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.hero-model-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.hero-model-canvas:active {
+  cursor: grabbing;
+}
+
+.hero-model-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 88%, transparent) 32%, transparent 68%),
+    linear-gradient(180deg, color-mix(in oklab, var(--background) 82%, transparent), transparent 24%, transparent 72%, var(--background) 100%);
+}
+
+.hero-model-glow {
+  position: absolute;
+  z-index: 1;
+  width: min(52vw, 720px);
+  height: min(52vw, 720px);
+  right: 4%;
+  top: 18%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, oklch(0.63 0.24 295 / 0.2) 0%, oklch(0.52 0.2 310 / 0.08) 34%, transparent 70%);
+  filter: blur(18px);
+  animation: hero-model-pulse 5s ease-in-out infinite;
+}
+
+.hero-model-hint {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1.25rem, 4vw, 3rem);
+  bottom: 1.5rem;
+  border: 1px solid oklch(1 0 0 / 0.1);
+  border-radius: 999px;
+  padding: 0.55rem 0.8rem;
+  color: oklch(0.9 0.02 290 / 0.5);
+  background: oklch(0.04 0.01 290 / 0.28);
+  backdrop-filter: blur(14px);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+@keyframes hero-model-pulse {
+  0%, 100% { transform: scale(0.94); opacity: 0.65; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@media (max-width: 767px) {
+  .hero-model-canvas {
+    opacity: 0.9;
+  }
+
+  .hero-model-vignette {
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--background) 92%, transparent) 0%, color-mix(in oklab, var(--background) 72%, transparent) 36%, color-mix(in oklab, var(--background) 84%, transparent) 72%, var(--background) 100%),
+      linear-gradient(90deg, color-mix(in oklab, var(--background) 64%, transparent), transparent 55%, color-mix(in oklab, var(--background) 72%, transparent));
+  }
+
+  .hero-model-glow {
+    width: 90vw;
+    height: 90vw;
+    right: 5%;
+    top: 27%;
+  }
+
+  .hero-model-hint {
+    right: 1rem;
+    bottom: 1rem;
+    font-size: 0.58rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-model-glow {
+    animation: none;
+  }
+}
