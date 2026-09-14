@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import "./hero-model.css";
 
-const MODEL_URL = "/models/sasuke.glb";
+const MODEL_URL = "/models/sasuke_utchiha%20(1).glb";
 
 export function HeroModel() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,22 +21,14 @@ export function HeroModel() {
       const canvas = canvasRef.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(36, 1, 0.01, 100);
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: true,
-        powerPreference: "high-performance",
-      });
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       scene.add(new THREE.HemisphereLight(0xffffff, 0x120d1c, 2.3));
-      const key = new THREE.DirectionalLight(0xffffff, 4.0);
+      const key = new THREE.DirectionalLight(0xffffff, 4);
       key.position.set(3, 5, 4);
-      key.castShadow = true;
       scene.add(key);
       const rim = new THREE.PointLight(0x9b6cff, 15, 10, 2);
       rim.position.set(-3.5, 2.5, -2);
@@ -47,7 +39,6 @@ export function HeroModel() {
 
       const group = new THREE.Group();
       scene.add(group);
-
       const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
       if (disposed) return;
 
@@ -57,31 +48,28 @@ export function HeroModel() {
         object.castShadow = true;
         object.receiveShadow = true;
         const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material: any) => {
-          if (material) material.envMapIntensity = 1.1;
-        });
+        materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.1; });
       });
 
-      // Normalize the asset around its actual visible bounds, not its GLB origin.
-      // This keeps the character visually centered even if the source file has an offset origin.
+      // Normalize around the actual rendered bounds, preserving proportions.
       const bounds = new THREE.Box3().setFromObject(model);
       const size = bounds.getSize(new THREE.Vector3());
       const center = bounds.getCenter(new THREE.Vector3());
-      const sourceHeight = Math.max(size.y, 0.001);
-      const normalizedHeight = 2.2;
-      const modelScale = normalizedHeight / sourceHeight;
+      const modelScale = 2.2 / Math.max(size.y, 0.001);
       model.scale.setScalar(modelScale);
-      model.position.set(
-        -center.x * modelScale,
-        -center.y * modelScale,
-        -center.z * modelScale,
-      );
+      model.position.set(-center.x * modelScale, -center.y * modelScale, -center.z * modelScale);
       group.add(model);
 
-      const normalizedBounds = new THREE.Box3().setFromObject(model);
-      const normalizedSphere = normalizedBounds.getBoundingSphere(new THREE.Sphere());
-      const sphereRadius = Math.max(normalizedSphere.radius, 0.1);
+      // Play the animation embedded in the new GLB when available.
+      let mixer: THREE.AnimationMixer | undefined;
+      if (gltf.animations.length) {
+        mixer = new THREE.AnimationMixer(model);
+        const action = mixer.clipAction(gltf.animations[0]);
+        action.reset().fadeIn(0.35).play();
+      }
 
+      const normalizedBounds = new THREE.Box3().setFromObject(model);
+      const sphere = normalizedBounds.getBoundingSphere(new THREE.Sphere());
       const pointer = { x: 0, y: 0 };
       let dragging = false;
       let lastX = 0;
@@ -91,113 +79,66 @@ export function HeroModel() {
       let zoom = 1;
       let baseDistance = 5;
       let baseY = 0;
-      let baseFov = 36;
 
-      const getViewportProfile = () => {
+      const fit = () => {
         const width = canvas.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || window.innerHeight;
         const aspect = width / Math.max(height, 1);
+        const portrait = height > width;
         const shortSide = Math.min(width, height);
-        const isPortrait = height > width;
-        const isMobile = shortSide < 768;
-        const isTablet = shortSide >= 768 && shortSide < 1100;
-
-        // Fluid values. These are viewport ratios, not device-specific coordinates.
-        // Portrait gets a little more breathing room vertically; wide screens can show
-        // a larger hero centerpiece without clipping the head, feet, or sword.
-        const visibleHeight = isMobile
-          ? (isPortrait ? 0.70 : 0.76)
-          : isTablet
-            ? 0.76
-            : aspect > 2.0
-              ? 0.80
-              : 0.78;
-
-        const fov = isPortrait ? 38 : isTablet ? 35 : 33;
-        return { width, height, aspect, visibleHeight, fov, isPortrait, isMobile };
-      };
-
-      const fitCameraToModel = () => {
-        const profile = getViewportProfile();
-        baseFov = profile.fov;
-        camera.fov = baseFov;
-        camera.aspect = profile.aspect;
+        const mobile = shortSide < 768;
+        const tablet = shortSide >= 768 && shortSide < 1100;
+        const fov = portrait ? 38 : tablet ? 35 : 33;
+        camera.fov = fov;
+        camera.aspect = aspect;
         camera.updateProjectionMatrix();
 
-        const verticalHalfAngle = THREE.MathUtils.degToRad(baseFov / 2);
-        const horizontalHalfAngle = Math.atan(
-          Math.tan(verticalHalfAngle) * profile.aspect,
-        );
-
-        // Fit the actual character bounds in both axes with a small safety margin.
-        const halfHeight = normalizedBounds.max.y - normalizedBounds.min.y;
-        const halfWidth = normalizedBounds.max.x - normalizedBounds.min.x;
-        const requiredVertical = (halfHeight * 0.5) / Math.tan(verticalHalfAngle);
-        const requiredHorizontal = (halfWidth * 0.5) / Math.tan(horizontalHalfAngle);
-        const sphereFit = sphereRadius / Math.sin(verticalHalfAngle);
-        const rawDistance = Math.max(requiredVertical, requiredHorizontal, sphereFit);
-
-        // visibleHeight is the portion of the viewport occupied by the model.
-        baseDistance = (rawDistance / profile.visibleHeight) * 0.92;
-        camera.position.set(0, 0.06, baseDistance / zoom);
-        camera.lookAt(0, 0, 0);
-
-        // Keep the center of the visible model in the visual center of the hero.
-        // A tiny fluid lift on short/landscape viewports compensates for the browser chrome.
-        baseY = profile.isMobile && profile.isPortrait ? -0.02 : 0;
-        group.position.x = 0;
-        group.position.y = baseY;
-        group.position.z = 0;
+        const vAngle = THREE.MathUtils.degToRad(fov / 2);
+        const hAngle = Math.atan(Math.tan(vAngle) * aspect);
+        const halfH = (normalizedBounds.max.y - normalizedBounds.min.y) * 0.5;
+        const halfW = (normalizedBounds.max.x - normalizedBounds.min.x) * 0.5;
+        const verticalFit = halfH / Math.tan(vAngle);
+        const horizontalFit = halfW / Math.max(Math.tan(hAngle), 0.01);
+        const sphereFit = sphere.radius / Math.max(Math.sin(vAngle), 0.01);
+        const fitDistance = Math.max(verticalFit, horizontalFit, sphereFit);
+        const fillRatio = mobile && portrait ? 0.68 : mobile ? 0.72 : tablet ? 0.76 : aspect > 2 ? 0.8 : 0.78;
+        baseDistance = (fitDistance / fillRatio) * 0.94;
+        baseY = portrait ? -0.02 : 0;
+        camera.position.set(0, baseY, baseDistance / zoom);
+        camera.lookAt(0, baseY, 0);
       };
 
       const onPointerMove = (event: PointerEvent) => {
         const rect = canvas.getBoundingClientRect();
         pointer.x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1;
         pointer.y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1;
-
         if (!dragging) return;
         userRotation += (event.clientX - lastX) * 0.009;
-        userTilt = THREE.MathUtils.clamp(
-          userTilt + (event.clientY - lastY) * 0.0045,
-          -0.24,
-          0.24,
-        );
+        userTilt = THREE.MathUtils.clamp(userTilt + (event.clientY - lastY) * 0.0045, -0.24, 0.24);
         lastX = event.clientX;
         lastY = event.clientY;
       };
-
       const onPointerDown = (event: PointerEvent) => {
         dragging = true;
         lastX = event.clientX;
         lastY = event.clientY;
         canvas.setPointerCapture?.(event.pointerId);
       };
-
       const onPointerUp = (event: PointerEvent) => {
         dragging = false;
         canvas.releasePointerCapture?.(event.pointerId);
       };
-
-      const onPointerLeave = () => {
-        if (!dragging) {
-          pointer.x *= 0.35;
-          pointer.y *= 0.35;
-        }
-      };
-
+      const onPointerLeave = () => { if (!dragging) { pointer.x *= 0.35; pointer.y *= 0.35; } };
       const onWheel = (event: WheelEvent) => {
         event.preventDefault();
         zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.00065, 0.86, 1.16);
       };
-
       const onResize = () => {
-        const width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
-        const height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
-        camera.aspect = width / Math.max(height, 1);
-        camera.updateProjectionMatrix();
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 768 ? 1.25 : 1.65));
+        const width = canvas.clientWidth || window.innerWidth;
+        const height = canvas.clientHeight || window.innerHeight;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65));
         renderer.setSize(width, height, false);
-        fitCameraToModel();
+        fit();
       };
 
       canvas.addEventListener("pointermove", onPointerMove);
@@ -213,36 +154,20 @@ export function HeroModel() {
 
       const clock = new THREE.Clock();
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
-        const idle = reduceMotion.matches ? 0 : elapsed * 0.10;
-
+        mixer?.update(clock.getDelta());
         if (!dragging) userRotation *= 0.985;
-
-        // Gentle parallax keeps the model alive without moving it away from center.
-        group.rotation.y = idle + userRotation + pointer.x * 0.07;
-        group.rotation.x = THREE.MathUtils.lerp(
-          group.rotation.x,
-          pointer.y * 0.028 + userTilt,
-          0.08,
-        );
-        group.position.y = THREE.MathUtils.lerp(
-          group.position.y,
-          baseY + (reduceMotion.matches ? 0 : Math.sin(elapsed * 0.65) * 0.018) + pointer.y * -0.012,
-          0.08,
-        );
-        camera.position.z = THREE.MathUtils.lerp(
-          camera.position.z,
-          baseDistance / zoom,
-          0.08,
-        );
+        const idle = reduceMotion.matches ? 0 : elapsed * 0.08;
+        group.rotation.y = idle + userRotation + pointer.x * 0.06;
+        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.025 + userTilt, 0.08);
+        group.position.y = THREE.MathUtils.lerp(group.position.y, baseY + (reduceMotion.matches ? 0 : Math.sin(elapsed * 0.6) * 0.014) + pointer.y * -0.01, 0.08);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, baseDistance / zoom, 0.08);
         camera.lookAt(0, baseY, 0);
         renderer.render(scene, camera);
       };
-
       animate();
 
       cleanup = () => {
@@ -256,7 +181,7 @@ export function HeroModel() {
         window.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("scroll", onResize);
-
+        mixer?.stopAllAction();
         model.traverse((object: any) => {
           if (!object.isMesh) return;
           object.geometry?.dispose?.();
@@ -274,16 +199,12 @@ export function HeroModel() {
     }
 
     init().catch((error) => console.error("Hero model failed to load", error));
-    return () => {
-      disposed = true;
-      cleanup?.();
-      cancelAnimationFrame(animationFrame);
-    };
+    return () => { disposed = true; cleanup?.(); cancelAnimationFrame(animationFrame); };
   }, []);
 
   return (
     <div className="hero-model-layer">
-      <canvas ref={canvasRef} className="hero-model-canvas" aria-label="Interactive 3D MakeWebb hero model" />
+      <canvas ref={canvasRef} className="hero-model-canvas" aria-label="Interactive 3D Sasuke hero model" />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
       <div className="hero-model-hint">Drag to rotate · Scroll to zoom</div>
