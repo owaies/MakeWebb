@@ -1,0 +1,45 @@
+.scroll-range-sasuke {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 500ms ease, visibility 500ms ease;
+}
+
+.scroll-range-sasuke.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-range-sasuke .hero-model-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.scroll-range-sasuke .hero-model-canvas {
+  pointer-events: auto;
+}
+
+.scroll-range-sasuke .hero-model-vignette {
+  opacity: .78;
+}
+
+.scroll-range-sasuke .hero-model-glow {
+  opacity: .7;
+}
+
+.scroll-range-sasuke .hero-model-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .scroll-range-sasuke .hero-model-canvas {
+    opacity: .72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-range-sasuke { transition: none; }
+}
