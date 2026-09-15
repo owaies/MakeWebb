@@ -28,7 +28,7 @@ export function Nav() {
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="glass pointer-events-auto flex w-full max-w-3xl items-center gap-1 rounded-full py-2 pr-2 pl-4"
+        className="pointer-events-auto flex w-full max-w-3xl items-center gap-1 rounded-full border border-transparent bg-transparent py-2 pr-2 pl-4 shadow-none backdrop-blur-none"
       >
         <Link to="/" className="mr-auto flex items-center gap-2">
           <span className="inline-block h-2.5 w-2.5 rotate-45 rounded-[2px] bg-primary" />
