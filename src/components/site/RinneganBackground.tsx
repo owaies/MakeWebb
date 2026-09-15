@@ -25,8 +25,8 @@ function detectVideoKind(): VideoKind {
   const iosPhone = /iphone|ipod/i.test(ua) || /iphone|ipod/i.test(platform);
   const ipad = /ipad/i.test(ua) || (platform.includes("mac") && touchPoints > 1);
 
-  // Android Chrome Desktop Site may expose a desktop UA and a wide CSS
-  // viewport. Touch + coarse pointer preserves the physical-device signal.
+  // Android Chrome Desktop Site can expose a desktop UA and a wide CSS
+  // viewport. Prefer the physical-device signal when it is available.
   const mobileHardware =
     android ||
     iosPhone ||
@@ -73,24 +73,51 @@ export function RinneganBackground() {
     const video = videoRef.current;
     if (!video || reducedMotion) return;
 
+    let cancelled = false;
     setReady(false);
+
+    // Register listeners BEFORE load(). On mobile browsers the first
+    // canplay/loadeddata event can otherwise fire before the listeners exist,
+    // leaving the video permanently transparent behind the fallback.
+    const showVideo = () => {
+      if (!cancelled) setReady(true);
+    };
+    const startPlayback = () => {
+      if (cancelled) return;
+      setReady(true);
+      void video.play().catch(() => {
+        // Autoplay can be blocked even for muted video. The first decoded
+        // frame is still allowed to render, so visibility does not depend on
+        // play() succeeding.
+      });
+    };
+    const onError = () => {
+      if (!cancelled) setReady(false);
+    };
+
+    video.addEventListener("loadeddata", showVideo);
+    video.addEventListener("canplay", startPlayback);
+    video.addEventListener("error", onError);
+    video.addEventListener("stalled", onError);
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
     video.load();
 
-    const onCanPlay = () => {
-      setReady(true);
-      void video.play().catch(() => undefined);
-    };
-    const onError = () => setReady(false);
-
-    video.addEventListener("canplay", onCanPlay);
-    video.addEventListener("error", onError);
+    // If the browser restored a cached frame before the listeners ran,
+    // expose it immediately.
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      showVideo();
+    }
 
     return () => {
-      video.removeEventListener("canplay", onCanPlay);
+      cancelled = true;
+      video.removeEventListener("loadeddata", showVideo);
+      video.removeEventListener("canplay", startPlayback);
       video.removeEventListener("error", onError);
+      video.removeEventListener("stalled", onError);
       video.pause();
-      video.removeAttribute("src");
-      video.load();
     };
   }, [src, reducedMotion]);
 
