@@ -52,10 +52,15 @@ export function HeroModel() {
 
       const model = gltf.scene;
 
-      // The source GLB faces away from the hero camera. Rotate the whole
-      // character once so the screen sees Sasuke's face exactly like the
-      // supplied front-facing reference image. Do not rotate this during play.
-      model.rotation.set(0, Math.PI, 0);
+      // Put the animation rig under a separate orientation parent. This is
+      // important because an animation can contain root rotation tracks. The
+      // parent guarantees the character always faces the camera like the
+      // supplied front-facing reference image, while the rig remains free to
+      // animate its body and bones.
+      const facingGroup = new THREE.Group();
+      facingGroup.rotation.set(0, Math.PI, 0);
+      group.add(facingGroup);
+      facingGroup.add(model);
 
       model.traverse((object: any) => {
         if (!object.isMesh) return;
@@ -67,8 +72,8 @@ export function HeroModel() {
         });
       });
 
-      // Normalize the unanimated character once. The group remains at the
-      // world origin forever, which keeps the model visually locked to center.
+      // Normalize once. Nothing below this point translates or rotates the
+      // character itself, so its screen position remains stable.
       const rawBounds = new THREE.Box3().setFromObject(model);
       const rawSize = rawBounds.getSize(new THREE.Vector3());
       const rawCenter = rawBounds.getCenter(new THREE.Vector3());
@@ -79,7 +84,6 @@ export function HeroModel() {
         -rawCenter.y * modelScale,
         -rawCenter.z * modelScale,
       );
-      group.add(model);
 
       let mixer: THREE.AnimationMixer | undefined;
       let action: THREE.AnimationAction | undefined;
@@ -99,29 +103,28 @@ export function HeroModel() {
         action.play();
       }
 
-      const viewport = { width: 1, height: 1 };
       let cameraDistance = 5;
-      const fixedTarget = new THREE.Vector3(0, 0, 0);
       const fitBox = new THREE.Box3();
       const fitSphere = new THREE.Sphere();
+      const fixedTarget = new THREE.Vector3(0, 0, 0);
 
       const updateViewport = () => {
-        viewport.width = canvas.clientWidth || window.innerWidth;
-        viewport.height = canvas.clientHeight || window.innerHeight;
+        const width = canvas.clientWidth || window.innerWidth;
+        const height = canvas.clientHeight || window.innerHeight;
 
         renderer.setPixelRatio(
-          Math.min(window.devicePixelRatio, viewport.width < 768 ? 1.35 : 1.75),
+          Math.min(window.devicePixelRatio, width < 768 ? 1.35 : 1.75),
         );
-        renderer.setSize(viewport.width, viewport.height, false);
+        renderer.setSize(width, height, false);
 
-        camera.aspect = viewport.width / Math.max(viewport.height, 1);
-        camera.fov = viewport.width < 768 ? 38 : viewport.width < 1200 ? 35 : 33;
+        camera.aspect = width / Math.max(height, 1);
+        camera.fov = width < 768 ? 38 : width < 1200 ? 35 : 33;
         camera.updateProjectionMatrix();
       };
 
       const updateCamera = () => {
-        // Fit only the distance. Never follow the animated body's center, so
-        // walking/running cannot make Sasuke drift away from the screen center.
+        // Only change camera distance to fit the animated character. The
+        // camera target and x/y coordinates never follow the animation.
         fitBox.setFromObject(group);
         const radius = fitBox.getBoundingSphere(fitSphere).radius;
         const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
@@ -136,19 +139,16 @@ export function HeroModel() {
       };
 
       const getScrollProgress = () => {
-        const maxScroll = Math.max(
-          document.documentElement.scrollHeight - window.innerHeight,
-          1,
-        );
+        const scrollHeight = document.documentElement.scrollHeight;
+        const maxScroll = Math.max(scrollHeight - window.innerHeight, 1);
         return THREE.MathUtils.clamp(window.scrollY / maxScroll, 0, 1);
       };
 
       const scrubAnimation = () => {
         if (!mixer || !action) return;
         const time = getScrollProgress() * clipDuration;
-        // AnimationMixer.setTime evaluates the rig at an exact timestamp.
-        // Moving the page down moves forward through the clip; moving back up
-        // supplies a smaller timestamp, so the animation reverses naturally.
+        // Exact-time sampling means the animation follows scroll position in
+        // both directions: down advances the clip, up reverses it.
         mixer.setTime(time);
       };
 
@@ -169,13 +169,12 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        // Keep the animation perfectly tied to the current scroll position.
-        // There is intentionally no mixer.update(), idle motion, or rotation.
+        // No automatic time progression and no rotation. Scroll alone picks
+        // the current animation frame.
         scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
         updateCamera();
-
         renderer.render(scene, camera);
       };
 
