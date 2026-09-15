@@ -52,11 +52,11 @@ export function HeroModel() {
 
       const model = gltf.scene;
 
-      // The reference supplied by the user is a clean right-facing side
-      // profile. Keep this orientation on a parent outside the animated rig so
-      // animation tracks can never rotate Sasuke back toward the camera.
+      // The current model orientation is the face-forward view. Rotate the
+      // entire rig 180 degrees on a parent outside the animated hierarchy so
+      // the visible result is Sasuke's back, matching the supplied reference.
       const facingGroup = new THREE.Group();
-      facingGroup.rotation.set(0, -Math.PI / 2, 0);
+      facingGroup.rotation.set(0, Math.PI / 2, 0);
       group.add(facingGroup);
       facingGroup.add(model);
 
@@ -119,6 +119,8 @@ export function HeroModel() {
       };
 
       const updateCamera = () => {
+        // The camera never tracks the animated body. It only adjusts distance
+        // enough to keep the full character visible inside the fixed viewport.
         fitBox.setFromObject(group);
         const radius = fitBox.getBoundingSphere(fitSphere).radius;
         const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
@@ -140,8 +142,7 @@ export function HeroModel() {
 
       const scrubAnimation = () => {
         if (!mixer || !action) return;
-        const time = getScrollProgress() * clipDuration;
-        mixer.setTime(time);
+        mixer.setTime(getScrollProgress() * clipDuration);
       };
 
       const onScroll = () => scrubAnimation();
@@ -161,8 +162,6 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        // Scroll is the only source of animation time. There is deliberately
-        // no clock update, idle motion, pointer rotation, or auto rotation.
         scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
@@ -210,7 +209,7 @@ export function HeroModel() {
       <canvas
         ref={canvasRef}
         className="hero-model-canvas"
-        aria-label="3D Sasuke model with scroll-controlled animation"
+        aria-label="3D Sasuke model with scroll-controlled back-facing animation"
       />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
