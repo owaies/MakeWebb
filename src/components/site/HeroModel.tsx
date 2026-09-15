@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import "./hero-model.css";
 
 const MODEL_URL = "/models/sasuke_utchiha%20(1).glb";
+const MODEL_HEIGHT = 2.25;
 
 export function HeroModel() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,13 +21,14 @@ export function HeroModel() {
 
       const canvas = canvasRef.current;
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(36, 1, 0.01, 100);
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100);
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
         antialias: true,
         powerPreference: "high-performance",
       });
+
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
@@ -49,6 +51,12 @@ export function HeroModel() {
       if (disposed) return;
 
       const model = gltf.scene;
+
+      // The source GLB faces away from the hero camera. Rotate the whole
+      // character once so the screen sees Sasuke's face exactly like the
+      // supplied front-facing reference image. Do not rotate this during play.
+      model.rotation.set(0, Math.PI, 0);
+
       model.traverse((object: any) => {
         if (!object.isMesh) return;
         object.castShadow = true;
@@ -59,59 +67,75 @@ export function HeroModel() {
         });
       });
 
-      // Normalize the character around its actual bounds so the rig stays centered.
+      // Normalize the unanimated character once. The group remains at the
+      // world origin forever, which keeps the model visually locked to center.
       const rawBounds = new THREE.Box3().setFromObject(model);
       const rawSize = rawBounds.getSize(new THREE.Vector3());
       const rawCenter = rawBounds.getCenter(new THREE.Vector3());
-      const modelScale = 2.85 / Math.max(rawSize.y, 0.001);
+      const modelScale = MODEL_HEIGHT / Math.max(rawSize.y, 0.001);
       model.scale.setScalar(modelScale);
       model.position.set(
         -rawCenter.x * modelScale,
         -rawCenter.y * modelScale,
         -rawCenter.z * modelScale,
       );
-
-      // The GLB is exported facing away from the camera. Rotate the whole character
-      // exactly 180 degrees once, while leaving the rig free to animate normally.
-      model.rotation.set(0, Math.PI, 0);
       group.add(model);
 
       let mixer: THREE.AnimationMixer | undefined;
       let action: THREE.AnimationAction | undefined;
+      let clipDuration = 0;
+
       if (gltf.animations.length > 0) {
+        const clip = gltf.animations[0];
+        clipDuration = Math.max(clip.duration, 0.001);
         mixer = new THREE.AnimationMixer(model);
-        action = mixer.clipAction(gltf.animations[0]);
+        action = mixer.clipAction(clip);
         action.reset();
-        action.setLoop(THREE.LoopRepeat, Infinity);
-        action.clampWhenFinished = false;
         action.enabled = true;
+        action.setLoop(THREE.LoopRepeat, Infinity);
         action.setEffectiveWeight(1);
-        // Do NOT pause or set the time scale to zero. mixer.setTime() below is the
-        // actual scroll scrubber and needs the action to remain evaluatable.
         action.setEffectiveTimeScale(1);
+        action.paused = false;
         action.play();
       }
 
-      let fitDistance = 5;
+      const viewport = { width: 1, height: 1 };
+      let cameraDistance = 5;
+      const fixedTarget = new THREE.Vector3(0, 0, 0);
       const fitBox = new THREE.Box3();
       const fitSphere = new THREE.Sphere();
-      const target = new THREE.Vector3(0, 0, 0);
 
       const updateViewport = () => {
-        const width = canvas.clientWidth || window.innerWidth;
-        const height = canvas.clientHeight || window.innerHeight;
+        viewport.width = canvas.clientWidth || window.innerWidth;
+        viewport.height = canvas.clientHeight || window.innerHeight;
+
         renderer.setPixelRatio(
-          Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65),
+          Math.min(window.devicePixelRatio, viewport.width < 768 ? 1.35 : 1.75),
         );
-        renderer.setSize(width, height, false);
-        camera.aspect = width / Math.max(height, 1);
-        camera.fov = height > width ? 39 : width < 1100 ? 35 : 32;
+        renderer.setSize(viewport.width, viewport.height, false);
+
+        camera.aspect = viewport.width / Math.max(viewport.height, 1);
+        camera.fov = viewport.width < 768 ? 38 : viewport.width < 1200 ? 35 : 33;
         camera.updateProjectionMatrix();
       };
 
+      const updateCamera = () => {
+        // Fit only the distance. Never follow the animated body's center, so
+        // walking/running cannot make Sasuke drift away from the screen center.
+        fitBox.setFromObject(group);
+        const radius = fitBox.getBoundingSphere(fitSphere).radius;
+        const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
+        const horizontalAngle = Math.atan(Math.tan(verticalAngle) * camera.aspect);
+        const limitingAngle = Math.max(0.05, Math.min(verticalAngle, horizontalAngle));
+        const margin = camera.aspect < 0.72 ? 1.52 : camera.aspect < 1.1 ? 1.40 : 1.30;
+        const requiredDistance = (radius / Math.tan(limitingAngle)) * margin;
+
+        cameraDistance = THREE.MathUtils.lerp(cameraDistance, requiredDistance, 0.12);
+        camera.position.set(0, 0, cameraDistance);
+        camera.lookAt(fixedTarget);
+      };
+
       const getScrollProgress = () => {
-        // Use the complete document scroll range. This makes the animation scrub
-        // reliably on mobile, tablet and desktop instead of depending on section IDs.
         const maxScroll = Math.max(
           document.documentElement.scrollHeight - window.innerHeight,
           1,
@@ -119,55 +143,42 @@ export function HeroModel() {
         return THREE.MathUtils.clamp(window.scrollY / maxScroll, 0, 1);
       };
 
-      const syncAnimationToScroll = () => {
-        if (!action || !mixer) return;
-        const duration = Math.max(action.getClip().duration, 0.001);
-        const time = getScrollProgress() * duration;
+      const scrubAnimation = () => {
+        if (!mixer || !action) return;
+        const time = getScrollProgress() * clipDuration;
+        // AnimationMixer.setTime evaluates the rig at an exact timestamp.
+        // Moving the page down moves forward through the clip; moving back up
+        // supplies a smaller timestamp, so the animation reverses naturally.
         mixer.setTime(time);
       };
 
-      const onScroll = () => syncAnimationToScroll();
+      const onScroll = () => scrubAnimation();
       const onResize = () => {
         updateViewport();
-        syncAnimationToScroll();
+        scrubAnimation();
       };
 
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
       window.visualViewport?.addEventListener("resize", onResize);
+
       onResize();
-      syncAnimationToScroll();
-
-      const fitAnimatedCharacter = () => {
-        fitBox.setFromObject(group);
-        const radius = fitBox.getBoundingSphere(fitSphere).radius;
-        const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
-        const horizontalAngle = Math.atan(Math.tan(verticalAngle) * camera.aspect);
-        const limitingAngle = Math.max(0.05, Math.min(verticalAngle, horizontalAngle));
-        const margin = camera.aspect < 0.75 ? 1.08 : camera.aspect < 1.2 ? 1.06 : 1.04;
-        const required = (radius / Math.tan(limitingAngle)) * margin;
-        fitDistance = THREE.MathUtils.lerp(fitDistance, required, 0.18);
-
-        // Camera never follows the animated skeleton. This is what keeps Sasuke
-        // locked to the exact center while arms, legs and body move.
-        camera.position.set(0, 0, fitDistance);
-        camera.lookAt(target);
-      };
+      scrubAnimation();
 
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        if (action && mixer) {
-          const duration = Math.max(action.getClip().duration, 0.001);
-          mixer.setTime(getScrollProgress() * duration);
-        }
-
-        group.rotation.set(0, 0, 0);
+        // Keep the animation perfectly tied to the current scroll position.
+        // There is intentionally no mixer.update(), idle motion, or rotation.
+        scrubAnimation();
         group.position.set(0, 0, 0);
-        fitAnimatedCharacter();
+        group.rotation.set(0, 0, 0);
+        updateCamera();
+
         renderer.render(scene, camera);
       };
+
       animate();
 
       cleanup = () => {
@@ -176,6 +187,7 @@ export function HeroModel() {
         window.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("resize", onResize);
         mixer?.stopAllAction();
+
         model.traverse((object: any) => {
           if (!object.isMesh) return;
           object.geometry?.dispose?.();
@@ -188,11 +200,13 @@ export function HeroModel() {
             material?.dispose?.();
           });
         });
+
         renderer.dispose();
       };
     }
 
     init().catch((error) => console.error("Hero model failed to load", error));
+
     return () => {
       disposed = true;
       cleanup?.();
@@ -209,7 +223,6 @@ export function HeroModel() {
       />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
-      <div className="hero-model-hint">Scroll to animate</div>
     </div>
   );
 }
