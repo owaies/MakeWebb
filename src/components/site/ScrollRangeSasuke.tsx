@@ -3,20 +3,16 @@ import { HeroModel } from "./HeroModel";
 import "./scroll-range-sasuke.css";
 
 export function ScrollRangeSasuke() {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
 
   useEffect(() => {
     let raf = 0;
     const update = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const start = document.querySelector<HTMLElement>("#selected-work");
-        const footer = document.querySelector<HTMLElement>("footer");
-        if (!start || !footer) return;
-        const scrollY = window.scrollY;
-        const startY = start.getBoundingClientRect().top + scrollY - window.innerHeight * 0.55;
-        const endY = footer.getBoundingClientRect().bottom + scrollY;
-        setActive(scrollY >= startY && scrollY < endY);
+        // Keep Sasuke mounted and centered throughout the home page so the
+        // animation can be driven continuously by the full-page scroll.
+        setActive(true);
       });
     };
 
