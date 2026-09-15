@@ -21,7 +21,12 @@ export function HeroModel() {
       const canvas = canvasRef.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(36, 1, 0.01, 100);
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
@@ -48,7 +53,9 @@ export function HeroModel() {
         object.castShadow = true;
         object.receiveShadow = true;
         const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.1; });
+        materials.forEach((material: any) => {
+          if (material) material.envMapIntensity = 1.1;
+        });
       });
 
       const rawBounds = new THREE.Box3().setFromObject(model);
@@ -56,37 +63,39 @@ export function HeroModel() {
       const rawCenter = rawBounds.getCenter(new THREE.Vector3());
       const modelScale = 2.0 / Math.max(rawSize.y, 0.001);
       model.scale.setScalar(modelScale);
-      model.position.set(-rawCenter.x * modelScale, -rawCenter.y * modelScale, -rawCenter.z * modelScale);
+      model.position.set(
+        -rawCenter.x * modelScale,
+        -rawCenter.y * modelScale,
+        -rawCenter.z * modelScale,
+      );
       group.add(model);
 
       let mixer: THREE.AnimationMixer | undefined;
+      let action: THREE.AnimationAction | undefined;
       if (gltf.animations.length > 0) {
         mixer = new THREE.AnimationMixer(model);
-        const action = mixer.clipAction(gltf.animations[0]);
+        action = mixer.clipAction(gltf.animations[0]);
         action.reset();
         action.setLoop(THREE.LoopRepeat, Infinity);
         action.clampWhenFinished = false;
         action.enabled = true;
-        action.setEffectiveTimeScale(1);
+        action.setEffectiveTimeScale(0);
         action.setEffectiveWeight(1);
         action.play();
+        action.paused = true;
       }
 
-      const pointer = { x: 0, y: 0 };
-      let dragging = false;
-      let lastX = 0;
-      let lastY = 0;
-      let userRotation = 0;
-      let userTilt = 0;
-      let zoom = 1;
       let fitDistance = 5;
       const fitTarget = new THREE.Vector3();
       const fitBox = new THREE.Box3();
+      const fitSphere = new THREE.Sphere();
 
       const updateViewport = () => {
         const width = canvas.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || window.innerHeight;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65));
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio, Math.min(width, 900) < 768 ? 1.25 : 1.65),
+        );
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.fov = height > width ? 39 : width < 1100 ? 35 : 32;
@@ -94,11 +103,9 @@ export function HeroModel() {
       };
 
       const fitAnimatedCharacter = () => {
-        // The animation changes the skinned pose, so calculate the bounds after
-        // the mixer update instead of fitting only the model's bind pose.
         fitBox.setFromObject(group);
         const center = fitBox.getCenter(fitTarget);
-        const radius = fitBox.getBoundingSphere(new THREE.Sphere()).radius;
+        const radius = fitBox.getBoundingSphere(fitSphere).radius;
         const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
         const horizontalAngle = Math.atan(Math.tan(verticalAngle) * camera.aspect);
         const limitingAngle = Math.max(0.05, Math.min(verticalAngle, horizontalAngle));
@@ -106,68 +113,66 @@ export function HeroModel() {
         const required = (radius / Math.tan(limitingAngle)) * margin;
         fitDistance = THREE.MathUtils.lerp(fitDistance, required, 0.14);
 
+        // Keep the character locked to the exact visual center and looking straight
+        // at the camera. The only changing motion is the embedded rig animation.
         const centerY = THREE.MathUtils.lerp(0, center.y, 0.35);
         camera.position.x = THREE.MathUtils.lerp(camera.position.x, center.x, 0.12);
         camera.position.y = THREE.MathUtils.lerp(camera.position.y, centerY, 0.12);
-        camera.position.z = THREE.MathUtils.lerp(camera.position.z, center.z + fitDistance / zoom, 0.12);
+        camera.position.z = THREE.MathUtils.lerp(
+          camera.position.z,
+          center.z + fitDistance,
+          0.12,
+        );
         camera.lookAt(center.x, centerY, center.z);
       };
 
-      const onPointerMove = (event: PointerEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        pointer.x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1;
-        pointer.y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1;
-        if (!dragging) return;
-        userRotation += (event.clientX - lastX) * 0.009;
-        userTilt = THREE.MathUtils.clamp(userTilt + (event.clientY - lastY) * 0.0045, -0.24, 0.24);
-        lastX = event.clientX;
-        lastY = event.clientY;
-      };
-      const onPointerDown = (event: PointerEvent) => {
-        dragging = true;
-        lastX = event.clientX;
-        lastY = event.clientY;
-        canvas.setPointerCapture?.(event.pointerId);
-      };
-      const onPointerUp = (event: PointerEvent) => {
-        dragging = false;
-        canvas.releasePointerCapture?.(event.pointerId);
-      };
-      const onPointerLeave = () => { if (!dragging) { pointer.x *= 0.35; pointer.y *= 0.35; } };
-      const onWheel = (event: WheelEvent) => {
-        event.preventDefault();
-        zoom = THREE.MathUtils.clamp(zoom + event.deltaY * 0.00065, 0.9, 1.12);
-      };
-      const onResize = () => updateViewport();
+      const getScrollProgress = () => {
+        const start = document.querySelector<HTMLElement>("#selected-work");
+        const footer = document.querySelector<HTMLElement>("footer");
+        if (!start || !footer) return 0;
 
-      canvas.addEventListener("pointermove", onPointerMove);
-      canvas.addEventListener("pointerdown", onPointerDown);
-      canvas.addEventListener("pointerup", onPointerUp);
-      canvas.addEventListener("pointercancel", onPointerUp);
-      canvas.addEventListener("pointerleave", onPointerLeave);
-      canvas.addEventListener("wheel", onWheel, { passive: false });
+        const scrollY = window.scrollY;
+        const startY = start.getBoundingClientRect().top + scrollY - window.innerHeight * 0.55;
+        const endY = footer.getBoundingClientRect().bottom + scrollY;
+        const range = Math.max(endY - startY, 1);
+        return THREE.MathUtils.clamp((scrollY - startY) / range, 0, 1);
+      };
+
+      const syncAnimationToScroll = () => {
+        if (!action) return;
+        const progress = getScrollProgress();
+        const duration = Math.max(action.getClip().duration, 0.001);
+        action.time = progress * duration;
+        mixer?.setTime(action.time);
+      };
+
+      const onScroll = () => syncAnimationToScroll();
+      const onResize = () => {
+        updateViewport();
+        syncAnimationToScroll();
+      };
+
+      window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
       window.visualViewport?.addEventListener("resize", onResize);
       onResize();
+      syncAnimationToScroll();
 
-      const clock = new THREE.Clock();
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        const delta = clock.getDelta();
-        const elapsed = clock.elapsedTime;
-        mixer?.update(delta);
+        // No idle animation, no auto-rotation and no pointer-driven rotation.
+        // Sasuke remains front-facing and centered while scroll controls the rig.
+        if (action) {
+          const duration = Math.max(action.getClip().duration, 0.001);
+          const progress = getScrollProgress();
+          action.time = progress * duration;
+          mixer?.setTime(action.time);
+        }
 
-        if (!dragging) userRotation *= 0.985;
-        const idle = reduceMotion.matches ? 0 : elapsed * 0.055;
-        group.rotation.y = idle + userRotation + pointer.x * 0.045;
-        group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, pointer.y * 0.018 + userTilt, 0.08);
-        group.position.y = Math.sin(elapsed * 0.55) * 0.008;
-
-        // Refit every frame because the rig animation changes the character's
-        // visible bounds while moving arms, legs, clothing and the sword.
+        group.rotation.set(0, 0, 0);
+        group.position.set(0, 0, 0);
         fitAnimatedCharacter();
         renderer.render(scene, camera);
       };
@@ -175,12 +180,7 @@ export function HeroModel() {
 
       cleanup = () => {
         cancelAnimationFrame(animationFrame);
-        canvas.removeEventListener("pointermove", onPointerMove);
-        canvas.removeEventListener("pointerdown", onPointerDown);
-        canvas.removeEventListener("pointerup", onPointerUp);
-        canvas.removeEventListener("pointercancel", onPointerUp);
-        canvas.removeEventListener("pointerleave", onPointerLeave);
-        canvas.removeEventListener("wheel", onWheel);
+        window.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("resize", onResize);
         mixer?.stopAllAction();
@@ -201,15 +201,23 @@ export function HeroModel() {
     }
 
     init().catch((error) => console.error("Hero model failed to load", error));
-    return () => { disposed = true; cleanup?.(); cancelAnimationFrame(animationFrame); };
+    return () => {
+      disposed = true;
+      cleanup?.();
+      cancelAnimationFrame(animationFrame);
+    };
   }, []);
 
   return (
     <div className="hero-model-layer">
-      <canvas ref={canvasRef} className="hero-model-canvas" aria-label="Interactive 3D Sasuke hero model" />
+      <canvas
+        ref={canvasRef}
+        className="hero-model-canvas"
+        aria-label="3D Sasuke model with scroll-controlled animation"
+      />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
-      <div className="hero-model-hint">Drag to rotate · Scroll to zoom</div>
+      <div className="hero-model-hint">Scroll to animate</div>
     </div>
   );
 }
