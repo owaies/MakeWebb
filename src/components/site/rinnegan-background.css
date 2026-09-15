@@ -18,6 +18,7 @@
   object-fit: cover;
   object-position: center;
   opacity: 1;
+  filter: brightness(1.16) saturate(1.06);
 }
 
 @media (prefers-reduced-motion: reduce) {
