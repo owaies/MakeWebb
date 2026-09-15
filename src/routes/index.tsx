@@ -10,57 +10,49 @@ import { projects, services } from "@/lib/site-data";
 import "@/components/site/hero-services.css";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "MakeWebb — Websites, Apps, AI Integration & Automation" },
-      { name: "description", content: "MakeWebb builds high-craft websites, applications, AI integrations, automation, UI/UX and interactive 3D experiences for founders and teams." },
-      { property: "og:title", content: "MakeWebb — Websites, Apps, AI & Automation" },
-      { property: "og:description", content: "A two-person studio shipping websites, apps, AI integrations, automation, product design and interactive experiences." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => ({ meta: [
+    { title: "MakeWebb — Websites, Apps, AI Integration & Automation" },
+    { name: "description", content: "MakeWebb builds high-craft websites, applications, AI integrations, automation, UI/UX and interactive 3D experiences for founders and teams." },
+    { property: "og:title", content: "MakeWebb — Websites, Apps, AI & Automation" },
+    { property: "og:description", content: "A two-person studio shipping websites, apps, AI integrations, automation, product design and interactive experiences." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: Home,
 });
 
 function Hero() {
-  return (
-    <section className="hero-scroll-scene">
-      <div className="hero-scroll-sticky">
-        <RinneganBackground />
-        <div className="hero-scroll-model"><HeroModel /></div>
-        <div className="makewebb-hero-wash" />
-
-        <div className="relative z-10 mx-auto h-full max-w-[1440px] px-6 md:px-10 lg:px-10">
-          <div className="grid h-full grid-cols-12">
-            <div className="col-span-12 flex flex-col justify-center lg:col-span-5 lg:justify-start lg:pt-[21vh]">
-              <Reveal><p className="makewebb-kicker"><span /> WE BUILD THE NEXT</p></Reveal>
-              <Reveal delay={0.08}><h1 className="makewebb-hero-title">Ideas into<span>Reality</span></h1></Reveal>
-              <Reveal delay={0.16}><p className="makewebb-hero-copy">Websites, Apps, AI Integration,<br className="hidden sm:block" /> Automation and Digital Products<br className="hidden sm:block" /> for the next generation.</p></Reveal>
-              <Reveal delay={0.24}>
-                <div className="mt-8 flex items-center gap-5 sm:mt-10">
-                  <Link to="/contact" className="makewebb-primary-button">Start a Project <ArrowUpRight className="h-4 w-4" /></Link>
-                  <Link to="/work" className="makewebb-showreel"><span className="makewebb-play"><Play className="ml-0.5 h-4 w-4 fill-current" /></span><span>Watch Showreel</span></Link>
-                </div>
-              </Reveal>
+  return <section className="hero-scroll-scene">
+    <div className="hero-scroll-sticky">
+      <RinneganBackground />
+      <div className="hero-scroll-model"><HeroModel /></div>
+      <div className="makewebb-hero-wash" />
+      <div className="relative z-10 mx-auto h-full max-w-[1440px] px-6 md:px-10 lg:px-10">
+        <div className="grid h-full grid-cols-12">
+          <div className="col-span-12 flex flex-col justify-center lg:col-span-5 lg:justify-start lg:pt-[21vh]">
+            <p className="makewebb-kicker"><span /> WE BUILD THE NEXT</p>
+            <h1 className="makewebb-hero-title">Ideas into<span>Reality</span></h1>
+            <p className="makewebb-hero-copy">Websites, Apps, AI Integration,<br className="hidden sm:block" /> Automation and Digital Products<br className="hidden sm:block" /> for the next generation.</p>
+            <div className="mt-8 flex items-center gap-5 sm:mt-10">
+              <Link to="/contact" className="makewebb-primary-button">Start a Project <ArrowUpRight className="h-4 w-4" /></Link>
+              <Link to="/work" className="makewebb-showreel"><span className="makewebb-play"><Play className="ml-0.5 h-4 w-4 fill-current" /></span><span>Watch Showreel</span></Link>
             </div>
           </div>
-
-          <div className="makewebb-hero-character-label"><span>う</span><span>ち</span><span>は</span><span>サ</span><span>ス</span><span>ケ</span></div>
-          <div className="makewebb-stats"><div><strong>50+</strong><span>Projects Delivered</span></div><div><strong>30+</strong><span>Happy Clients</span></div><div><strong>3+</strong><span>Years of Experience</span></div></div>
-          <div className="makewebb-bottom-mark"><span>BUILD</span><span>AUTOMATE</span><span>INNOVATE</span></div>
-          <div className="makewebb-scroll-cue"><span className="makewebb-mouse"><i /></span><span>SCROLL</span><i className="makewebb-scroll-line" /></div>
-          <div className="makewebb-section-nav" aria-label="Page sections">
-            <span className="makewebb-section-nav-label">SCROLL TO EXPLORE</span>
-            {["Home", "Services", "Projects", "About", "Contact"].map((label, index) => {
-              const href = ["/", "/services", "/work", "/team", "/contact"][index];
-              return <Link key={label} to={href as "/" | "/services" | "/work" | "/team" | "/contact"} className={index === 0 ? "active" : ""}><span className="makewebb-section-dot">{String(index + 1).padStart(2, "0")}</span><span>{label}</span></Link>;
-            })}
-          </div>
+        </div>
+        <div className="makewebb-hero-character-label"><span>う</span><span>ち</span><span>は</span><span>サ</span><span>ス</span><span>ケ</span></div>
+        <div className="makewebb-stats"><div><strong>50+</strong><span>Projects Delivered</span></div><div><strong>30+</strong><span>Happy Clients</span></div><div><strong>3+</strong><span>Years of Experience</span></div></div>
+        <div className="makewebb-bottom-mark"><span>BUILD</span><span>AUTOMATE</span><span>INNOVATE</span></div>
+        <div className="makewebb-scroll-cue"><span className="makewebb-mouse"><i /></span><span>SCROLL</span><i className="makewebb-scroll-line" /></div>
+        <div className="makewebb-section-nav" aria-label="Page sections">
+          <span className="makewebb-section-nav-label">SCROLL TO EXPLORE</span>
+          {["Home", "Services", "Projects", "About", "Contact"].map((label, index) => {
+            const href = ["/", "/services", "/work", "/team", "/contact"][index];
+            return <Link key={label} to={href as "/" | "/services" | "/work" | "/team" | "/contact"} className={index === 0 ? "active" : ""}><span className="makewebb-section-dot">{String(index + 1).padStart(2, "0")}</span><span>{label}</span></Link>;
+          })}
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>;
 }
 
 function Marquee(){const items=["WEB","APPS","AI INTEGRATION","AUTOMATION","UI/UX","3D / INTERACTIVE","DATA"];return <div className="overflow-hidden border-y border-border bg-ink py-5"><motion.div className="flex gap-10 whitespace-nowrap" animate={{x:["0%","-50%"]}} transition={{duration:22,repeat:Infinity,ease:"linear"}}>{[...items,...items,...items,...items].map((t,i)=><span key={i} className="font-display text-sm tracking-[0.28em] text-muted-foreground uppercase">{t} <span className="text-primary">✦</span></span>)}</motion.div></div>}
