@@ -52,13 +52,11 @@ export function HeroModel() {
 
       const model = gltf.scene;
 
-      // Put the animation rig under a separate orientation parent. This is
-      // important because an animation can contain root rotation tracks. The
-      // parent guarantees the character always faces the camera like the
-      // supplied front-facing reference image, while the rig remains free to
-      // animate its body and bones.
+      // The reference supplied by the user is a clean right-facing side
+      // profile. Keep this orientation on a parent outside the animated rig so
+      // animation tracks can never rotate Sasuke back toward the camera.
       const facingGroup = new THREE.Group();
-      facingGroup.rotation.set(0, Math.PI, 0);
+      facingGroup.rotation.set(0, -Math.PI / 2, 0);
       group.add(facingGroup);
       facingGroup.add(model);
 
@@ -72,8 +70,6 @@ export function HeroModel() {
         });
       });
 
-      // Normalize once. Nothing below this point translates or rotates the
-      // character itself, so its screen position remains stable.
       const rawBounds = new THREE.Box3().setFromObject(model);
       const rawSize = rawBounds.getSize(new THREE.Vector3());
       const rawCenter = rawBounds.getCenter(new THREE.Vector3());
@@ -123,8 +119,6 @@ export function HeroModel() {
       };
 
       const updateCamera = () => {
-        // Only change camera distance to fit the animated character. The
-        // camera target and x/y coordinates never follow the animation.
         fitBox.setFromObject(group);
         const radius = fitBox.getBoundingSphere(fitSphere).radius;
         const verticalAngle = THREE.MathUtils.degToRad(camera.fov / 2);
@@ -147,8 +141,6 @@ export function HeroModel() {
       const scrubAnimation = () => {
         if (!mixer || !action) return;
         const time = getScrollProgress() * clipDuration;
-        // Exact-time sampling means the animation follows scroll position in
-        // both directions: down advances the clip, up reverses it.
         mixer.setTime(time);
       };
 
@@ -169,8 +161,8 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        // No automatic time progression and no rotation. Scroll alone picks
-        // the current animation frame.
+        // Scroll is the only source of animation time. There is deliberately
+        // no clock update, idle motion, pointer rotation, or auto rotation.
         scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
