@@ -53,9 +53,9 @@ export function HeroModel() {
       const model = gltf.scene;
       const presentation = new THREE.Group();
 
-      // The source model is sideways relative to the camera. Keep this
-      // presentation rotation fixed. Scrolling only changes animation time.
-      presentation.rotation.set(0, -Math.PI / 2, 0);
+      // The source model is sideways relative to the camera. The presentation
+      // group owns the fixed orientation so animation never changes facing.
+      presentation.rotation.set(0, Math.PI / 2, 0);
       group.add(presentation);
       presentation.add(model);
 
@@ -110,8 +110,8 @@ export function HeroModel() {
         const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
         if (!hero) return 0;
 
-        // The complete 300vh hero is the animation timeline. The sticky
-        // viewport remains visible while this progress moves from 0 to 1.
+        // Progress is the hero's own scroll range, not the whole document.
+        // This makes the sticky 300vh scene the complete animation timeline.
         const scrollRange = Math.max(hero.offsetHeight - window.innerHeight, 1);
         return THREE.MathUtils.clamp(
           -hero.getBoundingClientRect().top / scrollRange,
@@ -146,11 +146,22 @@ export function HeroModel() {
       };
 
       const scrubAnimation = () => {
-        if (!mixer) return;
-        // No independent animation clock. Every rendered frame is derived
-        // directly from scroll position, making the animation reversible.
+        if (!mixer || !action) return;
+
         const progress = getHeroProgress();
-        mixer.setTime(progress * clipDuration);
+        const targetTime = THREE.MathUtils.clamp(
+          progress * clipDuration,
+          0,
+          clipDuration,
+        );
+
+        // LoopOnce + clampWhenFinished pauses the action when it reaches the
+        // final frame. That breaks reverse scrolling. Re-enable/unpause it
+        // before every absolute time seek so the same timeline works in both
+        // directions with no autoplay clock.
+        action.enabled = true;
+        action.paused = false;
+        mixer.setTime(targetTime);
       };
 
       const onScroll = () => scrubAnimation();
@@ -168,17 +179,12 @@ export function HeroModel() {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
 
-        // Exact bidirectional mapping:
-        // 0% scroll = 0% animation
-        // 25% scroll = 25% animation
-        // 50% scroll = 50% animation
-        // 75% scroll = 75% animation
-        // 100% scroll = 100% animation
-        // Scrolling upward automatically reverses the clip.
+        // Absolute scroll position controls absolute animation time.
+        // Down = later in the clip, up = earlier in the same clip.
         scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
-        presentation.rotation.set(0, -Math.PI / 2, 0);
+        presentation.rotation.set(0, Math.PI / 2, 0);
         updateCamera();
         renderer.render(scene, camera);
       };
@@ -223,7 +229,7 @@ export function HeroModel() {
       <canvas
         ref={canvasRef}
         className="hero-model-canvas"
-        aria-label="Front-facing Sasuke with exact bidirectional scroll-controlled animation"
+        aria-label="Front-facing Sasuke with absolute bidirectional scroll-controlled animation"
       />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
