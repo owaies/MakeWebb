@@ -23,7 +23,12 @@ export function HeroModel() {
       const canvas = canvasRef.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100);
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
@@ -41,12 +46,16 @@ export function HeroModel() {
 
       const group = new THREE.Group();
       scene.add(group);
+
       const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
       if (disposed) return;
 
       const model = gltf.scene;
       const presentation = new THREE.Group();
-      presentation.rotation.y = Math.PI;
+
+      // The source model is sideways relative to the camera. Keep this
+      // presentation rotation fixed. Scrolling only changes animation time.
+      presentation.rotation.set(0, -Math.PI / 2, 0);
       group.add(presentation);
       presentation.add(model);
 
@@ -54,8 +63,12 @@ export function HeroModel() {
         if (!object.isMesh) return;
         object.castShadow = true;
         object.receiveShadow = true;
-        const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material: any) => { if (material) material.envMapIntensity = 1.1; });
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+        materials.forEach((material: any) => {
+          if (material) material.envMapIntensity = 1.1;
+        });
       });
 
       const rawBounds = new THREE.Box3().setFromObject(model);
@@ -63,11 +76,16 @@ export function HeroModel() {
       const rawCenter = rawBounds.getCenter(new THREE.Vector3());
       const modelScale = MODEL_HEIGHT / Math.max(rawSize.y, 0.001);
       model.scale.setScalar(modelScale);
-      model.position.set(-rawCenter.x * modelScale, -rawCenter.y * modelScale, -rawCenter.z * modelScale);
+      model.position.set(
+        -rawCenter.x * modelScale,
+        -rawCenter.y * modelScale,
+        -rawCenter.z * modelScale,
+      );
 
       let mixer: THREE.AnimationMixer | undefined;
       let action: THREE.AnimationAction | undefined;
       let clipDuration = 0.001;
+
       if (gltf.animations.length > 0) {
         const clip = gltf.animations[0];
         clipDuration = Math.max(clip.duration, 0.001);
@@ -87,20 +105,27 @@ export function HeroModel() {
       const fitBox = new THREE.Box3();
       const fitSphere = new THREE.Sphere();
       const fixedTarget = new THREE.Vector3(0, 0, 0);
-      let smoothProgress = 0;
-      let targetProgress = 0;
 
       const getHeroProgress = () => {
         const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
         if (!hero) return 0;
+
+        // The complete 300vh hero is the animation timeline. The sticky
+        // viewport remains visible while this progress moves from 0 to 1.
         const scrollRange = Math.max(hero.offsetHeight - window.innerHeight, 1);
-        return THREE.MathUtils.clamp(-hero.getBoundingClientRect().top / scrollRange, 0, 1);
+        return THREE.MathUtils.clamp(
+          -hero.getBoundingClientRect().top / scrollRange,
+          0,
+          1,
+        );
       };
 
       const updateViewport = () => {
         const width = canvas.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || window.innerHeight;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, width < 768 ? 1.35 : 1.75));
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio, width < 768 ? 1.35 : 1.75),
+        );
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.fov = width < 768 ? 38 : width < 1200 ? 35 : 33;
@@ -120,8 +145,20 @@ export function HeroModel() {
         camera.lookAt(fixedTarget);
       };
 
-      const onScroll = () => { targetProgress = getHeroProgress(); };
-      const onResize = () => { updateViewport(); targetProgress = getHeroProgress(); };
+      const scrubAnimation = () => {
+        if (!mixer) return;
+        // No independent animation clock. Every rendered frame is derived
+        // directly from scroll position, making the animation reversible.
+        const progress = getHeroProgress();
+        mixer.setTime(progress * clipDuration);
+      };
+
+      const onScroll = () => scrubAnimation();
+      const onResize = () => {
+        updateViewport();
+        scrubAnimation();
+      };
+
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
       window.visualViewport?.addEventListener("resize", onResize);
@@ -130,16 +167,22 @@ export function HeroModel() {
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
-        targetProgress = getHeroProgress();
-        smoothProgress += (targetProgress - smoothProgress) * 0.18;
-        if (Math.abs(smoothProgress - targetProgress) < 0.0005) smoothProgress = targetProgress;
-        if (mixer) mixer.setTime(smoothProgress * clipDuration);
+
+        // Exact bidirectional mapping:
+        // 0% scroll = 0% animation
+        // 25% scroll = 25% animation
+        // 50% scroll = 50% animation
+        // 75% scroll = 75% animation
+        // 100% scroll = 100% animation
+        // Scrolling upward automatically reverses the clip.
+        scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
-        presentation.rotation.set(0, Math.PI, 0);
+        presentation.rotation.set(0, -Math.PI / 2, 0);
         updateCamera();
         renderer.render(scene, camera);
       };
+
       animate();
 
       cleanup = () => {
@@ -151,7 +194,9 @@ export function HeroModel() {
         model.traverse((object: any) => {
           if (!object.isMesh) return;
           object.geometry?.dispose?.();
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          const materials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
           materials.forEach((material: any) => {
             material?.map?.dispose?.();
             material?.normalMap?.dispose?.();
@@ -165,12 +210,21 @@ export function HeroModel() {
     }
 
     init().catch((error) => console.error("Hero model failed to load", error));
-    return () => { disposed = true; cleanup?.(); cancelAnimationFrame(animationFrame); };
+
+    return () => {
+      disposed = true;
+      cleanup?.();
+      cancelAnimationFrame(animationFrame);
+    };
   }, []);
 
   return (
     <div className="hero-model-layer">
-      <canvas ref={canvasRef} className="hero-model-canvas" aria-label="Front-facing Sasuke with scroll-controlled animation" />
+      <canvas
+        ref={canvasRef}
+        className="hero-model-canvas"
+        aria-label="Front-facing Sasuke with exact bidirectional scroll-controlled animation"
+      />
       <div className="hero-model-vignette" />
       <div className="hero-model-glow" />
     </div>
