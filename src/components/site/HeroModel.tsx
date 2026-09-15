@@ -31,17 +31,30 @@ export function HeroModel() {
       });
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.12;
+      renderer.toneMappingExposure = 1.2;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x120d1c, 2.3));
-      const key = new THREE.DirectionalLight(0xffffff, 4);
-      key.position.set(3, 5, 4);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x171020, 2.8));
+
+      const key = new THREE.DirectionalLight(0xffffff, 5.2);
+      key.position.set(3, 6, 5);
+      key.castShadow = true;
+      key.shadow.mapSize.set(1024, 1024);
+      key.shadow.camera.near = 0.5;
+      key.shadow.camera.far = 20;
       scene.add(key);
-      const rim = new THREE.PointLight(0x9b6cff, 15, 10, 2);
+
+      const frontFill = new THREE.DirectionalLight(0xffffff, 2.2);
+      frontFill.position.set(-2, 3, 6);
+      scene.add(frontFill);
+
+      const rim = new THREE.PointLight(0x9b6cff, 12, 12, 2);
       rim.position.set(-3.5, 2.5, -2);
       scene.add(rim);
-      const fill = new THREE.PointLight(0x4b9dff, 7, 9, 2);
-      fill.position.set(3, 1.5, 2);
+
+      const fill = new THREE.PointLight(0x4b9dff, 5, 10, 2);
+      fill.position.set(3, 1.5, 3);
       scene.add(fill);
 
       const group = new THREE.Group();
@@ -52,9 +65,6 @@ export function HeroModel() {
 
       const model = gltf.scene;
       const presentation = new THREE.Group();
-
-      // The source model is sideways relative to the camera. The presentation
-      // group owns the fixed orientation so animation never changes facing.
       presentation.rotation.set(0, Math.PI / 2, 0);
       group.add(presentation);
       presentation.add(model);
@@ -63,12 +73,27 @@ export function HeroModel() {
         if (!object.isMesh) return;
         object.castShadow = true;
         object.receiveShadow = true;
+
         const materials = Array.isArray(object.material)
           ? object.material
           : [object.material];
+
         materials.forEach((material: any) => {
-          if (material) material.envMapIntensity = 1.1;
+          if (!material) return;
+          material.envMapIntensity = 1.35;
+          material.needsUpdate = true;
         });
+
+        if (object.geometry) {
+          object.geometry.computeVertexNormals?.();
+          const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+          materials.forEach((material: any) => {
+            material?.map && (material.map.anisotropy = maxAnisotropy);
+            material?.normalMap && (material.normalMap.anisotropy = maxAnisotropy);
+            material?.roughnessMap && (material.roughnessMap.anisotropy = maxAnisotropy);
+            material?.metalnessMap && (material.metalnessMap.anisotropy = maxAnisotropy);
+          });
+        }
       });
 
       const rawBounds = new THREE.Box3().setFromObject(model);
@@ -94,10 +119,9 @@ export function HeroModel() {
         action.reset();
         action.enabled = true;
         action.setLoop(THREE.LoopOnce, 1);
-        action.clampWhenFinished = true;
+        action.clampWhenFinished = false;
         action.setEffectiveWeight(1);
-        action.setEffectiveTimeScale(1);
-        action.paused = false;
+        action.setEffectiveTimeScale(0);
         action.play();
       }
 
@@ -109,9 +133,6 @@ export function HeroModel() {
       const getHeroProgress = () => {
         const hero = document.querySelector<HTMLElement>(HERO_SELECTOR);
         if (!hero) return 0;
-
-        // Progress is the hero's own scroll range, not the whole document.
-        // This makes the sticky 300vh scene the complete animation timeline.
         const scrollRange = Math.max(hero.offsetHeight - window.innerHeight, 1);
         return THREE.MathUtils.clamp(
           -hero.getBoundingClientRect().top / scrollRange,
@@ -123,9 +144,8 @@ export function HeroModel() {
       const updateViewport = () => {
         const width = canvas.clientWidth || window.innerWidth;
         const height = canvas.clientHeight || window.innerHeight;
-        renderer.setPixelRatio(
-          Math.min(window.devicePixelRatio, width < 768 ? 1.35 : 1.75),
-        );
+        const dprLimit = width < 768 ? 2 : 2.5;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprLimit));
         renderer.setSize(width, height, false);
         camera.aspect = width / Math.max(height, 1);
         camera.fov = width < 768 ? 38 : width < 1200 ? 35 : 33;
@@ -147,18 +167,8 @@ export function HeroModel() {
 
       const scrubAnimation = () => {
         if (!mixer || !action) return;
-
         const progress = getHeroProgress();
-        const targetTime = THREE.MathUtils.clamp(
-          progress * clipDuration,
-          0,
-          clipDuration,
-        );
-
-        // LoopOnce + clampWhenFinished pauses the action when it reaches the
-        // final frame. That breaks reverse scrolling. Re-enable/unpause it
-        // before every absolute time seek so the same timeline works in both
-        // directions with no autoplay clock.
+        const targetTime = THREE.MathUtils.clamp(progress * clipDuration, 0, clipDuration);
         action.enabled = true;
         action.paused = false;
         mixer.setTime(targetTime);
@@ -178,9 +188,6 @@ export function HeroModel() {
       const animate = () => {
         if (disposed) return;
         animationFrame = requestAnimationFrame(animate);
-
-        // Absolute scroll position controls absolute animation time.
-        // Down = later in the clip, up = earlier in the same clip.
         scrubAnimation();
         group.position.set(0, 0, 0);
         group.rotation.set(0, 0, 0);
@@ -231,8 +238,6 @@ export function HeroModel() {
         className="hero-model-canvas"
         aria-label="Front-facing Sasuke with absolute bidirectional scroll-controlled animation"
       />
-      <div className="hero-model-vignette" />
-      <div className="hero-model-glow" />
     </div>
   );
 }
