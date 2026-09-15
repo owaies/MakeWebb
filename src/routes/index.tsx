@@ -43,13 +43,6 @@ function Hero() {
         <div className="makewebb-stats"><div><strong>50+</strong><span>Projects Delivered</span></div><div><strong>30+</strong><span>Happy Clients</span></div><div><strong>3+</strong><span>Years of Experience</span></div></div>
         <div className="makewebb-bottom-mark"><span>BUILD</span><span>AUTOMATE</span><span>INNOVATE</span></div>
         <div className="makewebb-scroll-cue"><span className="makewebb-mouse"><i /></span><span>SCROLL</span><i className="makewebb-scroll-line" /></div>
-        <div className="makewebb-section-nav" aria-label="Page sections">
-          <span className="makewebb-section-nav-label">SCROLL TO EXPLORE</span>
-          {["Home", "Services", "Projects", "About", "Contact"].map((label, index) => {
-            const href = ["/", "/services", "/work", "/team", "/contact"][index];
-            return <Link key={label} to={href as "/" | "/services" | "/work" | "/team" | "/contact"} className={index === 0 ? "active" : ""}><span className="makewebb-section-dot">{String(index + 1).padStart(2, "0")}</span><span>{label}</span></Link>;
-          })}
-        </div>
       </div>
     </div>
   </section>;
