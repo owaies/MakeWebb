@@ -1,0 +1,50 @@
+.rinnegan-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  background: var(--background);
+}
+
+.rinnegan-background-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(75% 85% at 50% 46%, oklch(0.25 0.14 300 / 0.55), transparent 68%),
+    radial-gradient(90% 80% at 10% 0%, oklch(0.16 0.10 292 / 0.7), transparent 62%),
+    var(--background);
+}
+
+.rinnegan-background-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.rinnegan-background-video.is-ready {
+  opacity: 1;
+}
+
+.rinnegan-background-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, oklch(0.04 0.02 285 / 0.30) 0%, transparent 32%, oklch(0.04 0.02 285 / 0.28) 100%),
+    radial-gradient(circle at 50% 48%, transparent 28%, oklch(0.03 0.01 285 / 0.22) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rinnegan-background-video { display: none; }
+}
