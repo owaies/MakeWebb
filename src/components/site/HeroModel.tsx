@@ -36,7 +36,6 @@ export function HeroModel() {
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
       scene.add(new THREE.HemisphereLight(0xffffff, 0x171020, 2.8));
-
       const key = new THREE.DirectionalLight(0xffffff, 5.2);
       key.position.set(3, 6, 5);
       key.castShadow = true;
@@ -74,10 +73,7 @@ export function HeroModel() {
         object.castShadow = true;
         object.receiveShadow = true;
 
-        const materials = Array.isArray(object.material)
-          ? object.material
-          : [object.material];
-
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
         materials.forEach((material: any) => {
           if (!material) return;
           material.envMapIntensity = 1.35;
@@ -88,10 +84,10 @@ export function HeroModel() {
           object.geometry.computeVertexNormals?.();
           const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
           materials.forEach((material: any) => {
-            material?.map && (material.map.anisotropy = maxAnisotropy);
-            material?.normalMap && (material.normalMap.anisotropy = maxAnisotropy);
-            material?.roughnessMap && (material.roughnessMap.anisotropy = maxAnisotropy);
-            material?.metalnessMap && (material.metalnessMap.anisotropy = maxAnisotropy);
+            if (material?.map) material.map.anisotropy = maxAnisotropy;
+            if (material?.normalMap) material.normalMap.anisotropy = maxAnisotropy;
+            if (material?.roughnessMap) material.roughnessMap.anisotropy = maxAnisotropy;
+            if (material?.metalnessMap) material.metalnessMap.anisotropy = maxAnisotropy;
           });
         }
       });
@@ -119,10 +115,11 @@ export function HeroModel() {
         action.reset();
         action.enabled = true;
         action.setLoop(THREE.LoopOnce, 1);
-        action.clampWhenFinished = false;
+        action.clampWhenFinished = true;
         action.setEffectiveWeight(1);
-        action.setEffectiveTimeScale(0);
+        action.setEffectiveTimeScale(1);
         action.play();
+        action.paused = true;
       }
 
       let cameraDistance = 5;
@@ -167,11 +164,19 @@ export function HeroModel() {
 
       const scrubAnimation = () => {
         if (!mixer || !action) return;
+
         const progress = getHeroProgress();
         const targetTime = THREE.MathUtils.clamp(progress * clipDuration, 0, clipDuration);
+
+        // The mixer clock is never allowed to run on its own. For each render,
+        // temporarily enable the action, seek to the exact scroll-derived time,
+        // then pause it again. This makes scroll position the single source of
+        // truth and guarantees both downward and upward scrubbing.
         action.enabled = true;
         action.paused = false;
+        action.setEffectiveTimeScale(1);
         mixer.setTime(targetTime);
+        action.paused = true;
       };
 
       const onScroll = () => scrubAnimation();
@@ -207,9 +212,7 @@ export function HeroModel() {
         model.traverse((object: any) => {
           if (!object.isMesh) return;
           object.geometry?.dispose?.();
-          const materials = Array.isArray(object.material)
-            ? object.material
-            : [object.material];
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
           materials.forEach((material: any) => {
             material?.map?.dispose?.();
             material?.normalMap?.dispose?.();
@@ -236,7 +239,7 @@ export function HeroModel() {
       <canvas
         ref={canvasRef}
         className="hero-model-canvas"
-        aria-label="Front-facing Sasuke with absolute bidirectional scroll-controlled animation"
+        aria-label="Front-facing Sasuke with exact bidirectional scroll-controlled animation"
       />
     </div>
   );
