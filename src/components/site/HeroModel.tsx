@@ -68,28 +68,23 @@ export function HeroModel() {
       group.add(presentation);
       presentation.add(model);
 
-      model.traverse((object: any) => {
-        if (!object.isMesh) return;
+      model.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return;
         object.castShadow = true;
         object.receiveShadow = true;
+        object.geometry.computeVertexNormals();
 
+        const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
         const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material: any) => {
-          if (!material) return;
-          material.envMapIntensity = 1.35;
+        materials.forEach((material) => {
+          if (material instanceof THREE.MeshStandardMaterial) {
+            material.envMapIntensity = 1.35;
+            for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
+              if (texture) texture.anisotropy = maxAnisotropy;
+            }
+          }
           material.needsUpdate = true;
         });
-
-        if (object.geometry) {
-          object.geometry.computeVertexNormals?.();
-          const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-          materials.forEach((material: any) => {
-            if (material?.map) material.map.anisotropy = maxAnisotropy;
-            if (material?.normalMap) material.normalMap.anisotropy = maxAnisotropy;
-            if (material?.roughnessMap) material.roughnessMap.anisotropy = maxAnisotropy;
-            if (material?.metalnessMap) material.metalnessMap.anisotropy = maxAnisotropy;
-          });
-        }
       });
 
       const rawBounds = new THREE.Box3().setFromObject(model);
@@ -209,16 +204,18 @@ export function HeroModel() {
         window.removeEventListener("resize", onResize);
         window.visualViewport?.removeEventListener("resize", onResize);
         mixer?.stopAllAction();
-        model.traverse((object: any) => {
-          if (!object.isMesh) return;
-          object.geometry?.dispose?.();
+        model.traverse((object) => {
+          if (!(object instanceof THREE.Mesh)) return;
+          object.geometry.dispose();
           const materials = Array.isArray(object.material) ? object.material : [object.material];
-          materials.forEach((material: any) => {
-            material?.map?.dispose?.();
-            material?.normalMap?.dispose?.();
-            material?.roughnessMap?.dispose?.();
-            material?.metalnessMap?.dispose?.();
-            material?.dispose?.();
+          materials.forEach((material) => {
+            if (material instanceof THREE.MeshStandardMaterial) {
+              material.map?.dispose();
+              material.normalMap?.dispose();
+              material.roughnessMap?.dispose();
+              material.metalnessMap?.dispose();
+            }
+            material.dispose();
           });
         });
         renderer.dispose();
