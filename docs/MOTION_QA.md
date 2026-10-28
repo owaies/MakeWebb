@@ -19,3 +19,9 @@ Verify essential content remains complete when motion is reduced.
 - Confirm no animation loop continues after unmount and no unhandled import rejection appears in the console.
 - Enable the operating system's reduced-motion preference and confirm the smooth-scroll loop is not initialized.
 
+## Custom cursor idle behavior
+
+- Move the pointer and confirm the dot and ring follow smoothly.
+- Stop moving and confirm the animation loop settles instead of scheduling frames indefinitely.
+- Move again after it settles and confirm tracking resumes.
+- Move the pointer outside the document and confirm cursor classes and pending animation frames are cleared.
