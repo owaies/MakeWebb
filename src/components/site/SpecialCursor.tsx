@@ -26,6 +26,10 @@ export function SpecialCursor() {
         "a, button, [role=button], input, textarea, select, summary",
       );
       document.documentElement.classList.toggle("mw-cursor-hover", !!interactive);
+      if (rafRef.current === null) {
+        lastTime = performance.now();
+        rafRef.current = requestAnimationFrame(frame);
+      }
     };
 
     const down = () => document.documentElement.classList.add("mw-cursor-down");
@@ -33,6 +37,10 @@ export function SpecialCursor() {
     const leave = () => {
       visible = false;
       document.documentElement.classList.remove("mw-cursor-visible", "mw-cursor-hover");
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
 
     const frame = (time: number) => {
@@ -55,14 +63,18 @@ export function SpecialCursor() {
         ringRef.current.style.transform = `translate3d(${ring.current.x}px,${ring.current.y}px,0)`;
       }
 
-      rafRef.current = requestAnimationFrame(frame);
+      const stillMoving =
+        Math.abs(target.current.x - dot.current.x) > 0.1 ||
+        Math.abs(target.current.y - dot.current.y) > 0.1 ||
+        Math.abs(target.current.x - ring.current.x) > 0.1 ||
+        Math.abs(target.current.y - ring.current.y) > 0.1;
+      rafRef.current = visible && stillMoving ? requestAnimationFrame(frame) : null;
     };
 
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerdown", down, { passive: true });
     window.addEventListener("pointerup", up, { passive: true });
     document.documentElement.addEventListener("mouseleave", leave);
-    rafRef.current = requestAnimationFrame(frame);
 
     return () => {
       window.removeEventListener("pointermove", move);
@@ -70,6 +82,7 @@ export function SpecialCursor() {
       window.removeEventListener("pointerup", up);
       document.documentElement.removeEventListener("mouseleave", leave);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
       document.documentElement.classList.remove("mw-cursor-visible", "mw-cursor-hover", "mw-cursor-down");
     };
   }, []);
