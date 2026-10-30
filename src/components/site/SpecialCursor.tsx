@@ -11,7 +11,8 @@ export function SpecialCursor() {
 
   useEffect(() => {
     const finePointer = window.matchMedia("(pointer: fine)");
-    if (!finePointer.matches) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!finePointer.matches || reducedMotion.matches) return;
 
     let visible = false;
     let lastTime = performance.now();
@@ -89,7 +90,8 @@ export function SpecialCursor() {
 
   useEffect(() => {
     const coarsePointer = window.matchMedia("(pointer: coarse)");
-    if (!coarsePointer.matches) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!coarsePointer.matches || reducedMotion.matches) return;
 
     let lastTouch = 0;
     const touch = (event: TouchEvent) => {
