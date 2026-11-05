@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./special-cursor.css";
 
 export function SpecialCursor() {
@@ -8,11 +8,39 @@ export function SpecialCursor() {
   const target = useRef({ x: -100, y: -100 });
   const dot = useRef({ x: -100, y: -100 });
   const ring = useRef({ x: -100, y: -100 });
+  const [motionPreferences, setMotionPreferences] = useState({
+    finePointer: false,
+    coarsePointer: false,
+    reducedMotion: true,
+  });
 
   useEffect(() => {
     const finePointer = window.matchMedia("(pointer: fine)");
+    const coarsePointer = window.matchMedia("(pointer: coarse)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!finePointer.matches || reducedMotion.matches) return;
+
+    const updatePreferences = () => {
+      setMotionPreferences({
+        finePointer: finePointer.matches,
+        coarsePointer: coarsePointer.matches,
+        reducedMotion: reducedMotion.matches,
+      });
+    };
+
+    updatePreferences();
+    finePointer.addEventListener("change", updatePreferences);
+    coarsePointer.addEventListener("change", updatePreferences);
+    reducedMotion.addEventListener("change", updatePreferences);
+
+    return () => {
+      finePointer.removeEventListener("change", updatePreferences);
+      coarsePointer.removeEventListener("change", updatePreferences);
+      reducedMotion.removeEventListener("change", updatePreferences);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!motionPreferences.finePointer || motionPreferences.reducedMotion) return;
 
     let visible = false;
     let lastTime = performance.now();
@@ -86,12 +114,10 @@ export function SpecialCursor() {
       rafRef.current = null;
       document.documentElement.classList.remove("mw-cursor-visible", "mw-cursor-hover", "mw-cursor-down");
     };
-  }, []);
+  }, [motionPreferences.finePointer, motionPreferences.reducedMotion]);
 
   useEffect(() => {
-    const coarsePointer = window.matchMedia("(pointer: coarse)");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!coarsePointer.matches || reducedMotion.matches) return;
+    if (!motionPreferences.coarsePointer || motionPreferences.reducedMotion) return;
 
     let lastTouch = 0;
     const touch = (event: TouchEvent) => {
@@ -111,7 +137,7 @@ export function SpecialCursor() {
 
     document.addEventListener("touchstart", touch, { passive: true });
     return () => document.removeEventListener("touchstart", touch);
-  }, []);
+  }, [motionPreferences.coarsePointer, motionPreferences.reducedMotion]);
 
   return (
     <>
