@@ -12,7 +12,7 @@ Verify hover treatments never hide primary text or actions.
 Test desktop, tablet, mobile, and browser zoom. Confirm the layout does not depend on a single viewport width.
 
 ## Reduced motion
-Verify essential content remains complete when motion is reduced.
+Verify essential content remains complete when motion is reduced. Toggle the operating-system preference while the page is already open and confirm smooth scrolling stops immediately when reduction is enabled, then initializes again only after it is disabled.
 
 ## Smooth-scroll lifecycle regression
 - Navigate away from the page immediately after a fresh load, while the deferred Lenis module may still be loading.
