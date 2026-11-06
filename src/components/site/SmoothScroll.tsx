@@ -3,17 +3,30 @@ import { useEffect, type ReactNode } from "react";
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     let raf = 0;
-    let destroy: (() => void) | undefined;
     let cancelled = false;
+    let starting = false;
+    let lenis: { raf: (time: number) => void; destroy: () => void } | undefined;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const stop = () => {
+      cancelled = true;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      lenis?.destroy();
+      lenis = undefined;
+    };
 
-    import("lenis")
-      .then(({ default: Lenis }) => {
-        // The dynamic import may finish after this component has unmounted.
-        if (cancelled) return;
+    const start = async () => {
+      if (motionQuery.matches || lenis || starting) return;
+      cancelled = false;
+      starting = true;
 
-        const lenis = new Lenis({
+      try {
+        const { default: Lenis } = await import("lenis");
+        starting = false;
+        if (cancelled || motionQuery.matches) return;
+
+        lenis = new Lenis({
           duration: 1.15,
           easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
@@ -21,24 +34,33 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         });
 
         const loop = (time: number) => {
-          if (cancelled) return;
+          if (cancelled || motionQuery.matches || !lenis) return;
           lenis.raf(time);
           raf = requestAnimationFrame(loop);
         };
 
         raf = requestAnimationFrame(loop);
-        destroy = () => {
-          cancelAnimationFrame(raf);
-          lenis.destroy();
-        };
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
+        starting = false;
         if (!cancelled) console.error("Unable to initialize smooth scrolling", error);
-      });
+      }
+    };
+
+    const handleMotionChange = () => {
+      if (motionQuery.matches) {
+        stop();
+      } else {
+        cancelled = false;
+        void start();
+      }
+    };
+
+    motionQuery.addEventListener("change", handleMotionChange);
+    void start();
 
     return () => {
-      cancelled = true;
-      destroy?.();
+      motionQuery.removeEventListener("change", handleMotionChange);
+      stop();
     };
   }, []);
 
