@@ -25,3 +25,9 @@ Verify essential content remains complete when motion is reduced. Toggle the ope
 - Stop moving and confirm the animation loop settles instead of scheduling frames indefinitely.
 - Move again after it settles and confirm tracking resumes.
 - Move the pointer outside the document and confirm cursor classes and pending animation frames are cleared.
+
+## Custom cursor press cancellation
+
+- Press and hold the primary pointer button, then move the pointer outside the document; confirm the pressed cursor treatment clears.
+- Trigger a browser pointer-cancel event (for example, by interrupting an active pointer gesture) and confirm the pressed treatment clears.
+- While holding the pointer button, switch focus to another application and return; confirm the cursor is no longer shown as pressed.
