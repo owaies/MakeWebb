@@ -65,6 +65,7 @@ export function SpecialCursor() {
     const up = () => document.documentElement.classList.remove("mw-cursor-down");
     const leave = () => {
       visible = false;
+      up();
       document.documentElement.classList.remove("mw-cursor-visible", "mw-cursor-hover");
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
@@ -103,12 +104,16 @@ export function SpecialCursor() {
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerdown", down, { passive: true });
     window.addEventListener("pointerup", up, { passive: true });
+    window.addEventListener("pointercancel", up, { passive: true });
+    window.addEventListener("blur", up);
     document.documentElement.addEventListener("mouseleave", leave);
 
     return () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      window.removeEventListener("blur", up);
       document.documentElement.removeEventListener("mouseleave", leave);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
